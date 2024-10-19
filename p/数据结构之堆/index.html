@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="堆结构 许多应用程序都需要处理有序的元素，但是不一定要求它们全部有序，或是不一定要一次就将它们完全排好序。例如，你要实现一个进程调度算法，每一">
+<title>数据结构之堆</title>
+
+<link rel='canonical' href='http://localhost:1313/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%A0%86/'>
+
+<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="数据结构之堆">
+<meta property='og:description' content="堆结构 许多应用程序都需要处理有序的元素，但是不一定要求它们全部有序，或是不一定要一次就将它们完全排好序。例如，你要实现一个进程调度算法，每一">
+<meta property='og:url' content='http://localhost:1313/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%A0%86/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='堆' /><meta property='article:published_time' content='2024-10-19T19:47:58&#43;08:00'/><meta property='article:modified_time' content='2024-10-19T19:47:58&#43;08:00'/>
+<meta name="twitter:title" content="数据结构之堆">
+<meta name="twitter:description" content="堆结构 许多应用程序都需要处理有序的元素，但是不一定要求它们全部有序，或是不一定要一次就将它们完全排好序。例如，你要实现一个进程调度算法，每一">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😍</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#完全二叉树">完全二叉树</a></li>
+    <li><a href="#堆的实现">堆的实现</a>
+      <ol>
+        <li><a href="#sink方法">sink方法</a></li>
+        <li><a href="#heapify方法">heapify方法</a></li>
+        <li><a href="#swim方法">swim方法</a></li>
+        <li><a href="#添加与删除">添加与删除</a></li>
+      </ol>
+    </li>
+    <li><a href="#拓展堆排序">拓展：堆排序</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" >
+                数据结构
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%A0%86/">数据结构之堆</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-10-19</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="堆结构">堆结构
+</h1><p>许多应用程序都需要处理有序的元素，但是不一定要求它们全部有序，或是不一定要一次就将它们完全排好序。例如，你要实现一个进程调度算法，每一个进程都有一个优先级(<del>当有电话到来时，你的游戏很可能会被打断</del>)，所以电话程序的优先级会高于游戏程序的优先级。</p>
+<p>所以当前面临的挑战是：一个电脑上每个时刻都会有许多不同的进程，怎么按照优先级去调度它们呢？也就是说，在每次调度的时候，我们都希望花费很少的时间去找到最重要的进程(或者最不重要的进程)，堆结构就很好的解决这个问题。</p>
+<h2 id="完全二叉树">完全二叉树
+</h2><p>二叉树是一种常见的结构，对于一个结点来说，它通常可以有两个子节点(left, right)，看起来是这样的：</p>
+<p><img src="D:%5cBlogs%5cblogs%5ccontent%5cpost%5calgo%5cBinary_tree.svg.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="BinaryTree"
+	
+	
+></p>
+<p>用代码来表示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Tree</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Val</span> <span class="kt">int</span> <span class="c1">// 值域
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Left</span> <span class="o">*</span><span class="nx">Tree</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Right</span> <span class="o">*</span><span class="nx">Tree</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>不过这里我们不会使用这种形式，可以使用数组来进行父子结点之间关系。</p>
+<p>完全二叉树是一个特殊的二叉树，下面是维基百科对完全二叉树的介绍</p>
+<blockquote>
+<p>在一颗<a class="link" href="https://zh.wikipedia.org/wiki/%e4%ba%8c%e5%85%83%e6%a8%b9"  target="_blank" rel="noopener"
+    >二叉树</a>中，若除最后一层外的其余层都是满的，并且最后一层要么是满的，要么在右边缺少连续若干节点，则此<a class="link" href="https://zh.wikipedia.org/wiki/%e4%ba%8c%e5%85%83%e6%a8%b9"  target="_blank" rel="noopener"
+    >二叉树</a>为<a class="link" href="https://zh.wikipedia.org/wiki/%e5%ae%8c%e5%85%a8%e4%ba%8c%e5%8f%89%e6%a0%91"  target="_blank" rel="noopener"
+    >完全二叉树</a>（Complete Binary Tree）。具有n个节点的<a class="link" href="https://zh.wikipedia.org/wiki/%e5%ae%8c%e5%85%a8%e4%ba%8c%e5%8f%89%e6%a0%91"  target="_blank" rel="noopener"
+    >完全二叉树</a>的深度<img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/b70df35ef7bd93a0bd0111f03a49f945b8afeb94"
+	
+	
+	
+	loading="lazy"
+	
+		alt="{\displaystyle log_{2}n&#43;1}"
+	
+	
+>。深度为k的<a class="link" href="https://zh.wikipedia.org/wiki/%e5%ae%8c%e5%85%a8%e4%ba%8c%e5%8f%89%e6%a0%91"  target="_blank" rel="noopener"
+    >完全二叉树</a>，至少有<img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/5f7a246a73fbe0284d9a15d69b88677ce5be6284"
+	
+	
+	
+	loading="lazy"
+	
+		alt="{\displaystyle 2^{\begin{aligned}k-1\end{aligned}}}"
+	
+	
+>个节点，至多有<img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/40e7e2aed4ee10bc92e2fd88afda4b76da298a48"
+	
+	
+	
+	loading="lazy"
+	
+		alt="{\displaystyle 2^{\begin{aligned}k\end{aligned}}-1}"
+	
+	
+>个节点。</p>
+</blockquote>
+<p>通俗点来说，完全二叉树就是满二叉树从后向前去除子节点后剩下的二叉树。简单来说，堆按照根节点与子节点的大小关系可以分为<strong>大根堆</strong>和<strong>小根堆</strong>。大根堆的根节点比所有的子节点大，小根堆的根节点比子节点都小。所以按照这种规则，大根堆的根节点一定是数组里面的最大值，小根堆的根节点一定是数组里面的最小值。</p>
+<h2 id="堆的实现">堆的实现
+</h2><p>首先，对于一个不是堆结构的数组来说，第一步要做的就是<code>heapify</code>堆化，堆化需要用到两个辅助函数，</p>
+<p>就是 <code>sink</code>和<code>swim</code>。</p>
+<p>从名字上来看，<code>sink</code>就是向下交换，<code>swim</code>就是向上交换，对于一个数组，我们可以<strong>从第一个非叶子结点开始堆化</strong>，对于这些非叶子结点，我们每次都进行堆化，这样初始化到数组的第一个元素的时候，整个数组就是堆结构了。</p>
+<h3 id="sink方法">sink方法
+</h3><p>首先是找到这个数组的第一个非叶子结点，对于一个数组<code>arr</code>来说，我们假定它的长度是<code>n</code>，那么它的第一个非叶子结点就是<code>(n-1) / 2</code>，这里从大根堆开始建堆.</p>
+<p>首先，一个堆结构看起来可能是这样的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MaxHeap</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">item</span> <span class="p">[]</span><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>它的<code>sink</code>方法是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">sink</span><span class="p">(</span><span class="nx">k</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 孩子结点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">child</span> <span class="o">:=</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">child</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">child</span> <span class="p">=</span> <span class="nx">child</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 没必要交换
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 交换两个元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">k</span> <span class="p">=</span> <span class="nx">child</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面这段代码的意思是，给定一个下标，让这个下标的元素向下交换，从而满足堆结构。然后就可以开始进行堆化的操作了</p>
+<h3 id="heapify方法">heapify方法
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">heapify</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 从非叶子结点开始
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">this</span><span class="p">.</span><span class="nf">sink</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>经过此次操作，我们就已经有了堆结构，<code>item</code>切片的第一个元素就是数组中的最大值。</p>
+<h3 id="swim方法">swim方法
+</h3><p>但是，到目前为止，我们还没有让这个堆实现动态数据的添加和实现，当新增一个数据的时候，我们就把它添加到切片的结尾末尾，此时，这个新增的结点很可能会破坏掉原来的堆结构，这个时候，<strong>我们应该给新添加进来的元素找到合适的位置</strong>，<code>swim</code>方法就可以很好的实现。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">swim</span><span class="p">(</span><span class="nx">k</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">k</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 父节点比自己小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">k</span> <span class="p">=</span> <span class="p">(</span><span class="nx">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="c1">// 注意这里啊
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="添加与删除">添加与删除
+</h3><p>添加一个元素时，需要动态的调整位置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">insert</span><span class="p">(</span><span class="nx">val</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">item</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nf">swim</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>删除一个元素的时候(一般是根节点)，这里有一个<code>trick</code>，根节点与最后一个结点进行交换，然后再把新的结点<code>sink</code>使得找到合适的位置，这样做是因为，数组不适合频繁的添加删除元素，这样做可以更加高效！</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">delMax</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ans</span> <span class="o">:=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">item</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">// 删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">this</span><span class="p">.</span><span class="nf">sink</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">ans</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">getMax</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>到此，我们就成功的实现了一个大顶堆，小顶堆的实现与之很相似，这里直接贴出代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MinHeap</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">item</span> <span class="p">[]</span><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MinHeap</span><span class="p">)</span> <span class="nf">heapify</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">item</span> <span class="p">=</span> <span class="nx">nums</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">this</span><span class="p">.</span><span class="nf">sink</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MinHeap</span><span class="p">)</span> <span class="nf">sink</span><span class="p">(</span><span class="nx">k</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">child</span> <span class="o">:=</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">child</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">child</span> <span class="p">=</span> <span class="nx">child</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">k</span> <span class="p">=</span> <span class="nx">child</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MinHeap</span><span class="p">)</span> <span class="nf">swim</span><span class="p">(</span><span class="nx">k</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">k</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span> <span class="p">&gt;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">k</span> <span class="p">=</span> <span class="p">(</span><span class="nx">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MinHeap</span><span class="p">)</span> <span class="nf">genLength</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MinHeap</span><span class="p">)</span> <span class="nf">insert</span><span class="p">(</span><span class="nx">val</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">item</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nf">swim</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="拓展堆排序">拓展：堆排序
+</h2><p>在我们刚才构建大顶堆的时候，注意到每次都可以以 $O(logK)$的时间复杂度调整并获取最大值，所以，对于n组数来说，我们就可以以$O(nlogK)$的复杂度来进行排序，其中$K$是树的高度</p>
+<p>这里是完整代码，需要注意交换的范围每次都是在缩小的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// ConstructMaxHeap 将输入数组转换为最大堆。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">ConstructMaxHeap</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">sink</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// sink 是辅助函数，用于下沉元素以保持最大堆性质。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">sink</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">k</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">child</span> <span class="o">:=</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">child</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">child</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">child</span> <span class="p">=</span> <span class="nx">child</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">nums</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">=</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">child</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">k</span> <span class="p">=</span> <span class="nx">child</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// heapSort 使用堆排序算法对输入的切片进行排序。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">heapSort</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">ConstructMaxHeap</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="c1">// 交换最大元素到正确位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">sink</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>                    <span class="c1">// 重新构建堆
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">nums</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Original array:&#34;</span><span class="p">,</span> <span class="nx">nums</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">heapSort</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Sorted array:&#34;</span><span class="p">,</span> <span class="nx">nums</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E5%A0%86/">堆</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo=""
+        issue-term="pathname"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
