@@ -2,37 +2,40 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://XiaoPeng0x3.github.io/</loc>
+    <lastmod>2024-10-19T23:07:08+08:00</lastmod>
+  </url><url>
+    <loc>https://XiaoPeng0x3.github.io/post/</loc>
+    <lastmod>2024-10-19T23:07:08+08:00</lastmod>
+  </url><url>
+    <loc>https://XiaoPeng0x3.github.io/p/test/</loc>
+    <lastmod>2024-10-19T23:07:08+08:00</lastmod>
+  </url><url>
+    <loc>https://XiaoPeng0x3.github.io/categories/</loc>
     <lastmod>2024-10-19T19:47:58+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://XiaoPeng0x3.github.io/tags/</loc>
     <lastmod>2024-10-19T19:47:58+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/post/</loc>
+    <loc>https://XiaoPeng0x3.github.io/tags/%E5%A0%86/</loc>
     <lastmod>2024-10-19T19:47:58+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>https://XiaoPeng0x3.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc>
     <lastmod>2024-10-19T19:47:58+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/%E5%A0%86/</loc>
+    <loc>https://XiaoPeng0x3.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%A0%86/</loc>
     <lastmod>2024-10-19T19:47:58+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc>
-    <lastmod>2024-10-19T19:47:58+08:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%A0%86/</loc>
-    <lastmod>2024-10-19T19:47:58+08:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/page/</loc>
+    <loc>https://XiaoPeng0x3.github.io/page/</loc>
     <lastmod>2024-01-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/archives/</loc>
+    <loc>https://XiaoPeng0x3.github.io/archives/</loc>
     <lastmod>2024-01-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/%E5%85%B3%E4%BA%8E/</loc>
+    <loc>https://XiaoPeng0x3.github.io/%E5%85%B3%E4%BA%8E/</loc>
   </url><url>
-    <loc>http://localhost:1313/search/</loc>
+    <loc>https://XiaoPeng0x3.github.io/search/</loc>
   </url><url>
-    <loc>http://localhost:1313/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</loc>
+    <loc>https://XiaoPeng0x3.github.io/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/</loc>
   </url>
 </urlset>
