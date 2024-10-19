@@ -7,15 +7,7 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Xiao Peng</copyright>
-        <lastBuildDate>Sat, 19 Oct 2024 23:07:08 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>Test</title>
-        <link>https://XiaoPeng0x3.github.io/p/test/</link>
-        <pubDate>Sat, 19 Oct 2024 23:07:08 +0800</pubDate>
-        
-        <guid>https://XiaoPeng0x3.github.io/p/test/</guid>
-        <description></description>
-        </item>
-        <item>
+        <lastBuildDate>Sat, 19 Oct 2024 19:47:58 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>数据结构之堆</title>
         <link>https://XiaoPeng0x3.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%A0%86/</link>
         <pubDate>Sat, 19 Oct 2024 19:47:58 +0800</pubDate>
@@ -26,15 +18,19 @@
 &lt;p&gt;所以当前面临的挑战是：一个电脑上每个时刻都会有许多不同的进程，怎么按照优先级去调度它们呢？也就是说，在每次调度的时候，我们都希望花费很少的时间去找到最重要的进程(或者最不重要的进程)，堆结构就很好的解决这个问题。&lt;/p&gt;
 &lt;h2 id=&#34;完全二叉树&#34;&gt;完全二叉树
 &lt;/h2&gt;&lt;p&gt;二叉树是一种常见的结构，对于一个结点来说，它通常可以有两个子节点(left, right)，看起来是这样的：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://XiaoPeng0x3.github.io/Binary_tree.png&#34;
-	
-	
-	
-	loading=&#34;lazy&#34;
-	
-	
-&gt;&lt;/p&gt;
-&lt;p&gt;用代码来表示：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-txt&#34; data-lang=&#34;txt&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;   3
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 1    2
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; 4 5  6 7
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;用代码来表示：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
