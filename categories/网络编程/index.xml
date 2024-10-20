@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>网络编程 on 卖紫薯的紫薯精</title>
+        <link>https://XiaoPeng0x3.github.io/categories/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</link>
+        <description>Recent content in 网络编程 on 卖紫薯的紫薯精</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>Xiao Peng</copyright>
+        <lastBuildDate>Sun, 20 Oct 2024 17:31:13 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>网络编程(一)：初识套接字</title>
+        <link>https://XiaoPeng0x3.github.io/p/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E4%B8%80%E5%88%9D%E8%AF%86%E5%A5%97%E6%8E%A5%E5%AD%97/</link>
+        <pubDate>Sun, 20 Oct 2024 17:31:13 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/p/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E4%B8%80%E5%88%9D%E8%AF%86%E5%A5%97%E6%8E%A5%E5%AD%97/</guid>
+        <description>&lt;h1 id=&#34;前言&#34;&gt;前言
+&lt;/h1&gt;&lt;p&gt;这个系列会记录所有的学习计算机网络时的笔记。&lt;/p&gt;
+&lt;p&gt;首先计算机网络很重要(Web开发)，网络在日常生活和学习中无处不在，但是你真的了解底层的那些细节吗？比如&lt;code&gt;TCP/IP&lt;/code&gt;协议、&lt;code&gt;UDP&lt;/code&gt;协议，在面试的时候可能会问到相关的细节。&lt;/p&gt;
+&lt;h2 id=&#34;参考书籍&#34;&gt;参考书籍
+&lt;/h2&gt;&lt;p&gt;本次参考的书籍是：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;计算机网络：自顶向下&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在此基础上，可以选择一些视频资料进行辅助，推荐一门好评较高的课程：&lt;a class=&#34;link&#34; href=&#34;https://www.bilibili.com/video/BV1JV411t7ow&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;中科大——计算机网络&lt;/a&gt;，同时，如果觉得学了这些知识而缺少lab来动手的话，可以参考这门&lt;a class=&#34;link&#34; href=&#34;https://www.educoder.net/paths/zecl9i6m&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;lab&lt;/a&gt;,如果觉得过于简单，也可以挑战一下&lt;a class=&#34;link&#34; href=&#34;https://cs144.github.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;CS144&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;socket&#34;&gt;Socket
+&lt;/h1&gt;&lt;p&gt;&lt;code&gt;Socket&lt;/code&gt;的中文翻译是套接字，这个翻译很难理解，你可以把它认为是一个&lt;strong&gt;接口，插座&lt;/strong&gt;之类的物品，或者认为它是一个介质。在日常生活中，很多都是&lt;code&gt;Client-Server&lt;/code&gt;的模式，即客户端请求服务器上的一些资源，服务器在收到客户端的请求之后把数据发送到给客户端，这些数据就是通过套接字来实现的传输的。&lt;/p&gt;
+&lt;p&gt;套接字（Socket）是一个抽象层，应用程序可以通过它发送或接收数据，&lt;strong&gt;可对其进行像对文件一样的打开、读写和关闭等操作&lt;/strong&gt;。套接字允许应用程序将 I/O 插入到网络中，并与网络中的其他应用程序进行通信。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;网络套接字是 IP 地址与端口 Port 的组合。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;为了满足不同的通信程序对通信质量和性能的要求，网络系统提供了三种不同类型的套接字，以供用户在设计网络应用程序时根据不同的要求来选择。分别是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;流式套接字（SOCK-STREAM）&lt;/strong&gt;。提供一种可靠的、面向连接的双向数据传输服务，**实现了数据无差错、无重复的发送。**流式套接字内设流量控制，被传输的数据看作是无记录边界的字节流。在 TCP/IP 协议簇中，使用 TCP 协议来实现字节流的传输，当用户想要发送大批量的数据或者对数据传输有较高的要求时，可以使用流式套接字。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;数据报套接字（SOCK-DGRAM）&lt;/strong&gt;。提供一种无连接、不可靠的双向数据传输服务。数据包以独立的形式被发送，并且保留了记录边界，不提供可靠性保证。数据在传输过程中可能会丢失或重复，并且不能保证在接收端按发送顺序接收数据。在 TCP/IP 协议簇中，使用 UDP 协议来实现数据报套接字。在出现差错的可能性较小或允许部分传输出错的应用场合，可以使用数据报套接字进行数据传输，这样通信的效率较高。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;原始套接字（SOCK-RAW）&lt;/strong&gt;。该套接字允许对较低层协议（如 IP 或 ICMP ）进行直接访问，常用于网络协议分析，检验新的网络协议实现，也可用于测试新配置或安装的网络设备。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里需要记住两种协议：&lt;code&gt;TCP&lt;/code&gt;和&lt;code&gt;UDP&lt;/code&gt;，先不考虑它们底层是怎么实现的，&lt;code&gt;TCP&lt;/code&gt;的特点就是可以保证在传送的过程中数据不丢失、不重复、不乱序，&lt;strong&gt;原原本本的把数据发送给接受者&lt;/strong&gt;；而&lt;code&gt;UDP&lt;/code&gt;协议考虑的很少，所以&lt;code&gt;UDP&lt;/code&gt;协议可以用于传输速度快的场景。&lt;/p&gt;
+&lt;h2 id=&#34;创建socket&#34;&gt;创建Socket
+&lt;/h2&gt;&lt;p&gt;这里为了简单起见，使用&lt;code&gt;Python&lt;/code&gt;来创建&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 导入socket包&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;socket&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 创建一个TCP套接字&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;serverSocket&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;socket&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;AF_INET&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SOCK_STREAM&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# TCP是流式套接字&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 绑定Server的IP和Port&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;serverSocket&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bind&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;127.0.0.1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;8080&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# bind的参数是tuple类型，需要一个地址和端口&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;到这里，已经成功把&lt;code&gt;serverSocket&lt;/code&gt;绑定到&lt;code&gt;IP&lt;/code&gt;地址为&lt;code&gt;127.0.0.1:8080&lt;/code&gt;的机器上了&lt;/p&gt;
+&lt;h2 id=&#34;监听listen&#34;&gt;监听listen
+&lt;/h2&gt;&lt;p&gt;在创建好&lt;code&gt;serverSocket&lt;/code&gt;后，因为不知道什么时候&lt;code&gt;server&lt;/code&gt;会收到连接请求，一个有效的方法是&lt;code&gt;listen&lt;/code&gt;函数&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;serverSocket&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;listen&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这里，函数的参数是监听队列的大小，当有多个连接请求时，这些请求会被放到监听队列里面。&lt;/p&gt;
+&lt;p&gt;到目前为止，我们可以看一看&lt;code&gt;serverSocket&lt;/code&gt;的一些信息&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ServerSocket&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;下面是输出信息&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-txt&#34; data-lang=&#34;txt&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;socket.socket fd=340, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=(&amp;#39;127.0.0.1&amp;#39;, 8080)&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;其中，第一个参数&lt;code&gt;fd&lt;/code&gt;你可能不太了解，这个是一个&lt;code&gt;文件描述符(file descriptor)&lt;/code&gt;，文件描述符是&lt;strong&gt;一个&lt;code&gt;Obj&lt;/code&gt;的handle&lt;/strong&gt;，或者你也可以理解为指向文件的指针，在Unix和类Unix系统中，所有的I/O都被抽象为文件描述符，包括网络套接字。&lt;/p&gt;
+&lt;h2 id=&#34;流程&#34;&gt;流程
+&lt;/h2&gt;&lt;p&gt;在创建一个&lt;code&gt;socket&lt;/code&gt;时，可以遵循以下步骤&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;根据协议初始化一个&lt;code&gt;socket&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;给&lt;code&gt;socket&lt;/code&gt;绑定IP&lt;/li&gt;
+&lt;li&gt;开启监听&lt;/li&gt;
+&lt;li&gt;关闭这个&lt;code&gt;socket&lt;/code&gt;,防止内存泄漏&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;好，这就是创建&lt;code&gt;socket&lt;/code&gt;的所有过程~~&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
