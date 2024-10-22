@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="在上一篇中，我们学习了如何在server上创建一个TCP的套接字，这里来看一看对于服务端，server是怎么获取客户端的连接请求的。\n获取连接请求 在开启监听(listen)后，如果有客服端尝试连接服务器，那么内核将于客户端进行连接，因为请求连接可能会有多个，所以内核会维护一个队列来存放这些请求。当客户端连接到内核之后，那么内核可以使用accept函数来返回并接受来自这个连接。\n">
+<title>网络编程(二)：服务端获取连接请求</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E4%BA%8C%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5%E8%AF%B7%E6%B1%82/'>
+
+<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="网络编程(二)：服务端获取连接请求">
+<meta property='og:description' content="在上一篇中，我们学习了如何在server上创建一个TCP的套接字，这里来看一看对于服务端，server是怎么获取客户端的连接请求的。\n获取连接请求 在开启监听(listen)后，如果有客服端尝试连接服务器，那么内核将于客户端进行连接，因为请求连接可能会有多个，所以内核会维护一个队列来存放这些请求。当客户端连接到内核之后，那么内核可以使用accept函数来返回并接受来自这个连接。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E4%BA%8C%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5%E8%AF%B7%E6%B1%82/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Python' /><meta property='article:published_time' content='2024-10-21T13:19:18&#43;08:00'/><meta property='article:modified_time' content='2024-10-21T13:19:18&#43;08:00'/>
+<meta name="twitter:title" content="网络编程(二)：服务端获取连接请求">
+<meta name="twitter:description" content="在上一篇中，我们学习了如何在server上创建一个TCP的套接字，这里来看一看对于服务端，server是怎么获取客户端的连接请求的。\n获取连接请求 在开启监听(listen)后，如果有客服端尝试连接服务器，那么内核将于客户端进行连接，因为请求连接可能会有多个，所以内核会维护一个队列来存放这些请求。当客户端连接到内核之后，那么内核可以使用accept函数来返回并接受来自这个连接。\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😍</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#简单的demo">简单的demo</a></li>
+    <li><a href="#一些缺点">一些缺点</a>
+      <ol>
+        <li><a href="#浪费性能">浪费性能</a></li>
+      </ol>
+    </li>
+    <li><a href="#应对策略">应对策略</a>
+      <ol>
+        <li><a href="#多进程">多进程</a></li>
+        <li><a href="#多线程">多线程</a></li>
+      </ol>
+    </li>
+    <li><a href="#结尾">结尾</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" >
+                网络编程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E4%BA%8C%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5%E8%AF%B7%E6%B1%82/">网络编程(二)：服务端获取连接请求</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-10-21</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>在上一篇中，我们学习了如何在<code>server</code>上创建一个<code>TCP</code>的套接字，这里来看一看对于服务端，<code>server</code>是怎么获取客户端的连接请求的。</p>
+<h1 id="获取连接请求">获取连接请求
+</h1><p>在开启监听(<code>listen</code>)后，如果有客服端尝试连接服务器，那么内核将于客户端进行连接，因为请求连接可能会有多个，所以内核会维护一个队列来存放这些请求。当客户端连接到内核之后，那么内核可以使用<code>accept</code>函数来返回并接受来自这个连接。</p>
+<p>下面来用代码演示一下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 把上次的代码复制一下</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建一个套接字</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用socket进行初始化</span>
+</span></span><span class="line"><span class="cl"><span class="n">serverSocket</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="c1"># 使用IPV4地址簇，使用的是流式socket</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 接下来开始进行绑定</span>
+</span></span><span class="line"><span class="cl"><span class="n">serverSocket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&#34;127.0.0.1&#34;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">))</span> <span class="c1"># bind 需要的是一个tuple类型</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 绑定后可以开始listen, 即查看是否有客户端连接到服务器</span>
+</span></span><span class="line"><span class="cl"><span class="n">serverSocket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 最多监听一个</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在创建好<code>server socket</code>之后，我们就可以使用<code>accept</code>函数来进行连接。这里先不考虑<code>TCP</code>协议在连接时的一些细节</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">返回值： 
+</span></span></span><span class="line"><span class="cl"><span class="s1">connectionSocket 客户端连接套接字
+</span></span></span><span class="line"><span class="cl"><span class="s1">addr 连接的客户端地址
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">connectionSocket</span><span class="err">，</span><span class="n">addr</span> <span class="o">=</span> <span class="n">serverSocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是说，这个操作会返回一个新的<code>socket</code>,不同的是，通过这个<code>socket</code>就可以实现<code>server</code>与<code>client</code>之间的通讯。</p>
+<p>可以接受或者发送数据，下面是一些<code>API</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">recv</span><span class="p">()</span><span class="o">/</span><span class="n">send</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">recvmsg</span><span class="p">()</span><span class="o">/</span><span class="n">sendmsg</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">recvfrom</span><span class="p">()</span><span class="o">/</span><span class="n">sendto</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>需要注意的是，传递的这些字符全部都是流式数据，与原始字符串不同</p>
+<h2 id="简单的demo">简单的demo
+</h2><p>在这里，创建一个简单的小<code>demo</code>，我们可以创建一个简单的服务程序，这个<code>server</code>什么也不做，只是简单的把接受到的数据原封不动的发送给<code>client</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 初始化好一个socket</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">serverScoket</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 绑定IP和port</span>
+</span></span><span class="line"><span class="cl">    <span class="n">serverScoket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&#34;127.0.0.1&#34;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 开启监听listen</span>
+</span></span><span class="line"><span class="cl">    <span class="n">serverScoket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 这是一个监听队列，当处理多个请求的时候，会把未来得及处理的放入队列里面，其中的参数表示队列的大小</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 开启socket的accept,从而处理来自server的连接</span>
+</span></span><span class="line"><span class="cl">    <span class="n">connectionSocket</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">serverScoket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span> <span class="c1"># 先忽略第二个返回值</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;connect!&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">with</span> <span class="n">connectionSocket</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>    
+</span></span><span class="line"><span class="cl">            <span class="n">data</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span> <span class="c1"># 每次都尝试获得来自客户端的数据, 注意这是个字节流数据</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span>
+</span></span><span class="line"><span class="cl">            <span class="n">c</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1"># 把接受到的数据返回</span>
+</span></span><span class="line"><span class="cl">            
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们可以使用<code>netcat</code>这个工具来进行测试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nc 1270.0.0.1 <span class="m">8080</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，服务器端口已经连接上了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">connect!
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过这个有趣的连接，我们还可以使用<code>eval</code>函数来实现计算式求值</p>
+<blockquote>
+<p><code>eval</code>函数是危险的！这里只是做演示</p>
+<p><code>eval()</code> 可以执行任意的 Python 代码。如果传入的字符串包含恶意代码，这可能导致严重的安全漏洞。例如，攻击者可以通过构造恶意表达式来执行系统命令、访问敏感数据、修改文件等。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 初始化好一个socket</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">serverScoket</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 绑定IP和port</span>
+</span></span><span class="line"><span class="cl">    <span class="n">serverScoket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&#34;127.0.0.1&#34;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 开启监听listen</span>
+</span></span><span class="line"><span class="cl">    <span class="n">serverScoket</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 这是一个监听队列，当处理多个请求的时候，会把未来得及处理的放入队列里面，其中的参数表示队列的大小</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 开启socket的accept,从而处理来自server的连接</span>
+</span></span><span class="line"><span class="cl">    <span class="n">connectionSocket</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">serverScoket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span> <span class="c1"># 先忽略第二个返回值</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;connect!&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">with</span> <span class="n">connectionSocket</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>    
+</span></span><span class="line"><span class="cl">            <span class="n">data</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span> <span class="c1"># 每次都尝试获得来自客户端的数据, 注意这是个字节流数据</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span>
+</span></span><span class="line"><span class="cl">             <span class="c1"># 解码接收到的数据</span>
+</span></span><span class="line"><span class="cl">            <span class="n">expression</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1"># 计算表达式的结果</span>
+</span></span><span class="line"><span class="cl">            <span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">expression</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1"># 发送结果给客户端</span>
+</span></span><span class="line"><span class="cl">            <span class="n">c</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="一些缺点">一些缺点
+</h2><h3 id="浪费性能">浪费性能
+</h3><p>对于真实世界来说，这里的服务器实在是太弱了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>    
+</span></span><span class="line"><span class="cl">        <span class="n">data</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1"># 把接受到的数据返回</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>server</code>每次只能处理一个请求，当<code>client</code>没有发送数据的时候，<code>c.recv(1024)</code>这行代码也就会永远阻塞在这里，很浪费性能。</p>
+<p>此时，很自然的想到以并发的方式去处理频繁的连接</p>
+<h2 id="应对策略">应对策略
+</h2><h3 id="多进程">多进程
+</h3><p>可以使用<code>fork</code>来创建多个进程，其中，<code>fork</code>函数在子进程里面的返回值是0，所以，可以设想一下，当有服务来临时，父进程只去监听(<code>accept</code>)是否有连接，同时可以把读写操作放到子进程里面去运行，这样通过进程调度策略，就可以实现并发</p>
+<p>代码看起来是这样的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">pid_t</span> <span class="n">pid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">((</span><span class="n">pid</span> <span class="o">=</span> <span class="nf">fork</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 子进程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// do read() or do write()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// accept 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>每当一个连接到来时，程序就会创建一个子进程来处理，可惜进程实在是不够“轻量”，而且进程调度器来进行调度的时候也需要有着内核态到用户态的转换、进程的变量读写保存，因此可以考虑使用多线程来进行尝试</p>
+<h3 id="多线程">多线程
+</h3><p>什么是线程？</p>
+<blockquote>
+<p>In <a class="link" href="https://en.wikipedia.org/wiki/Computer_science"  target="_blank" rel="noopener"
+    >computer science</a>, a <strong>thread</strong> of <a class="link" href="https://en.wikipedia.org/wiki/Execution_%28computing%29"  target="_blank" rel="noopener"
+    >execution</a> is the smallest sequence of programmed instructions that can be managed independently by a <a class="link" href="https://en.wikipedia.org/wiki/Scheduling_%28computing%29"  target="_blank" rel="noopener"
+    >scheduler</a>, which is typically a part of the <a class="link" href="https://en.wikipedia.org/wiki/Operating_system"  target="_blank" rel="noopener"
+    >operating system</a>.[<a class="link" href="https://en.wikipedia.org/wiki/Thread_%28computing%29#cite_note-1"  target="_blank" rel="noopener"
+    >1]</a> In many cases, a thread is a component of a <a class="link" href="https://en.wikipedia.org/wiki/Process_%28computing%29"  target="_blank" rel="noopener"
+    >process</a>.</p>
+<p>The multiple threads of a given process may be executed <a class="link" href="https://en.wikipedia.org/wiki/Concurrent_computation"  target="_blank" rel="noopener"
+    >concurrently</a> (via multithreading capabilities), sharing resources such as <a class="link" href="https://en.wikipedia.org/wiki/Shared_memory_%28interprocess_communication%29"  target="_blank" rel="noopener"
+    >memory</a>, while different processes do not share these resources. In particular, the threads of a process share its executable code and the values of its <a class="link" href="https://en.wikipedia.org/wiki/Memory_management#HEAP"  target="_blank" rel="noopener"
+    >dynamically allocated</a> variables and non-<a class="link" href="https://en.wikipedia.org/wiki/Thread-local_storage"  target="_blank" rel="noopener"
+    >thread-local</a> <a class="link" href="https://en.wikipedia.org/wiki/Global_variable"  target="_blank" rel="noopener"
+    >global variables</a> at any given time.</p>
+<p>The implementation of threads and <a class="link" href="https://en.wikipedia.org/wiki/Process_%28computing%29"  target="_blank" rel="noopener"
+    >processes</a> differs between operating systems.</p>
+</blockquote>
+<p>线程是进程的一个子集(你可以这么认为)，一个进程里面会有多个线程，这些线程共享这个进程所有的资源(因为它们有着一样的页表)，所以在线程切换的时候，不需要有很大的开销，只需要维护每个线程内部不共享或者私有的数据即可。</p>
+<p>这样就可以使用多线程来处理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">threading</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 把发送请求发送这里</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">handle_client</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">addr</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="s1">&#39;connect&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">data</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span>
+</span></span><span class="line"><span class="cl">        <span class="n">c</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">serverSocket</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">serverSocket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&#34;127.0.0.1&#34;</span><span class="p">,</span> <span class="mi">8080</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">serverSocket</span><span class="o">.</span><span class="n">listen</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">connectionSocket</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">serverSocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span> <span class="c1"># 接受多个不同的请求</span>
+</span></span><span class="line"><span class="cl">        <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">handle_client</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">connectionSocket</span><span class="p">,</span> <span class="n">addr</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>多线程的方法可以使用线程池的方法去调度，不过线程也会占用系统的资源。</p>
+<h2 id="结尾">结尾
+</h2><p>之后记录一下<code>select、poll、epoll</code>这些方法</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/python/">Python</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E4%B8%80%E5%88%9D%E8%AF%86%E5%A5%97%E6%8E%A5%E5%AD%97/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">网络编程(一)：初识套接字</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div id="gitalk-container"></div>
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.18.0/js/md5.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: "Ov23liWjuogW7Zcxk6RF",
+        clientSecret: "26dd54f5668c88eacd02153ab33913603f099f3c",
+        repo: "https:\/\/github.com\/XiaoPeng0x3\/XiaoPeng0x3.github.io",
+        owner: "XiaoPeng0x3",
+        admin: ["XiaoPeng0x3"],
+        distractionFreeMode: false, 
+        id: md5(location.pathname), 
+    });
+    (function () {
+        if (
+            ["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1
+        ) {
+            document.getElementById("gitalk-container").innerHTML =
+                "Gitalk comments not available by default when the website is previewed locally.";
+            return;
+        }
+        gitalk.render("gitalk-container");
+    })();
+</script>
+
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
