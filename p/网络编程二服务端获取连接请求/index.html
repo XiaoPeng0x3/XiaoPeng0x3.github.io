@@ -15,6 +15,20 @@
 <meta name="twitter:description" content="在上一篇中，我们学习了如何在server上创建一个TCP的套接字，这里来看一看对于服务端，server是怎么获取客户端的连接请求的。\n获取连接请求 在开启监听(listen)后，如果有客服端尝试连接服务器，那么内核将于客户端进行连接，因为请求连接可能会有多个，所以内核会维护一个队列来存放这些请求。当客户端连接到内核之后，那么内核可以使用accept函数来返回并接受来自这个连接。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script>
     </head>
     <body class="
     article-page
@@ -799,7 +813,7 @@
             花有重开日，人无再少年 <br/>
         使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
         主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
-    </section>
+	</section>
 </footer>
 <script>
     (function(u, c) {
