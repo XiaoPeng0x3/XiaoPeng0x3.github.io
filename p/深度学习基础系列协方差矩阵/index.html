@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="矩阵乘法 矩阵乘法是矩阵运算的基础，简单来说，对于两个A和B矩阵来说，只要A的列数等于B的行数，那么这两个矩阵就可以发生运算\n即A是一个m x n的矩阵， B是一个n x k的矩阵，那么运算后的结果就是m x k的矩阵\n">
-<title>深度学习基础系列：矩阵乘法</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="协方差矩阵 协方差(covariance)可以用来观测变量之间是否存在线性相关性。然而，协方差本身有一些局限性，因此在实际应用中，我们通常还会使用相关系数来进一步评估变量之间的相关性。\n">
+<title>深度学习基础系列：协方差矩阵</title>
 
-<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95/'>
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97%E5%8D%8F%E6%96%B9%E5%B7%AE%E7%9F%A9%E9%98%B5/'>
 
-<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="深度学习基础系列：矩阵乘法">
-<meta property='og:description' content="矩阵乘法 矩阵乘法是矩阵运算的基础，简单来说，对于两个A和B矩阵来说，只要A的列数等于B的行数，那么这两个矩阵就可以发生运算\n即A是一个m x n的矩阵， B是一个n x k的矩阵，那么运算后的结果就是m x k的矩阵\n">
-<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95/'>
+<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="深度学习基础系列：协方差矩阵">
+<meta property='og:description' content="协方差矩阵 协方差(covariance)可以用来观测变量之间是否存在线性相关性。然而，协方差本身有一些局限性，因此在实际应用中，我们通常还会使用相关系数来进一步评估变量之间的相关性。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97%E5%8D%8F%E6%96%B9%E5%B7%AE%E7%9F%A9%E9%98%B5/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Python' /><meta property='article:published_time' content='2024-10-25T23:41:00&#43;08:00'/><meta property='article:modified_time' content='2024-10-25T23:41:00&#43;08:00'/>
-<meta name="twitter:title" content="深度学习基础系列：矩阵乘法">
-<meta name="twitter:description" content="矩阵乘法 矩阵乘法是矩阵运算的基础，简单来说，对于两个A和B矩阵来说，只要A的列数等于B的行数，那么这两个矩阵就可以发生运算\n即A是一个m x n的矩阵， B是一个n x k的矩阵，那么运算后的结果就是m x k的矩阵\n">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Python' /><meta property='article:published_time' content='2024-10-26T16:01:06&#43;08:00'/><meta property='article:modified_time' content='2024-10-26T16:01:06&#43;08:00'/>
+<meta name="twitter:title" content="深度学习基础系列：协方差矩阵">
+<meta name="twitter:description" content="协方差矩阵 协方差(covariance)可以用来观测变量之间是否存在线性相关性。然而，协方差本身有一些局限性，因此在实际应用中，我们通常还会使用相关系数来进一步评估变量之间的相关性。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
@@ -263,7 +263,55 @@ var _hmt = _hmt || [];
     </ol>
 </aside>
 
-    
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#协方差的局限性">协方差的局限性</a></li>
+        <li><a href="#相关系数">相关系数</a>
+          <ol>
+            <li><a href="#皮尔逊相关系数的定义">皮尔逊相关系数的定义</a></li>
+            <li><a href="#解释">解释</a></li>
+          </ol>
+        </li>
+        <li><a href="#python-示例">Python 示例</a>
+          <ol>
+            <li><a href="#使用-numpy">使用 <code>numpy</code></a></li>
+            <li><a href="#使用-pandas">使用 <code>pandas</code></a></li>
+          </ol>
+        </li>
+        <li><a href="#结论">结论</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
 
             <main class="main full-width">
     <article class="main-article">
@@ -282,7 +330,7 @@ var _hmt = _hmt || [];
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95/">深度学习基础系列：矩阵乘法</a>
+            <a href="/p/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97%E5%8D%8F%E6%96%B9%E5%B7%AE%E7%9F%A9%E9%98%B5/">深度学习基础系列：协方差矩阵</a>
         </h2>
     
         
@@ -304,7 +352,7 @@ var _hmt = _hmt || [];
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">2024-10-25</time>
+                <time class="article-time--published">2024-10-26</time>
             </div>
         
 
@@ -319,7 +367,7 @@ var _hmt = _hmt || [];
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 3 分钟
                 </time>
             </div>
         
@@ -334,33 +382,137 @@ var _hmt = _hmt || [];
     <section class="article-content">
     
     
-    <h1 id="矩阵乘法">矩阵乘法
-</h1><p>矩阵乘法是矩阵运算的基础，简单来说，对于两个<code>A</code>和<code>B</code>矩阵来说，只要<code>A</code>的列数等于<code>B</code>的行数，那么这两个矩阵就可以发生运算</p>
-<p>即<code>A</code>是一个<code>m x n</code>的矩阵， <code>B</code>是一个<code>n x k</code>的矩阵，那么运算后的结果就是<code>m x k</code>的矩阵</p>
-<p>首先把矩阵转换为<code>np.array</code>类型，然后判断它们的类型，查看是否可以相乘</p>
+    <h1 id="协方差矩阵">协方差矩阵
+</h1><p>协方差(<code>covariance</code>)可以用来观测变量之间是否存在线性相关性。然而，协方差本身有一些局限性，因此在实际应用中，我们通常还会使用相关系数来进一步评估变量之间的相关性。</p>
+<h3 id="协方差的局限性">协方差的局限性
+</h3><ol>
+<li>
+<p><strong>尺度依赖性</strong>：</p>
+<ul>
+<li>协方差的值受变量尺度的影响。如果一个变量的值范围很大，而另一个变量的值范围很小，即使它们之间有很强的线性关系，协方差的绝对值也可能很大或很小，这使得直接比较不同变量之间的协方差变得困难。</li>
+</ul>
+</li>
+<li>
+<p><strong>单位依赖性</strong>：</p>
+<ul>
+<li>协方差的单位是两个变量单位的乘积。例如，如果一个变量的单位是米，另一个变量的单位是秒，那么协方差的单位将是米·秒。这使得协方差的解释更加复杂。</li>
+</ul>
+</li>
+</ol>
+<h3 id="相关系数">相关系数
+</h3><p>为了克服协方差的这些局限性，我们通常使用 <strong>皮尔逊相关系数</strong>（Pearson correlation coefficient），它是一个标准化的协方差，范围在 -1 到 1 之间。</p>
+<h4 id="皮尔逊相关系数的定义">皮尔逊相关系数的定义
+</h4><p>皮尔逊相关系数 ( r ) 定义为：
+$$ r_{XY} = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y} $$</p>
+<p>其中：</p>
+<ul>
+<li>$\sigma_X $ 是 X 的标准差。</li>
+<li>$\sigma_Y$ 是 Y 的标准差。</li>
+</ul>
+<h4 id="解释">解释
+</h4><ul>
+<li><strong>( r = 1 )</strong>：完全正相关，即两个变量完全同向变化。</li>
+<li><strong>( r = -1 )</strong>：完全负相关，即两个变量完全反向变化。</li>
+<li><strong>( r = 0 )</strong>：没有线性相关性。</li>
+<li><strong>( |r| ) 接近 1</strong>：表示强相关性。</li>
+<li><strong>( |r| ) 接近 0</strong>：表示弱相关性或没有相关性。</li>
+</ul>
+<h3 id="python-示例">Python 示例
+</h3><p>可以使用 <code>numpy</code> 或 <code>pandas</code> 库来计算皮尔逊相关系数。</p>
+<h4 id="使用-numpy">使用 <code>numpy</code>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 示例数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>  <span class="c1"># 观测值1</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>  <span class="c1"># 观测值2</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>   <span class="c1"># 观测值3</span>
+</span></span><span class="line"><span class="cl"><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算协方差矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;协方差矩阵:</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算相关系数矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">corr_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># correlation coefficient</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;相关系数矩阵:</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">corr_matrix</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里的<code>np.cov()</code>和<code>np.corrcoef()</code>，如果不指定第二个参数，那么第二个参数默认<code>rowvar = True</code>，意思就是这组数据是按照横向放置的，意思就是每一行是一个属性</p>
+<p>而在有时候需要从文件里面读取一些属性，例如</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">matrix_dot_vector</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="o">|</span><span class="nb">float</span><span class="p">]],</span><span class="n">b</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="o">|</span><span class="nb">float</span><span class="p">])</span><span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="o">|</span><span class="nb">float</span><span class="p">]:</span>
-</span></span><span class="line"><span class="cl">	<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">b</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-</span></span><span class="line"><span class="cl">	<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">c</span>
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">X	Y	Z
+</span></span><span class="line"><span class="cl">x1	y1	z1
+</span></span><span class="line"><span class="cl">x2	y2	z2
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p><code>np.dot()</code>接受两个数组(矩阵)并返回它们的结果</p>
+</div><p>那么这个时候，就可以把默认值设置为<code>False</code>,代表每一列是一个属性</p>
+<h4 id="使用-pandas">使用 <code>pandas</code>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 示例数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算协方差矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cov</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;协方差矩阵:</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算相关系数矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">corr_matrix</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;相关系数矩阵:</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="n">corr_matrix</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="结论">结论
+</h3><p>协方差提供关于变量之间线性关系的一些信息，但建议使用皮尔逊相关系数。</p>
+<p>相关系数不仅标准化了协方差，还提供了一个易于解释的度量，范围在 -1 到 1 之间。1代表存在正相关关系，-1代表负相关关系。</p>
 
 </section>
 
@@ -427,12 +579,12 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97%E5%8D%8F%E6%96%B9%E5%B7%AE%E7%9F%A9%E9%98%B5/">
+    <a href="/p/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E7%B3%BB%E5%88%97%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">深度学习基础系列：协方差矩阵</h2>
+            <h2 class="article-title">深度学习基础系列：矩阵乘法</h2>
         </div>
     </a>
 </article>
