@@ -341,7 +341,8 @@
 	
 	
 &gt;&lt;/p&gt;
-&lt;p&gt;这里还需另外提醒的是矩阵的加减法，对于两个维数相同的矩阵$A 和B$，经过运算后得到$C$,其中，$$ C_{ij} = A_{ij} + B_{ij} $$,$$ C_{ij} = A_{ij} - B_{ij} $$&lt;/p&gt;
+&lt;p&gt;这里还需另外提醒的是矩阵的加减法，对于两个维数相同的矩阵$A 和B$，经过运算后得到$C$,其中，$$ C_{ij} = A_{ij} + B_{ij} $$&lt;/p&gt;
+&lt;p&gt;$$ C_{ij} = A_{ij} - B_{ij} $$&lt;/p&gt;
 &lt;p&gt;即对应元素相加减的操作&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
