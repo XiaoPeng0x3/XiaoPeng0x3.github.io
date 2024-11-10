@@ -823,6 +823,16 @@ var _hmt = _hmt || [];
 <p>这种三分法的优势在于，验证集用于超参数选择，而测试集则用来评估模型在未见过的数据上的泛化能力，从而避免在超参数选择过程中过拟合测试集的风险。</p>
 <p>有关交叉验证的部分解释来自<code>ChatGPT</code></p>
 <p><strong>交叉验证 (Cross-Validation)</strong> 是一种用于更稳健地评估模型性能和选择超参数的方法。它通过多次数据划分和训练测试来减少模型对数据划分的偶然影响。在交叉验证中，我们通常将数据划分为多个等大小的部分（称为“折”或“folds”），并在每次训练时使用不同的折组合来训练和测试模型。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241110151249694.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241110151249694"
+	
+	
+></p>
 <h3 id="交叉验证的数据划分步骤">交叉验证的数据划分步骤
 </h3><p>以常用的 <strong>K 折交叉验证 (K-Fold Cross-Validation)</strong> 为例，具体步骤如下：</p>
 <ol>
