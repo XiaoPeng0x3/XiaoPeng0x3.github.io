@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 Pytorch实现KNN近邻算法的一些思路\n图像分类 图像分类是计算机视觉的核心任务，当给定我们的模型一张图片，我们的模型应该可以正确的给出图片上的物体的类别\n">
+<title>Image Classifier笔记</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/image-classifier%E7%AC%94%E8%AE%B0/'>
+
+<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="Image Classifier笔记">
+<meta property='og:description' content="前言 Pytorch实现KNN近邻算法的一些思路\n图像分类 图像分类是计算机视觉的核心任务，当给定我们的模型一张图片，我们的模型应该可以正确的给出图片上的物体的类别\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/image-classifier%E7%AC%94%E8%AE%B0/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-11-08T17:54:16&#43;08:00'/><meta property='article:modified_time' content='2024-11-08T17:54:16&#43;08:00'/>
+<meta name="twitter:title" content="Image Classifier笔记">
+<meta name="twitter:description" content="前言 Pytorch实现KNN近邻算法的一些思路\n图像分类 图像分类是计算机视觉的核心任务，当给定我们的模型一张图片，我们的模型应该可以正确的给出图片上的物体的类别\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😍</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#图像分类所面临的挑战">图像分类所面临的挑战</a>
+      <ol>
+        <li><a href="#semantic-gap-语义差异">semantic gap 语义差异</a></li>
+        <li><a href="#图像旋转">图像旋转</a></li>
+        <li><a href="#更多的挑战">更多的挑战</a></li>
+      </ol>
+    </li>
+    <li><a href="#图像数据集">图像数据集</a></li>
+    <li><a href="#knn近邻算法">KNN近邻算法</a>
+      <ol>
+        <li><a href="#l1距离">L1距离</a></li>
+        <li><a href="#l2距离">L2距离</a></li>
+        <li><a href="#代码实现">代码实现</a></li>
+        <li><a href="#k的取值">k的取值</a></li>
+      </ol>
+    </li>
+    <li><a href="#使用pytorch来实现knn算法">使用Pytorch来实现KNN算法</a>
+      <ol>
+        <li><a href="#双重循环">双重循环</a></li>
+        <li><a href="#一重循环">一重循环</a></li>
+        <li><a href="#no-loop-不使用循环">No loop 不使用循环</a></li>
+      </ol>
+    </li>
+    <li><a href="#预测predict">预测predict</a></li>
+    <li><a href="#交叉验证">交叉验证</a>
+      <ol>
+        <li><a href="#交叉验证的数据划分步骤">交叉验证的数据划分步骤</a></li>
+        <li><a href="#交叉验证的优势">交叉验证的优势</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/eecs-498/007/" >
+                EECS-498/007
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/image-classifier%E7%AC%94%E8%AE%B0/">Image Classifier笔记</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-08</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 10 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p><code>Pytorch</code>实现<code>KNN</code>近邻算法的一些思路</p>
+<h1 id="图像分类">图像分类
+</h1><p>图像分类是计算机视觉的核心任务，当给定我们的模型一张图片，我们的模型应该可以正确的给出图片上的物体的类别</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241109120948752.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="哈吉米"
+	
+	
+></p>
+<p>例如，图片上有一只<code>cat</code>,那么模型应该正确输出<code>cat</code>。</p>
+<h2 id="图像分类所面临的挑战">图像分类所面临的挑战
+</h2><h3 id="semantic-gap-语义差异">semantic gap 语义差异
+</h3><p>在人类看来，几乎不用思考就可以辨别出图像上的物体，但是机器却是无情的执行命令的机器，怎么把图像上所蕴含的信息传递给机器呢？于是便有了像素的表示，我们可以把一张图片细分为很多个小格子，显然，格子越多，这样图片就更加清晰，图片是以数字形式存储的，这种形式通常被称为数字图像。数字图像是由像素（picture elements）组成的矩阵，每个像素代表图像中的一个小点。所以，现在来看，这样图片就是一个数字矩阵</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241109122034143.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241109122034143"
+	
+	
+></p>
+<h3 id="图像旋转">图像旋转
+</h3><p>虽然可以使用矩阵和数字的方法来表示一张图片，可是，按照这种方法，当把原始图片旋转之后，每个格子内的数字就会发生变化，对于人类来说，即便是把图片旋转后，也可以很简单的辨认出图片上的物体；而对机器来说，如果不加以处理，当模型接受到一个这样的图片后，很有可能会发生错误的预测。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241109122444232.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241109122444232"
+	
+	
+></p>
+<h3 id="更多的挑战">更多的挑战
+</h3><ul>
+<li>不但要识别出图片中是什么，还要准确的指出它的类别。例如，照片中是一只猫，但是，是橘猫、布偶猫还是狸花猫呢</li>
+<li>更难的，一些野生动物为了更好的适应所生存的环境，其颜色会和环境发生重叠，也就是所谓的保护色</li>
+</ul>
+<p>这些都给我们带来了更多的挑战</p>
+<h2 id="图像数据集">图像数据集
+</h2><p>这里，老师给出了常见的数据集，并且也对比了其中的图片数量级</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241109173249807.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241109173249807"
+	
+	
+></p>
+<p>其中，我只使用过<code>MNIST</code>数据集(手写体数字识别)，在本次作业中实现的<code>KNN</code>近邻算法使用的是<code>CIFAR10</code>，与<code>CIFAR100</code>主要的区别就是总共只有10个类别，每个类别里面有很多张图片。选择这个数据库的原因是，<code>MNIST</code>中的数据太少，而<code>ImageNet和Places365</code>数据太多，折中选择了这个数据集。</p>
+<h2 id="knn近邻算法">KNN近邻算法
+</h2><p>对于这类算法，一般有两个通用的<code>API</code></p>
+<ul>
+<li>
+<p>训练</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># To do</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">modle</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>预测</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">modle</span><span class="p">,</span> <span class="n">test_images</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># To do</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">test_labels</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>这个算法的核心思想是如果一个样本在特征空间中的k个最相邻的样本中的大多数都属于某一个类别，则该样本也属于这个类别。意思就是，对于一个预测的样本，如果离这个样本最近的数据都是属于<code>A</code>类别，那么这个要预测的样本很有可能就是<code>A</code>类别，毕竟它们很相似！</p>
+<h3 id="l1距离">L1距离
+</h3><p>这里的距离指的就是<code>曼哈顿距离</code>,计算方法就是对应坐标作差后取绝对值。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241109175210020.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241109175210020"
+	
+	
+></p>
+<h3 id="l2距离">L2距离
+</h3><p><code>L2</code>距离指的是欧式距离，也就是在空间中计算两个点之间对应坐标距离的方法</p>
+<h3 id="代码实现">代码实现
+</h3><p>现在来实现一下上文中提到的两个<code>API</code>，简单起见，这里使用<code>numpy</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">KNN</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">        <span class="k">pass</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">        X指的是输入的训练数据
+</span></span></span><span class="line"><span class="cl"><span class="s1">        y指的是训练数据对应的类别
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span> 
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># X是输入的，需要预测其类别的test数据</span>
+</span></span><span class="line"><span class="cl">        <span class="n">num_test</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># 样本类别数</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Ypred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">aeros</span><span class="p">(</span><span class="n">num_test</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 遍历所有test数据，给test数据中的每个数据找到其距离最近的那个图像</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_test</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 计算L1距离</span>
+</span></span><span class="line"><span class="cl">            <span class="n">dis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 找到其中距离最近的那个值对应的index，进而获得它的类别</span>
+</span></span><span class="line"><span class="cl">            <span class="n">min_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">dis</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 对应的标签就是self.y的标签</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Ypred</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">min_idx</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">Ypred</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里的<code>predict</code>使用的是显示<code>loop</code>,这种情况会特别耗时！</p>
+<h3 id="k的取值">k的取值
+</h3><p>上面的代码没有显示的指定<code>k</code>的取值范围，而是直接使用<code>k=1</code>这个取值，首先，这样做很简单，因为只需要查看离测试样本距离最近的那个类是什么类型即可。但是，这种操作会使得算法会对异常值特别敏感，同时，不同类别之间的边界也是突出状而不是趋于平滑</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241109221235375.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241109221235375"
+	
+	
+></p>
+<p>因此，我们可以提高<code>k</code>的取值，提高<code>k</code>值也减少了异常值对<code>test</code>数据的影响，因为<code>test</code>数据这次有<code>k</code>个不同的参考意见，而不是只去参考一个值。</p>
+<h2 id="使用pytorch来实现knn算法">使用Pytorch来实现KNN算法
+</h2><p>首先是计算两个向量之间的距离</p>
+<h3 id="双重循环">双重循环
+</h3><blockquote>
+<p>This implementation uses a naive set of nested loops over the training and    test data.     The input data may have any number of dimensions &ndash; for example this    function should be able to compute nearest neighbor between vectors, in    which case the inputs will have shape (num_{train, test}, D); it should    also be able to compute nearest neighbors between images, where the inputs    will have shape (num_{train, test}, C, H, W). More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p>
+</blockquote>
+<p>这里是老师给的一些代码的预处理的关键提示</p>
+<blockquote>
+<p>More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p>
+</blockquote>
+<p>对于所有的输入向量，不管是什么维度的样本，我们都可以转换为一个二维张量，这样做可以简化一些计算，同时使得结果更加清晰。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">compute_distances_two_loops</span><span class="p">(</span><span class="n">x_train</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Args:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        x_train: Tensor of shape (num_train, D1, D2, ...)
+</span></span></span><span class="line"><span class="cl"><span class="s2">        x_test: Tensor of shape (num_test, D1, D2, ...)
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Returns:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        dists: Tensor of shape (num_train, num_test) where dists[i, j]
+</span></span></span><span class="line"><span class="cl"><span class="s2">            is the squared Euclidean distance between the i-th training point
+</span></span></span><span class="line"><span class="cl"><span class="s2">            and the j-th test point. It should have the same dtype as x_train.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">num_train</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># 得到行数</span>
+</span></span><span class="line"><span class="cl">    <span class="n">num_test</span> <span class="o">=</span> <span class="n">x_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dists</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">num_train</span><span class="p">,</span> <span class="n">num_test</span><span class="p">)</span> <span class="c1"># dists[i, j]是第i个x_train与x_test的距离</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_train_flat</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_train</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_test_flat</span> <span class="o">=</span> <span class="n">x_test</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_test</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_train</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_test</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">diff</span> <span class="o">=</span> <span class="n">x_train_flat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_test_flat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dists</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dists</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样做十分清晰，而且不开根是因为我们不需要得到确切的欧氏距离，只是单纯的比较大小，所以直接返回距离的平方即可。</p>
+<p>但是，这样并没有利用<code>pytorch</code>,会导致计算速度减慢，看看怎么优化！</p>
+<h3 id="一重循环">一重循环
+</h3><p>这里使用的其实是一个高级特征，通过下标索引来访问元素(熟悉<code>numpy</code>的肯定不陌生)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">compute_distances_one_loop</span><span class="p">(</span><span class="n">x_train</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">num_train</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">num_test</span> <span class="o">=</span> <span class="n">x_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dists</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">num_train</span><span class="p">,</span> <span class="n">num_test</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">   
+</span></span><span class="line"><span class="cl">    <span class="n">x_train_flat</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_train</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_test_flat</span> <span class="o">=</span> <span class="n">x_test</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_test</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_train</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">      <span class="n">diff</span> <span class="o">=</span> <span class="n">x_train_flat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_test_flat</span> <span class="c1"># 计算每个x_train与x_test</span>
+</span></span><span class="line"><span class="cl">      <span class="n">dists</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 按照行进行求和</span>
+</span></span><span class="line"><span class="cl">   
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dists</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其中，<code>diff = x_train_flat[i] - x_test_flat</code> 这行代码可以自动帮我们计算第<code>i</code>个<code>x_train</code>与所有的<code>x_test</code>的差值，然后按照行的顺序进行求和(<code>dim=1</code>，<code>numpy</code>的是<code>axis = 1</code>)。</p>
+<h3 id="no-loop-不使用循环">No loop 不使用循环
+</h3><p>可以说不使用循环才是<code>KNN</code>里面一个十分精彩的部分，这里用到了高级机制<code>BoardCast</code>广播机制，下面我们来看一看这个部分的数学表达形式。</p>
+<p>图片来自<a class="link" href="https://www.bilibili.com/video/BV16KhQeUEzN/"  target="_blank" rel="noopener"
+    >bilibili视频</a>.</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/469974380305840447.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="469974380305840447"
+	
+	
+></p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/540658836292363635.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="540658836292363635"
+	
+	
+></p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/575221008725579399.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="575221008725579399"
+	
+	
+></p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/761743071581245081.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="761743071581245081"
+	
+	
+></p>
+<p>这里还需另外提醒的是矩阵的加减法，对于两个维数相同的矩阵$A 和B$，经过运算后得到$C$,其中，$$ C_{ij} = A_{ij} + B_{ij} $$,$$ C_{ij} = A_{ij} - B_{ij} $$</p>
+<p>即对应元素相加减的操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">compute_distances_no_loops</span><span class="p">(</span><span class="n">x_train</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">x_test</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">num_train</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">num_test</span> <span class="o">=</span> <span class="n">x_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dists</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">num_train</span><span class="p">,</span> <span class="n">num_test</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_train_flat</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_train</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_test_flat</span> <span class="o">=</span> <span class="n">x_test</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_test</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_train_squre</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_train_flat</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_test_squre</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_test_flat</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 计算点积</span>
+</span></span><span class="line"><span class="cl">    <span class="n">temp</span> <span class="o">=</span> <span class="n">x_train_flat</span> <span class="o">@</span> <span class="n">x_test_flat</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dists</span> <span class="o">=</span> <span class="n">x_train_squre</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_test_squre</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">temp</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dists</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>根据上面的计算结果，<code>x_train</code>是一列的张量，<code>x_test</code>是一行的张量，从而两者进行广播后运算，值得注意的是，两者的内积可以转换为矩阵相乘的形式。</p>
+<h2 id="预测predict">预测predict
+</h2><p>在计算出每个测试样本与(<code>x_test</code>)每个训练样本(<code>x_train</code>)的距离之后，对于每个测试样本，我们就可以找到其前<code>k</code>个最近值，然后确定其类别后返回。</p>
+<p>一个可能的函数看起来可能是这样的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">predict_labels</span><span class="p">(</span><span class="n">dists</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y_train</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">num_train</span><span class="p">,</span> <span class="n">num_test</span> <span class="o">=</span> <span class="n">dists</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="cl">    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_test</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_test</span><span class="p">):</span> <span class="c1"># 遍历x_test数据</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 找到每个测试样本最近的k个训练样本的距离和索引</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dists_k</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">dists</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">k</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># largest=False 是升序</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 获取这些最近的k个训练样本的标签</span>
+</span></span><span class="line"><span class="cl">        <span class="n">nearest_labels</span> <span class="o">=</span> <span class="n">y_train</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 计算每个标签的出现次数并选择出现次数最多的标签</span>
+</span></span><span class="line"><span class="cl">        <span class="n">labels</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">nearest_labels</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 记录最大出现次数</span>
+</span></span><span class="line"><span class="cl">        <span class="n">max_count</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 找到出现次数是最大出现次数的那个标签</span>
+</span></span><span class="line"><span class="cl">        <span class="n">most_common_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">counts</span> <span class="o">==</span> <span class="n">max_count</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 在计数最多的标签中选择数值最小的那个标签</span>
+</span></span><span class="line"><span class="cl">        <span class="n">y_pred</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">most_common_labels</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">y_pred</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个代码的思路就是，寻找距离<code>test</code>数据的最近的<code>k</code>个不同类别，返回其出现次数最多的那个类别，如果有两个类别出现次数相同，那么就返回距离最近的那个。</p>
+<h2 id="交叉验证">交叉验证
+</h2><p><strong><em>k</em>折交叉验证（英语：<em>k</em>-fold cross-validation）</strong>，将训练集分割成<em>k</em>个子样本，一个单独的子样本被保留作为验证模型的数据，其他<em>k</em> − 1个样本用来训练。交叉验证重复<em>k</em>次，每个子样本验证一次，平均<em>k</em>次的结果或者使用其它结合方式，最终得到一个单一估测。这个方法的优势在于，同时重复运用随机产生的子样本进行训练和验证，每次的结果验证一次，10次交叉验证是最常用的。</p>
+<p>对于原始数据 (<code>raw</code> 数据)，如果全部用于训练，则无法评估模型在未见过的数据上的表现，从而无法验证模型的有效性和准确性。因此，通常会将数据划分为两部分，一部分用于训练 (<code>train</code>)，另一部分用于测试 (<code>test</code>)，从而在测试集上评估模型的表现。</p>
+<p>在实际应用中，为了更好地选择超参数，我们会引入一个额外的数据集，称为验证集 (<code>validation</code>)。这样，数据集可以划分为三部分：训练集 (<code>train</code>)、验证集 (<code>validation</code>) 和测试集 (<code>test</code>)。</p>
+<p>具体流程如下：</p>
+<ol>
+<li><strong>训练集</strong>：用于训练模型，使模型能够学习数据的特征和模式。</li>
+<li><strong>验证集</strong>：用于选择超参数。我们在验证集上测试不同的超参数组合，并选择在验证集上表现最好的参数设置。</li>
+<li><strong>测试集</strong>：在完成超参数选择后，我们在测试集上评估最终模型的性能。测试集完全不参与训练和参数选择，因此可以真实反映模型在新数据上的表现。</li>
+</ol>
+<p>这种三分法的优势在于，验证集用于超参数选择，而测试集则用来评估模型在未见过的数据上的泛化能力，从而避免在超参数选择过程中过拟合测试集的风险。</p>
+<p>有关交叉验证的部分解释来自<code>ChatGPT</code></p>
+<p><strong>交叉验证 (Cross-Validation)</strong> 是一种用于更稳健地评估模型性能和选择超参数的方法。它通过多次数据划分和训练测试来减少模型对数据划分的偶然影响。在交叉验证中，我们通常将数据划分为多个等大小的部分（称为“折”或“folds”），并在每次训练时使用不同的折组合来训练和测试模型。</p>
+<h3 id="交叉验证的数据划分步骤">交叉验证的数据划分步骤
+</h3><p>以常用的 <strong>K 折交叉验证 (K-Fold Cross-Validation)</strong> 为例，具体步骤如下：</p>
+<ol>
+<li>
+<p><strong>将数据分成 K 个等大小的折</strong>：将数据集均匀分成 K 个折，记为 <code>fold_1, fold_2, ..., fold_K</code>。通常，K 的值是 5 或 10。</p>
+</li>
+<li>
+<p><strong>多次训练和验证</strong>：对于每次迭代（共 K 次），使用 K-1 个折作为训练集，剩下的一个折作为验证集。具体来说：</p>
+<ul>
+<li>第一次迭代：使用 <code>fold_2</code> 到 <code>fold_K</code> 作为训练集，<code>fold_1</code> 作为验证集。</li>
+<li>第二次迭代：使用 <code>fold_1</code> 和 <code>fold_3</code> 到 <code>fold_K</code> 作为训练集，<code>fold_2</code> 作为验证集。</li>
+<li>以此类推，直到每个折都被用作一次验证集。</li>
+</ul>
+</li>
+<li>
+<p><strong>计算平均性能</strong>：在每次迭代中记录模型在验证集上的性能（例如准确率、损失等），然后将 K 次的验证结果平均，作为该模型在该超参数下的总体验证性能。</p>
+</li>
+<li>
+<p><strong>选择最佳参数</strong>：对于每个超参数组合，都进行上述 K 次交叉验证，并根据平均性能选择表现最好的参数组合。</p>
+</li>
+<li>
+<p><strong>最终测试</strong>：完成超参数选择后，可以在独立的测试集上评估模型的最终性能。</p>
+</li>
+</ol>
+<h3 id="交叉验证的优势">交叉验证的优势
+</h3><p>交叉验证避免了简单的训练/验证分割可能带来的偶然性，使模型能更稳健地评估数据上的表现。此外，交叉验证可以最大化地利用数据，因为每个数据点都能在验证集中出现一次，同时也在训练集中使用 K-1 次。这种方法尤其适合数据量较小的场景。</p>
+<h3 id="总结">总结
+</h3><p>为了避免数据划分的偶然，我们保持三部分总体不变，对于<code>train validation</code>部分做出变化。</p>
+<p>我们把上面<code>train</code>数据分为<code>nums</code>个，每一块叫做一个<code>fold</code>, 假设分为<code>5</code>个<code>fold</code>，对于我们的待选参数集<code>K</code>来说，对于第<code>i</code>个参数<code>K[i]</code>，每次都选择<code>1</code>个<code>fold</code>作为验证集(<code>validation</code>)，剩下的<code>4</code>个作为训练集，然后再计算其准确率，对于<code>K[i]</code>来说，我们就得到了<code>5</code>个不同的准确率，然后可以取平均(<code>mean</code>)，作为选择<code>K[i]</code>为参数是的准确率，最后通过准确率就可以选出最优的<code>K</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">knn_cross_validate</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_train</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">y_train</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">num_folds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">k_choices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="c1"># 待选K</span>
+</span></span><span class="line"><span class="cl"><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_train_folds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">chunk</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">num_folds</span><span class="p">))</span> <span class="c1"># 把数据拆分为 num_folds块</span>
+</span></span><span class="line"><span class="cl">    <span class="n">y_train_folds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">chunk</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">num_folds</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">k_to_accuracies</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">k_choices</span><span class="p">}</span> <span class="c1"># 使用键值对进行存储</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">k_choices</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_folds</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x_val</span> <span class="o">=</span> <span class="n">x_train_folds</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="c1"># 获取第j个验证集</span>
+</span></span><span class="line"><span class="cl">            <span class="n">y_val</span> <span class="o">=</span> <span class="n">y_train_folds</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x_train_fold</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x_train_folds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_folds</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># 剩下的num_folds作为训练集</span>
+</span></span><span class="line"><span class="cl">            <span class="n">y_train_fold</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">y_train_folds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_folds</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">classifier</span> <span class="o">=</span> <span class="n">KnnClassifier</span><span class="p">(</span><span class="n">x_train_fold</span><span class="p">,</span> <span class="n">y_train_fold</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">acc</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">check_accuracy</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="c1"># 计算准确率</span>
+</span></span><span class="line"><span class="cl">            <span class="n">k_to_accuracies</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">k_to_accuracies</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="总结-1">总结
+</h1><p><code>KNN</code>近邻算法还是非常适合初学者入门的，其中主要难点或者说比较新鲜的点就是广播机制<code>BoardCast</code>以及交叉验证的代码实现！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pytorch/">Pytorch</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
