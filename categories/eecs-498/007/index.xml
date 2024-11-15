@@ -7,7 +7,428 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Xiao Peng</copyright>
-        <lastBuildDate>Fri, 08 Nov 2024 17:54:16 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/eecs-498/007/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 13 Nov 2024 08:49:49 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/eecs-498/007/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>线性分类器</title>
+        <link>https://XiaoPeng0x3.github.io/p/%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E5%99%A8/</link>
+        <pubDate>Wed, 13 Nov 2024 08:49:49 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/p/%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E5%99%A8/</guid>
+        <description>&lt;h1 id=&#34;前言&#34;&gt;前言
+&lt;/h1&gt;&lt;p&gt;好难好难&lt;/p&gt;
+&lt;h1 id=&#34;线性分类器&#34;&gt;线性分类器
+&lt;/h1&gt;&lt;h2 id=&#34;线性模型&#34;&gt;线性模型
+&lt;/h2&gt;&lt;p&gt;线性分类器在神经网络中相当于积木的低位&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113194302462.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241113194302462&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;你可以用很多层的线性分类器来实现一个神经网络，当然，为了提高模型拟合数据的能力，一般不会只去使用线性模型，而是会选择性的加入一些非线性模型&lt;/p&gt;
+&lt;h3 id=&#34;从线性观点&#34;&gt;从线性观点
+&lt;/h3&gt;&lt;p&gt;让我们继续回到上几节课提到的&lt;code&gt;CIFAR10&lt;/code&gt;数据集，这个数据集有&lt;code&gt;10&lt;/code&gt;个不同的类别。而对于图像的表示，我们可以把图像(&lt;code&gt;input&lt;/code&gt;)看作一个数字矩阵，我们想要实现的内容就是，对于一个数字矩阵，能否找到一个权重参数&lt;code&gt;W&lt;/code&gt;,使得数据的结果发生一些变化，从而根据这个输出的结果来进行分类判断。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;Wx + b&lt;/code&gt;是一个非常经典的线性模型&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113195001199.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241113195001199&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;例如，对于下面这个分类问题&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113195139990.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241113195139990&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;这里，我们假设输入的图像是一个简单的&lt;code&gt;2x2&lt;/code&gt;的矩阵，也就是说，该图像仅仅只由&lt;code&gt;4&lt;/code&gt;个特征点决定，那么，对于一个参数矩阵&lt;code&gt;W&lt;/code&gt;来说，它的每一行可以看成是一个类别的权重，把这些元素对应相乘就可以得到该类别的&amp;quot;总分数&amp;quot;(例如，&lt;code&gt;cat&lt;/code&gt;类在经过参数矩阵运算和&lt;code&gt;bias&lt;/code&gt;之后的总分就是&lt;code&gt;-96.8&lt;/code&gt;)。&lt;/p&gt;
+&lt;p&gt;为了使表示结果更加的整洁易懂，我们可以把这个&lt;code&gt;bias&lt;/code&gt;添加到参数矩阵&lt;code&gt;W&lt;/code&gt;里面。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113195717552.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241113195717552&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;从图像观点&#34;&gt;从图像观点
+&lt;/h3&gt;&lt;p&gt;这里的意思就是不把输入的数据拆分为一行，而是直接调整对应元素在图像中的数值&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113200053479.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241113200053479&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;给人在视觉上的观点就是给整个图像蒙上了一层模板，有着相同背景的图片更容易被划分到同一个类别中，也就意味着，每一类别好像是有了一张模板图片一样&lt;/p&gt;
+&lt;h3 id=&#34;从几何上看&#34;&gt;从几何上看
+&lt;/h3&gt;&lt;p&gt;从几何上看，这些图片会被一个一个的超平面给划分切开，彼此之间没有交集&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113200551107.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241113200551107&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;线性模型不能解决的问题&#34;&gt;线性模型不能解决的问题
+&lt;/h3&gt;&lt;p&gt;线性模型显然不太适合取解决非线性模型。这里列出来一些线性分类器不能解决的问题。&lt;/p&gt;
+&lt;p&gt;包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;一三象限问题&lt;/p&gt;
+&lt;p&gt;其实我觉得就是异或问题，对于这类问题，你无法找到一条直线来把两种颜色划分开来&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;非线性问题&lt;/p&gt;
+&lt;p&gt;对于这类数据一部分是呈现非线性的，除了非线性之外的数据是无法仅通过一条直线划分&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;下面的图片很好的表明了这些例子。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113200710153.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241113200710153&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;感知机不能学习异或问题！&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113201304746.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241113201304746&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;当然，如果一层感知机实现不了，那么就再来一层！天无绝人之路！&lt;/p&gt;
+&lt;h2 id=&#34;损失函数&#34;&gt;损失函数
+&lt;/h2&gt;&lt;p&gt;虽然线性模型很简单，但还是可以给我们许多启发。到目前为止，我们还没有给出一种可以更新权重&lt;code&gt;W&lt;/code&gt;的一个方法，于是损失函数便登场了！&lt;/p&gt;
+&lt;p&gt;损失函数可以理解为一个定量来分析真实值与我们的预测值之间的偏差的一个方式，按照这种方式，当我们的预测值越接近于真实值，那么我们可以认为，在这种条件下的&lt;code&gt;W&lt;/code&gt;是&lt;code&gt;loss&lt;/code&gt;友好的。&lt;/p&gt;
+&lt;p&gt;另外说一点，在后续提到损失函数时，我们都更加倾向于这个损失函数是凸函数(&lt;code&gt;Convex&lt;/code&gt;)，这样我们就可以通过导数解析的方式来求得损失函数最小时的权重&lt;code&gt;W&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/ConvexFunction.svg/1920px-ConvexFunction.svg.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;undefined&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;svm损失函数&#34;&gt;SVM损失函数
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;SVM&lt;/code&gt;的损失函数又叫做合页损失函数(&lt;code&gt;hinge loss&lt;/code&gt;)，在上文中，我们提到可以使用一个线性分类器来对图像进行分类&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114112607993.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241114112607993&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;我们可以把一个这个结果&lt;code&gt;S&lt;/code&gt;看成是线性变换后的结果，因此，对于每个图片，我们都可以通过这种方式来进行计算，从而得到它的一个分数&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114112919434.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241114112919434&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中，我们很有必要来展开阐述一下这个公式&lt;/p&gt;
+&lt;p&gt;这个公式以得分输出的形式其实弱化了&lt;code&gt;X W&lt;/code&gt;之间的关系，我们可以使用代码来进行描述&lt;/p&gt;
+&lt;p&gt;假设这里有训练集&lt;code&gt;X&lt;/code&gt;（&lt;code&gt;X: A PyTorch tensor of shape (N, D) containing a minibatch of data.&lt;/code&gt;),并且给出了权重参数矩阵&lt;code&gt;W&lt;/code&gt;（&lt;code&gt;W: A PyTorch tensor of shape (D, C) containing weights.&lt;/code&gt;）&lt;/p&gt;
+&lt;p&gt;也就是说，&lt;code&gt;X&lt;/code&gt;的每张图片有&lt;code&gt;D&lt;/code&gt;个特征，总共有&lt;code&gt;N&lt;/code&gt;个样本；权重&lt;code&gt;W&lt;/code&gt;有&lt;code&gt;C&lt;/code&gt;个类别，每个类别有&lt;code&gt;D&lt;/code&gt;个特征(按照列向量来说，每一个列对应一个图片)，这样，对于每一个样本&lt;code&gt;X[i] &lt;/code&gt; &lt;code&gt;(1xD)&lt;/code&gt;，我们都可以给这个图片计算出在不同类下面的分数&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;torch&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;X 是一个 NxD矩阵
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;W 是一个 DxC矩阵
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;nums_train&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;X&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;shape&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;nums_train&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;socres&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;W&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;X&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 得到这个图片在所有类上的分数&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;就像下面这个图片一样&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114115500850.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241114115500850&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中，假设&lt;code&gt;X[0]&lt;/code&gt;是&lt;code&gt;cat&lt;/code&gt;，那么我们就可以得到这张图片在&lt;code&gt;10&lt;/code&gt;个类别上的对于分数;假设&lt;code&gt;X[1]&lt;/code&gt;是&lt;code&gt;car&lt;/code&gt;，那么我们同样可以得到&lt;code&gt;car&lt;/code&gt;在&lt;code&gt;10&lt;/code&gt;个类别上的分数，然后就可以得到所有的分数。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;注意一些技巧，我们想要统计的是在&lt;code&gt;C&lt;/code&gt;个类上面的分数，所以输出的张量应该是&lt;code&gt;Cx1&lt;/code&gt;或者&lt;code&gt;1xC&lt;/code&gt;的;&lt;code&gt;torch&lt;/code&gt;的&lt;code&gt;mv&lt;/code&gt;函数很好的帮助我们将一个矩阵与一个向量相乘，在数学上的感受就是一个&lt;code&gt;CxD&lt;/code&gt;的矩阵与一个&lt;code&gt;Dx1&lt;/code&gt;的向量相乘，从而得到一个&lt;code&gt;Cx1&lt;/code&gt;的输出分数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;再看svm-loss&#34;&gt;再看SVM Loss
+&lt;/h3&gt;&lt;p&gt;再看&lt;code&gt;Loss&lt;/code&gt;函数，实际上做的就是一个衡量差值之间间隔的函数，方便起见，我们还是使用只有三个类和三个得分的输出&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114112919434.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241114112919434&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;怎么计算第一个&lt;code&gt;cat&lt;/code&gt;的损失值呢？其实就是对于元素相加减，然后再与&lt;code&gt;0&lt;/code&gt;作比较，所以&lt;code&gt;cat&lt;/code&gt;的&lt;code&gt;loss&lt;/code&gt;就是&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-txt&#34; data-lang=&#34;txt&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;max(0, 5.1-3.2+1) +
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;max(0, -1.7-3.2+1)
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Loss:2.9
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;同样我们也可以得到其它类的损失函数&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114120622231.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241114120622231&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;因此，这组数据的平均&lt;code&gt;loss&lt;/code&gt;就是 &lt;code&gt;Sum(loss) / x.shape[0]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114120711086.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241114120711086&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;同样，我们还是可以使用代码来进行描述&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;计算出所有类的分数&lt;/p&gt;
+&lt;p&gt;这一步我们已经计算出&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;找到对应正确的类，然后做加减法&lt;/p&gt;
+&lt;p&gt;得到&lt;code&gt;scores&lt;/code&gt;后，我们可以得到这个正确的类的分数。比如，第一张图片是&lt;code&gt;cat&lt;/code&gt;，那么我们可以找到&lt;code&gt;scores&lt;/code&gt;中是&lt;code&gt;cat&lt;/code&gt;的分数是&lt;code&gt;3.2&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;torch&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;X 是一个 NxD矩阵
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;W 是一个 DxC矩阵
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;y: A PyTorch tensor of shape (N,) containing training labels; y[i] = c means
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;      that X[i] has label c, where 0 &amp;lt;= c &amp;lt; C.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;      y[i] 就是X[i]的标签类
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;num_train&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;X&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;shape&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;num_classes&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;W&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;shape&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num_train&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;socres&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;W&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;X&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 得到这个图片在所有类上的分数&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;correct_class_score&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;scores&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 得到所有分数中, X[i]的分数&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num_classes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]:&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 不与自已比较&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;k&#34;&gt;continue&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;n&#34;&gt;margin&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;scores&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;correct_class_score&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# note delta = 1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;margin&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 负分数不必相加&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;n&#34;&gt;loss&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;margin&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样我们就得到这批样本的总的&lt;code&gt;loss&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;平均&lt;code&gt;loss&lt;/code&gt;也可以求得&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;loss&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num_train&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 样本的总loss 除以 样本的总数量&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;矩阵形式&#34;&gt;矩阵形式
+&lt;/h3&gt;&lt;p&gt;经过上面的铺垫，我们就可以为后面的矩阵求导做铺垫，现在让我们把这个&lt;code&gt;hinge loss&lt;/code&gt;的公式展开&lt;/p&gt;
+&lt;p&gt;因为我们不与自身作比较，所以，类的输出总分数就是
+$$
+W_j^{T} * X_i
+$$
+这个形式的意思就是$ W ^ T$的第&lt;code&gt;j&lt;/code&gt;行实际上就是图像&lt;code&gt;X[i]&lt;/code&gt;的参数，对应的，减去&lt;code&gt;correct&lt;/code&gt;时的分数，而&lt;code&gt;correct&lt;/code&gt;的表达可以是
+$$
+W_{y_i}^T * X_i
+$$
+然后累加和
+$$
+L_i = \sum_{j \neq y_i} \max(0, w_j^T x_i - w_{y_i}^T x_i + \Delta)
+$$
+我觉得这样写可以更加适合理解后面的梯度求导的形式！&lt;/p&gt;
+&lt;h2 id=&#34;正则化&#34;&gt;正则化
+&lt;/h2&gt;&lt;p&gt;为了防止过拟合问题，我们可以给模型的参数&lt;code&gt;W&lt;/code&gt;来加入一些惩罚项。&lt;/p&gt;
+&lt;p&gt;首先我们来看看什么是过拟合。&lt;/p&gt;
+&lt;h4 id=&#34;过拟合&#34;&gt;过拟合
+&lt;/h4&gt;&lt;p&gt;以线性回归来举例，对于训练样本中的所有数据，如果我们的模型足够大、足够复杂，那么我们的模型就可以&amp;quot;记住&amp;quot;所有的点，于是，对于一个简单的样本来说，在训练后得到的模型大概是这样的：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115173903762.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241115173903762&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中，&lt;code&gt;f2&lt;/code&gt;是我们预期出现的模型性能的样子，正则化可以防止我们的模型拟合的过好，从而加强模型的预测能力。&lt;/p&gt;
+&lt;h4 id=&#34;l1-l2正则化&#34;&gt;L1 L2正则化
+&lt;/h4&gt;&lt;p&gt;正则化也有着不同的类别，常见的就是&lt;code&gt;L1&lt;/code&gt;正则化和&lt;code&gt;L2&lt;/code&gt;正则化&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115174218445.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241115174218445&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其实正则化的目的就是去把&lt;code&gt;W&lt;/code&gt;约束在一定的解的空间内，对于矩阵&lt;code&gt;W&lt;/code&gt;来说，越简单的模型就意味着&lt;code&gt;W&lt;/code&gt;值的某些取值取得越小，从而拟合出来得出现呈现出一些低阶多项式的形状，当我们把&lt;code&gt;W&lt;/code&gt;的解约定在一定的取值内，我们假设这个取值是&lt;code&gt;m&lt;/code&gt;，对于&lt;code&gt;L1&lt;/code&gt;正则化的那个小尾巴 $ \lambda R(W) $来说，其&lt;code&gt;W&lt;/code&gt;的解
+$$
+0 &amp;lt;= W_1 + W_2 +  &amp;hellip;. + W_n &amp;lt;= m
+$$
+在二维空间内，我们可以得到这个解的区域是一个菱形区域(具体的数学证明设计凸优化的知识)&lt;/p&gt;
+&lt;p&gt;同样的，对于&lt;code&gt;L2&lt;/code&gt;正则化，我们同样要把参数&lt;code&gt;W&lt;/code&gt;约束在一个范围内
+$$
+0 &amp;lt;= W_1 ^ 2 + W_2 ^ 2 + &amp;hellip;.+W_n ^ 2 &amp;lt;= m
+$$&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;L1 L2&lt;/code&gt;正则化在空间上的解释可以用下面这张图解释&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/1965151-20200527132029063-1742062320.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;softmax与交叉熵损失函数&#34;&gt;softmax与交叉熵损失函数
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;softmax&lt;/code&gt;函数常用于多分类问题，对于一组输出，比如说上面&lt;code&gt;cat&lt;/code&gt;的输出，我们可以利用这个函数把各个输出的分数转换为概率来进行研究，其数学形式长这样&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115180137332.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241115180137332&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;分母是各个分数转化后的总和，分子是对于该类转化后的值&lt;/p&gt;
+&lt;p&gt;交叉熵（Cross Entropy）是Shannon信息论中一个重要概念，主要用于度量两个概率分布间的差异性信息。在信息论中，交叉熵是表示两个概率分布 $p$, $q$ 的差异，其中 $p$ 表示真实分布，$q$ 表示预测分布，那么 $H(p,q)$ 就称为交叉熵
+$$
+H(p,q)=\sum_i p_i \cdot \ln {1 \over q_i} = - \sum_i p_i \ln q_i \tag{1}
+$$
+在这个问题中，对于第&lt;code&gt;i&lt;/code&gt;类来说，其真实分布$p$的概率就是&lt;code&gt;1&lt;/code&gt;，所以总的表达式又可以进行化简&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115181457507.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241115181457507&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;然后&lt;code&gt;slices&lt;/code&gt;中有一个有趣的问题，当一个图片在一个有着&lt;code&gt;C&lt;/code&gt;类的数据集上进行分类时，假设我们预测得到的这个图片是每某个类的概率差不多，那么交叉熵损失是多少？&lt;/p&gt;
+&lt;p&gt;带入公式，实际上就是 $ -log \frac{1}{C} $, 也就是 $ log C $&lt;/p&gt;
+&lt;p&gt;对于这个数据集来说，&lt;code&gt;C&lt;/code&gt;的数量是10&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115182132996.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241115182132996&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;总结&#34;&gt;总结
+&lt;/h1&gt;&lt;p&gt;这次我们了解了很多损失函数和避免模型过拟合的方法，但是还没有了解怎么求得我们的最优的参数矩阵&lt;code&gt;W&lt;/code&gt;，下次来了解一下求最优参数的方法！&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Image Classifier笔记</title>
         <link>https://XiaoPeng0x3.github.io/p/image-classifier%E7%AC%94%E8%AE%B0/</link>
         <pubDate>Fri, 08 Nov 2024 17:54:16 +0800</pubDate>

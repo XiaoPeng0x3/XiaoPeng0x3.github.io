@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 好难好难\n线性分类器 线性模型 线性分类器在神经网络中相当于积木的低位\n你可以用很多层的线性分类器来实现一个神经网络，当然，为了提高模型拟合数据的能力，一般不会只去使用线性模型，而是会选择性的加入一些非线性模型\n">
+<title>线性分类器</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E5%99%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="线性分类器">
+<meta property='og:description' content="前言 好难好难\n线性分类器 线性模型 线性分类器在神经网络中相当于积木的低位\n你可以用很多层的线性分类器来实现一个神经网络，当然，为了提高模型拟合数据的能力，一般不会只去使用线性模型，而是会选择性的加入一些非线性模型\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E5%99%A8/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-11-13T08:49:49&#43;08:00'/><meta property='article:modified_time' content='2024-11-13T08:49:49&#43;08:00'/>
+<meta name="twitter:title" content="线性分类器">
+<meta name="twitter:description" content="前言 好难好难\n线性分类器 线性模型 线性分类器在神经网络中相当于积木的低位\n你可以用很多层的线性分类器来实现一个神经网络，当然，为了提高模型拟合数据的能力，一般不会只去使用线性模型，而是会选择性的加入一些非线性模型\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😍</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#线性模型">线性模型</a>
+      <ol>
+        <li><a href="#从线性观点">从线性观点</a></li>
+        <li><a href="#从图像观点">从图像观点</a></li>
+        <li><a href="#从几何上看">从几何上看</a></li>
+        <li><a href="#线性模型不能解决的问题">线性模型不能解决的问题</a></li>
+      </ol>
+    </li>
+    <li><a href="#损失函数">损失函数</a>
+      <ol>
+        <li><a href="#svm损失函数">SVM损失函数</a></li>
+        <li><a href="#再看svm-loss">再看SVM Loss</a></li>
+        <li><a href="#矩阵形式">矩阵形式</a></li>
+      </ol>
+    </li>
+    <li><a href="#正则化">正则化</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#过拟合">过拟合</a></li>
+            <li><a href="#l1-l2正则化">L1 L2正则化</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#softmax与交叉熵损失函数">softmax与交叉熵损失函数</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/eecs-498/007/" >
+                EECS-498/007
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E5%99%A8/">线性分类器</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-13</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p>好难好难</p>
+<h1 id="线性分类器">线性分类器
+</h1><h2 id="线性模型">线性模型
+</h2><p>线性分类器在神经网络中相当于积木的低位</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113194302462.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241113194302462"
+	
+	
+></p>
+<p>你可以用很多层的线性分类器来实现一个神经网络，当然，为了提高模型拟合数据的能力，一般不会只去使用线性模型，而是会选择性的加入一些非线性模型</p>
+<h3 id="从线性观点">从线性观点
+</h3><p>让我们继续回到上几节课提到的<code>CIFAR10</code>数据集，这个数据集有<code>10</code>个不同的类别。而对于图像的表示，我们可以把图像(<code>input</code>)看作一个数字矩阵，我们想要实现的内容就是，对于一个数字矩阵，能否找到一个权重参数<code>W</code>,使得数据的结果发生一些变化，从而根据这个输出的结果来进行分类判断。</p>
+<blockquote>
+<p><code>Wx + b</code>是一个非常经典的线性模型</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113195001199.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241113195001199"
+	
+	
+></p>
+<p>例如，对于下面这个分类问题</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113195139990.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241113195139990"
+	
+	
+></p>
+<p>这里，我们假设输入的图像是一个简单的<code>2x2</code>的矩阵，也就是说，该图像仅仅只由<code>4</code>个特征点决定，那么，对于一个参数矩阵<code>W</code>来说，它的每一行可以看成是一个类别的权重，把这些元素对应相乘就可以得到该类别的&quot;总分数&quot;(例如，<code>cat</code>类在经过参数矩阵运算和<code>bias</code>之后的总分就是<code>-96.8</code>)。</p>
+<p>为了使表示结果更加的整洁易懂，我们可以把这个<code>bias</code>添加到参数矩阵<code>W</code>里面。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113195717552.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241113195717552"
+	
+	
+></p>
+<h3 id="从图像观点">从图像观点
+</h3><p>这里的意思就是不把输入的数据拆分为一行，而是直接调整对应元素在图像中的数值</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113200053479.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241113200053479"
+	
+	
+></p>
+<p>给人在视觉上的观点就是给整个图像蒙上了一层模板，有着相同背景的图片更容易被划分到同一个类别中，也就意味着，每一类别好像是有了一张模板图片一样</p>
+<h3 id="从几何上看">从几何上看
+</h3><p>从几何上看，这些图片会被一个一个的超平面给划分切开，彼此之间没有交集</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113200551107.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241113200551107"
+	
+	
+></p>
+<h3 id="线性模型不能解决的问题">线性模型不能解决的问题
+</h3><p>线性模型显然不太适合取解决非线性模型。这里列出来一些线性分类器不能解决的问题。</p>
+<p>包括</p>
+<ul>
+<li>
+<p>一三象限问题</p>
+<p>其实我觉得就是异或问题，对于这类问题，你无法找到一条直线来把两种颜色划分开来</p>
+</li>
+<li>
+<p>非线性问题</p>
+<p>对于这类数据一部分是呈现非线性的，除了非线性之外的数据是无法仅通过一条直线划分</p>
+</li>
+</ul>
+<p>下面的图片很好的表明了这些例子。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113200710153.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241113200710153"
+	
+	
+></p>
+<p>感知机不能学习异或问题！</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113201304746.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241113201304746"
+	
+	
+></p>
+<p>当然，如果一层感知机实现不了，那么就再来一层！天无绝人之路！</p>
+<h2 id="损失函数">损失函数
+</h2><p>虽然线性模型很简单，但还是可以给我们许多启发。到目前为止，我们还没有给出一种可以更新权重<code>W</code>的一个方法，于是损失函数便登场了！</p>
+<p>损失函数可以理解为一个定量来分析真实值与我们的预测值之间的偏差的一个方式，按照这种方式，当我们的预测值越接近于真实值，那么我们可以认为，在这种条件下的<code>W</code>是<code>loss</code>友好的。</p>
+<p>另外说一点，在后续提到损失函数时，我们都更加倾向于这个损失函数是凸函数(<code>Convex</code>)，这样我们就可以通过导数解析的方式来求得损失函数最小时的权重<code>W</code></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/ConvexFunction.svg/1920px-ConvexFunction.svg.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="undefined"
+	
+	
+></p>
+<h3 id="svm损失函数">SVM损失函数
+</h3><p><code>SVM</code>的损失函数又叫做合页损失函数(<code>hinge loss</code>)，在上文中，我们提到可以使用一个线性分类器来对图像进行分类</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114112607993.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241114112607993"
+	
+	
+></p>
+<p>我们可以把一个这个结果<code>S</code>看成是线性变换后的结果，因此，对于每个图片，我们都可以通过这种方式来进行计算，从而得到它的一个分数</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114112919434.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241114112919434"
+	
+	
+></p>
+<p>其中，我们很有必要来展开阐述一下这个公式</p>
+<p>这个公式以得分输出的形式其实弱化了<code>X W</code>之间的关系，我们可以使用代码来进行描述</p>
+<p>假设这里有训练集<code>X</code>（<code>X: A PyTorch tensor of shape (N, D) containing a minibatch of data.</code>),并且给出了权重参数矩阵<code>W</code>（<code>W: A PyTorch tensor of shape (D, C) containing weights.</code>）</p>
+<p>也就是说，<code>X</code>的每张图片有<code>D</code>个特征，总共有<code>N</code>个样本；权重<code>W</code>有<code>C</code>个类别，每个类别有<code>D</code>个特征(按照列向量来说，每一个列对应一个图片)，这样，对于每一个样本<code>X[i] </code> <code>(1xD)</code>，我们都可以给这个图片计算出在不同类下面的分数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">X 是一个 NxD矩阵
+</span></span></span><span class="line"><span class="cl"><span class="s1">W 是一个 DxC矩阵
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">nums_train</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nums_train</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">socres</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="c1"># 得到这个图片在所有类上的分数</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>就像下面这个图片一样</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114115500850.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241114115500850"
+	
+	
+></p>
+<p>其中，假设<code>X[0]</code>是<code>cat</code>，那么我们就可以得到这张图片在<code>10</code>个类别上的对于分数;假设<code>X[1]</code>是<code>car</code>，那么我们同样可以得到<code>car</code>在<code>10</code>个类别上的分数，然后就可以得到所有的分数。</p>
+<blockquote>
+<p>注意一些技巧，我们想要统计的是在<code>C</code>个类上面的分数，所以输出的张量应该是<code>Cx1</code>或者<code>1xC</code>的;<code>torch</code>的<code>mv</code>函数很好的帮助我们将一个矩阵与一个向量相乘，在数学上的感受就是一个<code>CxD</code>的矩阵与一个<code>Dx1</code>的向量相乘，从而得到一个<code>Cx1</code>的输出分数</p>
+</blockquote>
+<h3 id="再看svm-loss">再看SVM Loss
+</h3><p>再看<code>Loss</code>函数，实际上做的就是一个衡量差值之间间隔的函数，方便起见，我们还是使用只有三个类和三个得分的输出</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114112919434.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241114112919434"
+	
+	
+></p>
+<p>怎么计算第一个<code>cat</code>的损失值呢？其实就是对于元素相加减，然后再与<code>0</code>作比较，所以<code>cat</code>的<code>loss</code>就是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">max(0, 5.1-3.2+1) +
+</span></span><span class="line"><span class="cl">max(0, -1.7-3.2+1)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Loss:2.9
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>同样我们也可以得到其它类的损失函数</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114120622231.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241114120622231"
+	
+	
+></p>
+<p>因此，这组数据的平均<code>loss</code>就是 <code>Sum(loss) / x.shape[0]</code></p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114120711086.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241114120711086"
+	
+	
+></p>
+<p>同样，我们还是可以使用代码来进行描述</p>
+<ul>
+<li>
+<p>计算出所有类的分数</p>
+<p>这一步我们已经计算出</p>
+</li>
+<li>
+<p>找到对应正确的类，然后做加减法</p>
+<p>得到<code>scores</code>后，我们可以得到这个正确的类的分数。比如，第一张图片是<code>cat</code>，那么我们可以找到<code>scores</code>中是<code>cat</code>的分数是<code>3.2</code></p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">X 是一个 NxD矩阵
+</span></span></span><span class="line"><span class="cl"><span class="s1">W 是一个 DxC矩阵
+</span></span></span><span class="line"><span class="cl"><span class="s1">y: A PyTorch tensor of shape (N,) containing training labels; y[i] = c means
+</span></span></span><span class="line"><span class="cl"><span class="s1">      that X[i] has label c, where 0 &lt;= c &lt; C.
+</span></span></span><span class="line"><span class="cl"><span class="s1">      y[i] 就是X[i]的标签类
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">num_train</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">num_classes</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_train</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">socres</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="c1"># 得到这个图片在所有类上的分数</span>
+</span></span><span class="line"><span class="cl">    <span class="n">correct_class_score</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="c1"># 得到所有分数中, X[i]的分数</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="c1"># 不与自已比较</span>
+</span></span><span class="line"><span class="cl">                <span class="k">continue</span>
+</span></span><span class="line"><span class="cl">            <span class="n">margin</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">correct_class_score</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># note delta = 1</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">margin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># 负分数不必相加</span>
+</span></span><span class="line"><span class="cl">                <span class="n">loss</span> <span class="o">+=</span> <span class="n">margin</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样我们就得到这批样本的总的<code>loss</code></p>
+<p>平均<code>loss</code>也可以求得</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">loss</span> <span class="o">/=</span> <span class="n">num_train</span> <span class="c1"># 样本的总loss 除以 样本的总数量</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="矩阵形式">矩阵形式
+</h3><p>经过上面的铺垫，我们就可以为后面的矩阵求导做铺垫，现在让我们把这个<code>hinge loss</code>的公式展开</p>
+<p>因为我们不与自身作比较，所以，类的输出总分数就是
+$$
+W_j^{T} * X_i
+$$
+这个形式的意思就是$ W ^ T$的第<code>j</code>行实际上就是图像<code>X[i]</code>的参数，对应的，减去<code>correct</code>时的分数，而<code>correct</code>的表达可以是
+$$
+W_{y_i}^T * X_i
+$$
+然后累加和
+$$
+L_i = \sum_{j \neq y_i} \max(0, w_j^T x_i - w_{y_i}^T x_i + \Delta)
+$$
+我觉得这样写可以更加适合理解后面的梯度求导的形式！</p>
+<h2 id="正则化">正则化
+</h2><p>为了防止过拟合问题，我们可以给模型的参数<code>W</code>来加入一些惩罚项。</p>
+<p>首先我们来看看什么是过拟合。</p>
+<h4 id="过拟合">过拟合
+</h4><p>以线性回归来举例，对于训练样本中的所有数据，如果我们的模型足够大、足够复杂，那么我们的模型就可以&quot;记住&quot;所有的点，于是，对于一个简单的样本来说，在训练后得到的模型大概是这样的：</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115173903762.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241115173903762"
+	
+	
+></p>
+<p>其中，<code>f2</code>是我们预期出现的模型性能的样子，正则化可以防止我们的模型拟合的过好，从而加强模型的预测能力。</p>
+<h4 id="l1-l2正则化">L1 L2正则化
+</h4><p>正则化也有着不同的类别，常见的就是<code>L1</code>正则化和<code>L2</code>正则化</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115174218445.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241115174218445"
+	
+	
+></p>
+<p>其实正则化的目的就是去把<code>W</code>约束在一定的解的空间内，对于矩阵<code>W</code>来说，越简单的模型就意味着<code>W</code>值的某些取值取得越小，从而拟合出来得出现呈现出一些低阶多项式的形状，当我们把<code>W</code>的解约定在一定的取值内，我们假设这个取值是<code>m</code>，对于<code>L1</code>正则化的那个小尾巴 $ \lambda R(W) $来说，其<code>W</code>的解
+$$
+0 &lt;= W_1 + W_2 +  &hellip;. + W_n &lt;= m
+$$
+在二维空间内，我们可以得到这个解的区域是一个菱形区域(具体的数学证明设计凸优化的知识)</p>
+<p>同样的，对于<code>L2</code>正则化，我们同样要把参数<code>W</code>约束在一个范围内
+$$
+0 &lt;= W_1 ^ 2 + W_2 ^ 2 + &hellip;.+W_n ^ 2 &lt;= m
+$$</p>
+<p><code>L1 L2</code>正则化在空间上的解释可以用下面这张图解释</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/1965151-20200527132029063-1742062320.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="img"
+	
+	
+></p>
+<h2 id="softmax与交叉熵损失函数">softmax与交叉熵损失函数
+</h2><p><code>softmax</code>函数常用于多分类问题，对于一组输出，比如说上面<code>cat</code>的输出，我们可以利用这个函数把各个输出的分数转换为概率来进行研究，其数学形式长这样</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115180137332.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241115180137332"
+	
+	
+></p>
+<p>分母是各个分数转化后的总和，分子是对于该类转化后的值</p>
+<p>交叉熵（Cross Entropy）是Shannon信息论中一个重要概念，主要用于度量两个概率分布间的差异性信息。在信息论中，交叉熵是表示两个概率分布 $p$, $q$ 的差异，其中 $p$ 表示真实分布，$q$ 表示预测分布，那么 $H(p,q)$ 就称为交叉熵
+$$
+H(p,q)=\sum_i p_i \cdot \ln {1 \over q_i} = - \sum_i p_i \ln q_i \tag{1}
+$$
+在这个问题中，对于第<code>i</code>类来说，其真实分布$p$的概率就是<code>1</code>，所以总的表达式又可以进行化简</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115181457507.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241115181457507"
+	
+	
+></p>
+<p>然后<code>slices</code>中有一个有趣的问题，当一个图片在一个有着<code>C</code>类的数据集上进行分类时，假设我们预测得到的这个图片是每某个类的概率差不多，那么交叉熵损失是多少？</p>
+<p>带入公式，实际上就是 $ -log \frac{1}{C} $, 也就是 $ log C $</p>
+<p>对于这个数据集来说，<code>C</code>的数量是10</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241115182132996.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241115182132996"
+	
+	
+></p>
+<h1 id="总结">总结
+</h1><p>这次我们了解了很多损失函数和避免模型过拟合的方法，但是还没有了解怎么求得我们的最优的参数矩阵<code>W</code>，下次来了解一下求最优参数的方法！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pytorch/">Pytorch</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/image-classifier%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Image Classifier笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
