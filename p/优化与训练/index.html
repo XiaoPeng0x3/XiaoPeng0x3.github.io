@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 继续来看看优化这部分\n梯度下降 优化部分主要讲解了与梯度下降以及梯度下降的各种优化版本\n虾几霸优化 对于评估一个W参数矩阵来说，需要计算出在这个W下的分类准确率即可。这里的”虾几把“的意思就是随机生成一个参数矩阵W，只要这个矩阵的准确率高于上一次计算的准确率，那么就把当前最优的W更新，然后一直模拟下去,一个可能的算法是这样的\n">
+<title>优化与训练</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E4%BC%98%E5%8C%96%E4%B8%8E%E8%AE%AD%E7%BB%83/'>
+
+<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="优化与训练">
+<meta property='og:description' content="前言 继续来看看优化这部分\n梯度下降 优化部分主要讲解了与梯度下降以及梯度下降的各种优化版本\n虾几霸优化 对于评估一个W参数矩阵来说，需要计算出在这个W下的分类准确率即可。这里的”虾几把“的意思就是随机生成一个参数矩阵W，只要这个矩阵的准确率高于上一次计算的准确率，那么就把当前最优的W更新，然后一直模拟下去,一个可能的算法是这样的\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E4%BC%98%E5%8C%96%E4%B8%8E%E8%AE%AD%E7%BB%83/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-11-15T20:20:39&#43;08:00'/><meta property='article:modified_time' content='2024-11-15T20:20:39&#43;08:00'/>
+<meta name="twitter:title" content="优化与训练">
+<meta name="twitter:description" content="前言 继续来看看优化这部分\n梯度下降 优化部分主要讲解了与梯度下降以及梯度下降的各种优化版本\n虾几霸优化 对于评估一个W参数矩阵来说，需要计算出在这个W下的分类准确率即可。这里的”虾几把“的意思就是随机生成一个参数矩阵W，只要这个矩阵的准确率高于上一次计算的准确率，那么就把当前最优的W更新，然后一直模拟下去,一个可能的算法是这样的\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😍</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#虾几霸优化">虾几霸优化</a></li>
+    <li><a href="#梯度下降法">梯度下降法</a></li>
+    <li><a href="#小批次计算-mini-batch">小批次计算 Mini Batch</a></li>
+    <li><a href="#sgdmomentum">SGD+Momentum</a></li>
+    <li><a href="#nesterov--momentum">Nesterov  Momentum</a></li>
+    <li><a href="#adagrad">AdaGrad</a></li>
+    <li><a href="#rmsprop">RMSProp</a></li>
+    <li><a href="#adam">Adam</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/eecs-498/007/" >
+                EECS-498/007
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E4%BC%98%E5%8C%96%E4%B8%8E%E8%AE%AD%E7%BB%83/">优化与训练</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-15</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p>继续来看看优化这部分</p>
+<h1 id="梯度下降">梯度下降
+</h1><p>优化部分主要讲解了与梯度下降以及梯度下降的各种优化版本</p>
+<h2 id="虾几霸优化">虾几霸优化
+</h2><p>对于评估一个<code>W</code>参数矩阵来说，需要计算出在这个<code>W</code>下的分类准确率即可。这里的”虾几把“的意思就是随机生成一个参数矩阵<code>W</code>，只要这个矩阵的准确率高于上一次计算的准确率，那么就把当前最优的<code>W</code>更新，然后一直模拟下去,一个可能的算法是这样的</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241122211850071.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241122211850071"
+	
+	
+></p>
+<p>经过这种方法去求得的<code>W</code>在准确率大约在<code>15%</code>，不算太坏，但算不上好！</p>
+<h2 id="梯度下降法">梯度下降法
+</h2><p>在一元函数中，导数可以理解为在这一点上的斜率，在多元函数中，我们使用梯度这个概念来进行导数的推广，实际上，梯度在每一维上的分量就是我们熟悉的导数</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241122234341763.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241122234341763"
+	
+	
+></p>
+<p>沿着负梯度的方向就是目标函数下降最快的方向</p>
+<p>因此，对于损失函数来说，我们可以找到<code>W</code>的梯度矩阵<code>dW</code>，然后再对<code>W</code>进行优化,这种方法就是大名鼎鼎的梯度下降</p>
+<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241122212315847.png" alt="image-20241122212315847"  />
+<p>可以看到，这里我们就有了三个未决的超参数</p>
+<ul>
+<li>怎样初始化<code>W</code></li>
+<li>要迭代寻找多少次(<code>num_steps</code>)</li>
+<li>学习率<code>learning_rate</code></li>
+</ul>
+<p>其中非常关键的一个参数就是<code>learning_rate</code>，因为最小化损失函数实际上就是去找到目标函数的极小值，在刚开始进行梯度下降时，初始位置在极小值的左边或者右边。下面用$ f(x) = sin(x) $来模拟一下整个过程</p>
+<ul>
+<li>
+<p>当学习率很小时</p>
+<p>我们总能找到极值， 但是却要寻找很长时间，这是因为每一步都走的特别小，所以寻找要很长的时间，这里假设学习率是<code>0.1</code>，迭代<code>100</code>次</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/test_animation.gif"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+</li>
+<li>
+<p>当学习率很大时</p>
+<p>学习率很大，这就意味着每一步都走的很大，所以很容易错过最小值，从而造成振荡，下面是学习率为<code>2</code>的情形</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/test.gif"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+</li>
+</ul>
+<p>所以，这些参数的选取实际上是在训练神经网络的一些困难之处，而且我们的训练集通常很大，所以每次更换学习率后再训练的代价很大，来说一下这些优化方法！</p>
+<h2 id="小批次计算-mini-batch">小批次计算 Mini Batch
+</h2><p>在寻找学习率的时候，我们没必要在整个测试集上进行，而是去选择一批样本进行训练，其实这样做也可以减少内存的压力，一个可行的代码是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 假设 X_train, y_train</span>
+</span></span><span class="line"><span class="cl"><span class="n">num_train</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># 得到样本总数</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># batch size</span>
+</span></span><span class="line"><span class="cl"><span class="n">batch</span> <span class="o">=</span> <span class="mi">32</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 生成随机样本</span>
+</span></span><span class="line"><span class="cl"><span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">num_train</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样，在每次训练的时候，我们就可以在小样本上进行迭代训练</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">X_train_batch</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">y_train_batch</span> <span class="o">=</span> <span class="n">y_train</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">############################</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="c1">############################</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="sgdmomentum">SGD+Momentum
+</h2><p>在随机梯度中引入动量的概念，给我们的点增加一个“惯性”的特点</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E5%8A%A8%E9%87%8F.gif"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>可以看到， 我们的小球确实像物理中的小球那样，在不断的运动着！一个可能的代码是</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241122233545718.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241122233545718"
+	
+	
+></p>
+<p>即先计算速度<code>v</code>，再根据速度<code>v</code>梯度下降</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">x0</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># 初始化随机x</span>
+</span></span><span class="line"><span class="cl"><span class="n">v</span> <span class="o">=</span> <span class="n">x0</span> <span class="c1"># 初始化</span>
+</span></span><span class="line"><span class="cl"><span class="n">beta</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="c1"># 动量值</span>
+</span></span><span class="line"><span class="cl"><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># 学习率</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span> <span class="c1"># 迭代50次</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">v</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">df</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">v</span>
+</span></span><span class="line"><span class="cl">    
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个动量的计算公式其实很有意思，它的前身或者本质就是<a class="link" href="https://zh.wikipedia.org/wiki/%E7%A7%BB%E5%8B%95%E5%B9%B3%E5%9D%87"  target="_blank" rel="noopener"
+    >指数加权平均</a>。在使用随机梯度下降时，前面一时刻的梯度似乎不会对后面的梯度造成影响，这就导致随机梯度下降的过程是一个不断震荡的过程，而且很容易陷入局部最小值，而引入指数加权平均时，可以看到，每次梯度的更新都是取决于前面几次的平均值</p>
+<p>$$
+v_{t+1} = \beta * v_t + (1-\beta)df(x)
+$$</p>
+<p>当$\beta$取0.9时，也就是我们会取梯度的一个样本平均(假设样本为10)，这样就把之前计算过的梯度与现在联系在一起，从而避免震荡！</p>
+<h2 id="nesterov--momentum">Nesterov  Momentum
+</h2><p>在ppt中的形式是这样的</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123104209913.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123104209913"
+	
+	
+></p>
+<p><code>Nesterov Momentum</code>的改进思想在于，它在计算梯度之前，先对参数进行一个“预更新”，即朝动量方向提前迈出一步，这样梯度会变得更加准确。</p>
+<p><code>Nesterov Momentum</code>的更新公式为：</p>
+<ol>
+<li>
+<p>预估下一步的位置：</p>
+<p>$$
+\tilde{\theta} = \theta_t + \gamma v_t
+$$</p>
+</li>
+<li>
+<p>在预估位置上计算梯度：</p>
+<p>$$
+v_{t+1}=γv_t−η∇f(θ~)
+$$</p>
+</li>
+<li>
+<p>更新参数：</p>
+<p>$$
+θ_{t+1}=θ_t+v_{t+1}
+$$</p>
+</li>
+</ol>
+<p>同样的，我们还可以使用这种方法去求<code>sin(x)</code>的极小值</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123110130201.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123110130201"
+	
+	
+></p>
+<p>使用预估的<code>x</code>求梯度</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 计算梯度下降路径</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>  <span class="c1"># 限定100步</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 预估位置</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x_pred</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">v</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 在预估位置计算梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="n">grad</span> <span class="o">=</span> <span class="n">df</span><span class="p">(</span><span class="n">x_pred</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 更新动量</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">v</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">grad</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 更新参数</span>
+</span></span><span class="line"><span class="cl">    <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">v</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/%E5%8A%A8%E9%87%8F%E6%94%B9%E8%BF%9B.gif"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h2 id="adagrad">AdaGrad
+</h2><p><code>Adagrad</code> 是一种自适应学习率的优化算法，它根据每个参数在训练过程中的历史梯度大小来调整学习率。对于稀疏特征或特征具有不同重要性的任务（如自然语言处理问题），<code>Adagrad</code> 具有较好的效果。</p>
+<p><code>Adagrad </code>的公式如下：</p>
+<ol>
+<li>
+<p><strong>更新梯度累积历史：</strong>
+$$
+G_t=G_{t−1}+∇f(x_t)^2
+$$</p>
+<p>这里 $G_t$是梯度平方的累计和（逐元素累加）。</p>
+</li>
+<li>
+<p><strong>更新参数：</strong>
+$$
+x_{t+1}=x_t - \frac{\eta}{\sqrt{G_t + \epsilon}} \nabla f(x_t)
+$$</p>
+<ul>
+<li>$\eta$ 是初始学习率。</li>
+<li>$\epsilon$ 是一个小值（如 $10^{-8}$），用于避免分母为零。</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123120438741.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123120438741"
+	
+	
+></p>
+<p>同样，我们来用<code>sin(x)</code>来模拟一下</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/adagrad.gif"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>可以看到，在这种方法下，“小球”似乎没有它的“物理属性”！</p>
+<h2 id="rmsprop">RMSProp
+</h2><p><code>RMSProp</code>是<code>AdaGrad</code>引入指数衰减平均后的优化版本</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123121410227.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123121410227"
+	
+	
+></p>
+<p>接着使用这种方法来求<code>sin(x)</code>的极小值</p>
+<p>有趣的一点是，与<code>AdaGrad</code>采取相同的学习率时，该方法产生了震荡，可能该方法在对学习率的初始值要求较高</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/rmsprop.gif"
+	
+	
+	
+	loading="lazy"
+	
+		alt="rmsprop"
+	
+	
+></p>
+<h2 id="adam">Adam
+</h2><p><code>Adma</code>是<code>RMSProp</code>结合了<code>Momentum</code>的版本</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123122212070.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123122212070"
+	
+	
+></p>
+<p>继续来寻找<code>sin(x)</code>的极小值点</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/adma.gif"
+	
+	
+	
+	loading="lazy"
+	
+		alt="adma"
+	
+	
+></p>
+<p>这是老师的经验，超参数的选择是个难点！</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123122758211.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123122758211"
+	
+	
+></p>
+<h1 id="总结">总结
+</h1><p>在了解这些优化技巧后，一个不错的建议是：优先使用<code>Mini-batch</code>和<code>Adam</code>优化。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pytorch/">Pytorch</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E5%99%A8/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">线性分类器</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/image-classifier%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Image Classifier笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
