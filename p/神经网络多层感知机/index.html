@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 前面讲解了一些优化算法，尤其是各种梯度下降算法，这次来看一看神经网络\n神经网络 神经网络的特点 前面我们在学习线性分类器的时候了解到，线性分类器对于异或、圆形、半圆形数据不能很好的划分出一条边界，这也导致了线性分类器不是那么的有效，而神经网络可以解决这个问题。\n">
+<title>神经网络——多层感知机</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/'>
+
+<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="神经网络——多层感知机">
+<meta property='og:description' content="前言 前面讲解了一些优化算法，尤其是各种梯度下降算法，这次来看一看神经网络\n神经网络 神经网络的特点 前面我们在学习线性分类器的时候了解到，线性分类器对于异或、圆形、半圆形数据不能很好的划分出一条边界，这也导致了线性分类器不是那么的有效，而神经网络可以解决这个问题。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-11-23T16:48:55&#43;08:00'/><meta property='article:modified_time' content='2024-11-23T16:48:55&#43;08:00'/>
+<meta name="twitter:title" content="神经网络——多层感知机">
+<meta name="twitter:description" content="前言 前面讲解了一些优化算法，尤其是各种梯度下降算法，这次来看一看神经网络\n神经网络 神经网络的特点 前面我们在学习线性分类器的时候了解到，线性分类器对于异或、圆形、半圆形数据不能很好的划分出一条边界，这也导致了线性分类器不是那么的有效，而神经网络可以解决这个问题。\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😍</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#神经网络的特点">神经网络的特点</a></li>
+    <li><a href="#得分方式的改变">得分方式的改变</a></li>
+    <li><a href="#激活函数">激活函数</a></li>
+    <li><a href="#简单的实现">简单的实现</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#链式求导">链式求导</a></li>
+  </ol>
+
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#实现forward_pass">实现forward_pass</a></li>
+        <li><a href="#forward_backward">forward_backward</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/eecs-498/007/" >
+                EECS-498/007
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/">神经网络——多层感知机</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-23</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p>前面讲解了一些优化算法，尤其是各种梯度下降算法，这次来看一看神经网络</p>
+<h1 id="神经网络">神经网络
+</h1><h2 id="神经网络的特点">神经网络的特点
+</h2><p>前面我们在学习线性分类器的时候了解到，线性分类器对于异或、圆形、半圆形数据不能很好的划分出一条边界，这也导致了线性分类器不是那么的有效，而神经网络可以解决这个问题。</p>
+<p>一般的，神经网络可以划分为输入层、<strong>隐藏层</strong>、输出层这三种结构，而正是隐藏层的一些非线性特征使得神经网络可以拟合出各种决策边界，所以在线性分类器上解决不了的问题便可以使用神经网络很好的解决。</p>
+<p>为了简单起见，作业里面实现的是一个两层的神经网络，使用的激活函数是<code>Relu</code>激活函数</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123170139633.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123170139633"
+	
+	
+></p>
+<h2 id="得分方式的改变">得分方式的改变
+</h2><p>在之前的线性分类中，我们把 $ X^T W $看作是一个得分的输出。在神经网络里面这里的计算方式也与其计算方式相同，不同的是，在多层神经网络之间传递上一层的分数时，总是要经过非线性激活函数输出后把分数传递到下一层，这是因为如果不加激活函数，那么实际上我们在做乘法的时候还是取得是一个线性计算的过程，所以要加上激活函数，从而引入非线性。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123170859794.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123170859794"
+	
+	
+></p>
+<p>全连接神经网络也叫做多层感知机</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123170950821.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123170950821"
+	
+	
+></p>
+<p>因此，计算得分的方式可能会是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">h1</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W1</span><span class="p">)</span> <span class="c1"># 得到第一层的分数</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 执行Relu, 即 h1 = max(0, h1), 只保留大于0的部分</span>
+</span></span><span class="line"><span class="cl"><span class="n">h1</span><span class="p">[</span><span class="n">h1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 经过激活函数后输出到下一层</span>
+</span></span><span class="line"><span class="cl"><span class="n">scores</span> <span class="o">=</span> <span class="n">h1</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W2</span><span class="p">)</span> <span class="c1"># 得到分数</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上文已提到，不加激活函数实际上做的还是线性变换</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123171345302.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123171345302"
+	
+	
+></p>
+<p>可以看到，经过合并后，不加激活函数的结果等价于一个线性分类</p>
+<h2 id="激活函数">激活函数
+</h2><p>激活函数的存在就是为了引入非线性，从而可以划分出非线性的决策边界，下面是一些激活函数</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241123171539920.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241123171539920"
+	
+	
+></p>
+<h2 id="简单的实现">简单的实现
+</h2><p>ppt中给出了一个简单的使用<code>MSE</code>作为损失函数的两层神经网络</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="c1"># N是训练的batch size; D_in 是input输入数据的维度;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># H是隐藏层的节点数; D_out 输出的维度，即输出节点数.</span>
+</span></span><span class="line"><span class="cl"><span class="n">N</span><span class="p">,</span> <span class="n">D_in</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">D_out</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建输入、输出数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">D_in</span><span class="p">)</span>  <span class="c1">#（64，1000）</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">D_out</span><span class="p">)</span> <span class="c1">#（64，10）可以看成是一个10分类问题</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 权值初始化</span>
+</span></span><span class="line"><span class="cl"><span class="n">w1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">D_in</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>  <span class="c1">#(1000,100),即输入层到隐藏层的权重</span>
+</span></span><span class="line"><span class="cl"><span class="n">w2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">D_out</span><span class="p">)</span> <span class="c1">#(100,10),即隐藏层到输出层的权重</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">1e-6</span>   <span class="c1">#学习率</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 第一步：数据的前向传播，计算预测值p_pred</span>
+</span></span><span class="line"><span class="cl">    <span class="n">h</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">h_relu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">h_relu</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="c1"># 第二步：计算计算预测值p_pred与真实值的误差</span>
+</span></span><span class="line"><span class="cl">    <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">y_pred</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">loss</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="c1"># 第三步：反向传播误差，更新两个权值矩阵</span>
+</span></span><span class="line"><span class="cl">    <span class="n">grad_y_pred</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">y_pred</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">grad_w2</span> <span class="o">=</span> <span class="n">h_relu</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">grad_y_pred</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">grad_h_relu</span> <span class="o">=</span> <span class="n">grad_y_pred</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">grad_h</span> <span class="o">=</span> <span class="n">grad_h_relu</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">grad_h</span><span class="p">[</span><span class="n">h</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="n">grad_w1</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">grad_h</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="c1"># 梯度下降法</span>
+</span></span><span class="line"><span class="cl">    <span class="n">w1</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">grad_w1</span>
+</span></span><span class="line"><span class="cl">    <span class="n">w2</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">grad_w2</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里比较有意思的地方是如何去更新我们的权重矩阵<code>W1,W2</code></p>
+<h1 id="反向传播">反向传播
+</h1><p>求得<code>W1</code>和<code>W2</code>得梯度便可以使用梯度下降法去进行跟新，那么怎么求这两个函数得梯度呢，答案就是去使用反向传播算法。</p>
+<p>反向传播算法的核心就是去利用链式求导法则，对于两层或者更多层的神经网络来说，直接求得损失函数对于权重的梯度是一件不太好实现的事情，实际上ppt里面讲解的就是链式求导法则，为了更好的理解链式求导，这里以损失函数为交叉熵函数实现的多分类问题来进行记录。</p>
+<h2 id="链式求导">链式求导
+</h2><p>上面构建了一个简单的二层网络，这个网络的工作流程是这样的</p>
+<ul>
+<li>
+<p>计算得分</p>
+<p>与之前的线性网络一致，对于输入$X$来说，输出的得分就是
+$$
+scores = XW_1 + b_1
+$$
+不同的是，为了拟合出更多的非线性边界，这里的得分还需要向第二层输出</p>
+</li>
+<li>
+<p>激活函数引入非线性</p>
+<p>假设我们的激活函数为$ReLu$函数，那么
+$$
+Z(x) = \left{
+\begin{aligned}
+x , x &gt;= 0\
+0, else
+\end{aligned}
+\right.
+$$
+也就是隐藏层<code>h1</code>的输出就是$Z(scores)$</p>
+</li>
+<li>
+<p>经过隐藏层输输入后，我们可以把计算第二层的结果看作之前的线性分类器
+即
+$$
+output = Z(scores)W_2 + b_2
+$$
+得到这个<code>output</code>后，可以把结果转为<code>softmax</code>，也就是
+$$
+y_{pred} = argmax[softmax(output)]
+$$
+这样就可以使用交叉熵损失函数计算损失</p>
+</li>
+</ul>
+<h1 id="作业-two_layer_net">作业 two_layer_net
+</h1><p>讲解一下这个作业中较难的部分</p>
+<h3 id="实现forward_pass">实现forward_pass
+</h3><p>可以从函数的参数里面得到需要的参数， 例如<code>W1, b1, W2, b2</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Unpack variables from the params dictionary</span>
+</span></span><span class="line"><span class="cl"><span class="n">W1</span><span class="p">,</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;W1&#39;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;b1&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">W2</span><span class="p">,</span> <span class="n">b2</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;W2&#39;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;b2&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">N</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>需要额外注意的是这些参数的形状， 我们的训练数据<code>X</code>是<code>NxD</code>的，也就是说，这个训练集中有<code>N</code>个样本，每个样本都是简单的<code>1xD</code>向量，作业为了防止我们出错，还贴心的在注释里面给出了这些参数的形状</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">It should have following keys with shape
+</span></span></span><span class="line"><span class="cl"><span class="s1">          W1: First layer weights; has shape (D, H)
+</span></span></span><span class="line"><span class="cl"><span class="s1">          b1: First layer biases; has shape (H,)
+</span></span></span><span class="line"><span class="cl"><span class="s1">          W2: Second layer weights; has shape (H, C)
+</span></span></span><span class="line"><span class="cl"><span class="s1">          b2: Second layer biases; has shape (C,)
+</span></span></span><span class="line"><span class="cl"><span class="s1">    - X: Input data of shape (N, D). Each X[i] is a training sample.
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>根据这个注释，我们在做矩阵乘法的时候就特别方便</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 第一层的输出</span>
+</span></span><span class="line"><span class="cl"><span class="n">hidden</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">W1</span><span class="p">)</span> <span class="o">+</span> <span class="n">b1</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 经过非线性激活函数</span>
+</span></span><span class="line"><span class="cl"><span class="n">hidden</span><span class="p">[</span><span class="n">hidden</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时，我们就得到了这个二层网络的隐藏层分数</p>
+<p>因此，计算输出的总分也是很简单</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 未经softmax函数处理</span>
+</span></span><span class="line"><span class="cl"><span class="n">scores</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">W2</span><span class="p">)</span> <span class="o">+</span> <span class="n">b2</span> <span class="c1"># raw_scores</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>到现在，我们就得到了网络的输出分数，现在让我们来梳理一下从图片到预测之间的流程</p>
+<ul>
+<li>
+<p>3x32x32数据集</p>
+<p>我们把原始数据集展平为一个一维向量，把若干个这样的向量堆叠在一起，这样就得到了训练集<code>X</code></p>
+</li>
+<li>
+<p>计算隐藏层输出</p>
+<p>与线性分类器计算分数一样，做乘法运算即可</p>
+</li>
+<li>
+<p>激活函数</p>
+<p>引入非线性，如<code>ReLu</code>, <code>Sigmoid</code>函数</p>
+</li>
+<li>
+<p>输出层</p>
+<p>得到隐藏层分数后计算输出层分数即可</p>
+</li>
+<li>
+<p><code>softmax</code>得到概率</p>
+<p>我们把输出的<code>scores</code>经过<code>softmax</code>后得到近似概率分布，然后概率最高的就是我们网络将图片分类的结果</p>
+</li>
+<li>
+<p>交叉熵损失函数优化</p>
+<p>使用交叉熵函数优化，从而得到之前的<code>W1, b1, W2, b2</code>的梯度，并使用梯度下降法进行学习</p>
+</li>
+</ul>
+<p>也就是说， 在<code>forward_pass</code>中，我们还剩最后两个步骤没有计算出来，下面我们将在<code>nn_forward_backward</code>中计算得出</p>
+<h3 id="forward_backward">forward_backward
+</h3><p>要想得到损失函数关于<code>W1, b1, W2, b2</code>的梯度， 我们得先求的损失函数，这里使用的是交叉熵损失函数，也就是说，我们需要求得<code>softmax</code>后的分数</p>
+<ul>
+<li>
+<p><code>softmax</code>过程</p>
+<p>这部分在<code>A1</code>中已经计算过，在这里在此计算一次。首先根据定义，其实就是每部分<code>exp</code>后除以总的<code>exp</code>和即可。我们的输出<code>scores</code>是一个<code>NxC</code>的矩阵，每一行(<code>dim=1</code>)的含义就是第<code>i</code>个样本(<code>1&lt;=i &lt;=N</code>)在10个类上的总分。例如，假如第<code>i</code>个样本在10个类中<code>cat</code>的分数最大，那么经过<code>softmax</code>后可以近似认为第<code>i</code>个样本是<code>cat</code>的概率最大</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 从前向传播中得到分数,注意，这个分数其实是raw_scores</span>
+</span></span><span class="line"><span class="cl"><span class="n">scores</span><span class="p">,</span> <span class="n">h1</span> <span class="o">=</span> <span class="n">nn_forward_pass</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 得到分数后softmax化</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 得到每个类别的最大值</span>
+</span></span><span class="line"><span class="cl"><span class="n">max_val</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 函数返回最大值和最大值的索引</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 除去最大值是防止exp值过大，同时不影响结果</span>
+</span></span><span class="line"><span class="cl"><span class="n">scores_remove_max</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">-</span> <span class="n">max_val</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># 使用广播机制，不使用也可以</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># scores_remove_max = scores - torch.max(scores, dim=1, keepdim=True).values</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># exp化</span>
+</span></span><span class="line"><span class="cl"><span class="n">scores_exp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">scores_remove_max</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 概率化</span>
+</span></span><span class="line"><span class="cl"><span class="n">scores_prob</span> <span class="o">=</span> <span class="n">scores_exp</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">scores_exp</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># 不使用广播机制同上</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>链式法则</p>
+<ul>
+<li>
+<p><code>dW2和db2</code></p>
+<p>在求得<code>softmax</code>化后的结果后，我们需要以损失函数的形式表达出来整个解，这里的损失函数是交叉熵损失函数，为了求得损失函数对<code>W2</code>的梯度，使用链式法则会更加简单清晰</p>
+<ul>
+<li>
+<p>交叉熵损失
+$$
+Loss= -\frac{1}{N}∑log(p_i)+reg⋅(∥W1∥^2+∥W2∥^2)
+$$
+这里的<code>pi</code>是预测值，也就是我们上面的<code>softmax</code>值，现在，我们可以把求解过程转换一下,即</p>
+<p>$$
+\frac{dL}{dW_2} = \frac{dL}{dP} \frac{dP}{dS} \frac{dS}{dW_2}
+$$</p>
+<p>我们可以来挖掘一下<code>Scores</code>与<code>W2</code>的关系，显然有</p>
+<p>$$
+Scores = h_1^T * W_2 + b_2
+$$</p>
+<blockquote>
+<p>怎么求第一项的梯度呢？</p>
+</blockquote>
+<p>$ \frac{dL}{dP} $的计算公式其实就是对数函数求导，而$\frac{dP}{dS}$的结果就要从<code>softmax</code>公式出发</p>
+<p>$$
+softmax(i) = \frac{e^{scores_i}}{e^{scores}}
+$$</p>
+<p>这个时候就要分当前预测类的类别的情况了，因为对于$p_i$来说，每次都要计算两部分梯度，当计算类别正确时，也就是<code>softmax</code>公式的分子上是含有$e^y_i$，那么此时分子分母都是含有要求导部分；当求其它梯度时，分子上其实就是个常数，求导法则发生了变化。这里推荐一个<a class="link" href="https://www.bilibili.com/video/BV1NU4y1w7C9/"  target="_blank" rel="noopener"
+    >视频</a>,可能会帮助更好的理解。</p>
+<p>也就是说，对于这部分梯度来说，正确的类别结果<code>-1</code>(正确类别分子上还有求导到部分)，错误类别不需要<code>-1</code>，，而且对这部分求导是因为分母上有需要求导部分。</p>
+<p>而且，每个标签都是<code>One-Hot</code>格式，这样我们就可以求得$\frac{dP}{dS}$</p>
+<p>所以求得$ \frac{dL}{dS}$</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">ds</span> <span class="o">=</span> <span class="n">scores_prob</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="c1"># NxC</span>
+</span></span><span class="line"><span class="cl"><span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">),</span> <span class="n">y</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">ds</span> <span class="o">/=</span> <span class="n">N</span> <span class="c1"># 注意不要遗漏 </span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>$\frac{dS}{dW}$ = <code>h1(NxH)</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">dW2</span> <span class="o">=</span>  <span class="n">h1</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span> <span class="c1"># HxC</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>同理也可以求得<code>db2</code>就是 <code>ds</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>dW1和db1</code></p>
+<p>这里同样使用的是链式法则</p>
+<p>$$
+h1 = ReLu(XW_1+b_1) \
+Scores = h_1W_2 + b_2
+$$</p>
+<p>所以要求
+$$
+\frac{dL}{dW_1} = \frac{dL}{dS} \frac{dS}{dh1} \frac{dh1}{dW_1}
+$$
+现在未知参数就是<code>dh1</code>,需要注意的是，因为是<code>ReLu</code>所以小于0的部分会置0</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">dh1</span> <span class="o">=</span> <span class="n">d_scores</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">W2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">dh1</span><span class="p">[</span><span class="n">h1</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># 小于等于0的不贡献梯度</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里不清晰的化还可以再加一部分即</p>
+<p>$$
+\frac{dh1}{dW_1} = X , h1 &gt;= 0
+$$</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>现在，链式求导的部分我们就求解完了，也是这次作业最难的一部分。</p>
+<h1 id="总结">总结
+</h1><p>多层感知机成功解决了线性分类不能完成的任务，但是多层感知机也有自身上的缺点，下节来看看大名鼎鼎鼎鼎大名的<strong>卷积神经网络</strong>！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pytorch/">Pytorch</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/%E4%BC%98%E5%8C%96%E4%B8%8E%E8%AE%AD%E7%BB%83/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">优化与训练</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E5%99%A8/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">线性分类器</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/image-classifier%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Image Classifier笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
