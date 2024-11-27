@@ -293,6 +293,7 @@ var _hmt = _hmt || [];
 
   <ol>
     <li><a href="#链式求导">链式求导</a></li>
+    <li><a href="#梯度求解">梯度求解</a></li>
   </ol>
 
   <ol>
@@ -366,7 +367,7 @@ var _hmt = _hmt || [];
 
 
                 <time class="article-time--reading">
-                    阅读时长: 7 分钟
+                    阅读时长: 9 分钟
                 </time>
             </div>
         
@@ -589,6 +590,103 @@ $$
 这样就可以使用交叉熵损失函数计算损失</p>
 </li>
 </ul>
+<h2 id="梯度求解">梯度求解
+</h2><p>需要额外注意的是，<code>W</code>的梯度<code>dW</code>是在损失函数中学习到的，我们更新<code>W</code>的意义就是去最小化损失函数，最小化损失函数也就是意味着我们的预测越准确，模型所产生的误差越小。</p>
+<p>对于一个单层或者多层网络来说，其输入输出、求导方式都是很相似的，下面是一般求解步骤</p>
+<ul>
+<li>
+<p>求得损失函数对输出的梯度<code>dout</code></p>
+<p>在常见的一些损失函数如<code>MSE</code>均值、<code>softmax</code>交叉熵等，可以求得其关于输出的导数，即求得$\frac{dL}{dout}$</p>
+</li>
+<li>
+<p>求得输出关于输入的梯度</p>
+<p>对于输出来说，一层网络的输出就是
+$$
+output = XW + b
+$$
+所以，对于，根据链式求导法则，我们就可以很容易的求出损失函数关于输入的梯度</p>
+</li>
+</ul>
+<p>在使用激活函数后，即<code>output</code>其实并不是原始的输出，而是经过激活函数处理后的输出，这也就意味着中间又多了一层关于激活函数的导数，我们以<code>ReLu</code>激活函数为例</p>
+<p>一般的，如果不加激活函数，那么我们的求导过程可能是这样的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 假设我们已经知道损失函数关于输出的梯度</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">dout</span><span class="p">):</span> 
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;&#39;&#39;    
+</span></span></span><span class="line"><span class="cl"><span class="s1">	Inputs:
+</span></span></span><span class="line"><span class="cl"><span class="s1">    - dout: Upstream derivative, of shape (N, M)
+</span></span></span><span class="line"><span class="cl"><span class="s1">      - x: Input data, of shape (N, D)
+</span></span></span><span class="line"><span class="cl"><span class="s1">      - w: Weights, of shape (D, M)
+</span></span></span><span class="line"><span class="cl"><span class="s1">      - b: Biases, of shape (M,)
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 根据求导公式</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dX</span> <span class="o">=</span> <span class="n">dout</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dW</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">dout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">db</span> <span class="o">=</span> <span class="n">dout</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dX</span><span class="p">,</span> <span class="n">dW</span><span class="p">,</span> <span class="n">db</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果在输出层多加了激活函数，那么只需要再多计算一次乘积即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">dout</span><span class="p">):</span> 
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;&#39;&#39;    
+</span></span></span><span class="line"><span class="cl"><span class="s1">	Inputs:
+</span></span></span><span class="line"><span class="cl"><span class="s1">    - dout: Upstream derivative, of shape (N, M)
+</span></span></span><span class="line"><span class="cl"><span class="s1">      - x: Input data, of shape (N, D)
+</span></span></span><span class="line"><span class="cl"><span class="s1">      - w: Weights, of shape (D, M)
+</span></span></span><span class="line"><span class="cl"><span class="s1">      - b: Biases, of shape (M,)
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 计算dW的梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dW</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">dout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 注意，是由输出大于0的部分才有梯度，所以需要进行保留</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dW</span><span class="p">[</span><span class="n">out</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>更一般的，我们会直接对<code>ReLu(x)</code>做求导，从而当输入<code>x</code>发生变化时，我们的<code>ReLu</code>依旧会更加模块化</p>
 <h1 id="作业-two_layer_net">作业 two_layer_net
 </h1><p>讲解一下这个作业中较难的部分</p>
 <h3 id="实现forward_pass">实现forward_pass
