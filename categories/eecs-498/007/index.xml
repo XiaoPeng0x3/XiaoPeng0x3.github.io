@@ -7,7 +7,276 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Xiao Peng</copyright>
-        <lastBuildDate>Sat, 23 Nov 2024 16:48:55 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/eecs-498/007/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 25 Nov 2024 17:12:53 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/eecs-498/007/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>卷积神经网络</title>
+        <link>https://XiaoPeng0x3.github.io/p/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/</link>
+        <pubDate>Mon, 25 Nov 2024 17:12:53 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/p/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/</guid>
+        <description>&lt;h1 id=&#34;前言&#34;&gt;前言
+&lt;/h1&gt;&lt;h2 id=&#34;全连接神经网络面临的问题&#34;&gt;全连接神经网络面临的问题
+&lt;/h2&gt;&lt;p&gt;在此之前，我们一直是在全连接层神经网络进行讨论，全连接神经网络其实也有许多不便之处&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;无法理解图像模板&lt;/p&gt;
+&lt;p&gt;对于之前的所有的有关图像分类实现的任务，对于给定的图片(&lt;code&gt;size:3x32x32&lt;/code&gt;)，我们并不考虑图片整体或者图片的一些局部特征是什么样的，而是直接把&lt;code&gt;3x32x32&lt;/code&gt;的图片展平为一个一维向量(&lt;code&gt;1x3072&lt;/code&gt;)，然后经过一些矩阵乘法，我们就可以得到这个图片的&lt;code&gt;scores&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;内存问题&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;3072&lt;/code&gt;维的向量似乎还是可以接受的，但是实际上这个图片是非常小的，假设我们使用了一些比较大的图片，那么输入的维度肯定会显著的提升。在进行神经网络全连接后，显然，每一层上都有着巨量的计算，而且为了有更好更复杂的模型，神经网络的层数也会增加，那么在此产生的计算和内存消耗将是巨大的&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;卷积神经网络&#34;&gt;卷积神经网络
+&lt;/h1&gt;&lt;h2 id=&#34;卷积层&#34;&gt;卷积层
+&lt;/h2&gt;&lt;p&gt;卷积神经网络的思路与全连接不同，卷积神经网络更加“尊重”图像的样子，它不会把输入图像进行压缩，而是在乎图像的整体特征，而保留整体特征的一个关键部分就是&lt;code&gt;卷积核&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;卷积核&#34;&gt;卷积核
+&lt;/h3&gt;&lt;p&gt;卷积核可以保留提取一些图片中相似的特征，只要你了解卷积核是怎么提取图片的特征的，你就会明白为什么&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;卷积核的计算&lt;/p&gt;
+&lt;p&gt;卷积核会在原来输入图片的维度上进行计算，假设我们使用的卷积核是&lt;code&gt;3x5x5&lt;/code&gt;的&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126130207101.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241126130207101&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;对于图像中每个&lt;code&gt;5x5&lt;/code&gt;的部分，我们使用点积去进行计算&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;多个卷积核的使用&lt;/p&gt;
+&lt;p&gt;在经过卷积核的计算后，我们得到了一个&lt;code&gt;1x28x28&lt;/code&gt;的输出(计算公式后文给出)，更一般的，我们会使用多个卷积核进行卷积，此时卷积核的维度就是&lt;code&gt;Nx3x5x5&lt;/code&gt;，那么输出就会是&lt;code&gt;Nx28x28&lt;/code&gt;的&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126130742263.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241126130742263&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;更一般的，对于一批数据，我们会对着一批数据进行卷积操作，此时就变为&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126130846131.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241126130846131&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;下面是其公式表达形式&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126130920660.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241126130920660&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;卷积层的堆叠&lt;/p&gt;
+&lt;p&gt;为了搭建更加复杂的网络，通常会堆积多个卷积层(像之前两层网络一样，在一定范围内层数越多越复杂，能力越高)，此时注意，为了确保引入多个卷积层而不是只是一个卷积层，这里也引入了非线性激活函数(&lt;code&gt;ReLu&lt;/code&gt;)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;输出大小&#34;&gt;输出大小
+&lt;/h3&gt;&lt;p&gt;卷积的过程就是在原始图片上进行滑动相乘的结果，当使用&lt;code&gt;5x5&lt;/code&gt;的卷积核时，输入图片大小为&lt;code&gt;32x32&lt;/code&gt;，那么在输入的长上的最后一次运算就是第&lt;code&gt;28, 29, 30, 31 ,32&lt;/code&gt;的格子上；同样对于宽也是一样的，这样就可以得到输出图像的特征就是&lt;code&gt;28x28&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;更一般的，对于输入特征&lt;code&gt;W&lt;/code&gt;来说，我们使用大小为&lt;code&gt;K&lt;/code&gt;的卷积核进行运算，那么输出特征就是**&lt;code&gt;W-K+1&lt;/code&gt;**的，利用这个公式，我们就可以很方便的计算输入特征为&lt;code&gt;32x32&lt;/code&gt;时，卷积核大小为&lt;code&gt;5x5&lt;/code&gt;时的输出特征。&lt;/p&gt;
+&lt;h4 id=&#34;带来的新问题&#34;&gt;带来的新问题
+&lt;/h4&gt;&lt;p&gt;经过&lt;code&gt;5x5&lt;/code&gt;的卷积核运算后，一个肉眼可见的差别就是输出图像与原始输入图像维数是不同的，当我们使用很多个卷积核后，输出的图像看起来像是降维一样。&lt;/p&gt;
+&lt;p&gt;为了保持输出图像与输入图像的维度(可能是减少损失的信息)，我们可以使用填充输入图像的方式来保证维度。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126141345424.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241126141345424&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;需要填充&lt;code&gt;0&lt;/code&gt;的层数&lt;code&gt;p&lt;/code&gt;就是&lt;code&gt;(k-1)/2&lt;/code&gt;，经过填充，输出的图像大小与输入就有着相同的维度。&lt;/p&gt;
+&lt;h4 id=&#34;不同的步长&#34;&gt;不同的步长
+&lt;/h4&gt;&lt;p&gt;在上面卷积核进行计算的时候，我们都是默认每次卷积的时候都是挨个滑动，事实上滑动的时候也可以跳跃着滑动，也就是说，在原先的基础上，如果每次都是&lt;code&gt;N&lt;/code&gt;步去滑动卷积，那么输出的维度就会减小&lt;code&gt;N&lt;/code&gt;倍，这个时候我们可以更新我们的计算公式&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126201933314.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241126201933314&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;池化层&#34;&gt;池化层
+&lt;/h2&gt;&lt;p&gt;池化分为平均池化层和最大池化层，例如，当使用大小为&lt;code&gt;2x2&lt;/code&gt;的卷积核进行最大池化的时候，实际上就是对卷积后的每层输出进行特征筛选&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241207114559652.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241207114559652&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;上图是一个使用最大层池化，步长为2的池化层，因为步长的原因，池化后的图片大小会发生变化，使用平均池化也是一样的原理，只需要计算&lt;code&gt;2x2&lt;/code&gt;内的均值即可&lt;/p&gt;
+&lt;h2 id=&#34;前向传播&#34;&gt;前向传播
+&lt;/h2&gt;&lt;p&gt;对于给定的数据，怎么实现前线传播的计算呢？假设下面是给定的数据&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;x&lt;/code&gt;, 大小为&lt;code&gt;NxCxHxW&lt;/code&gt;，&lt;code&gt;N&lt;/code&gt;代表这一批的数据，&lt;code&gt;C&lt;/code&gt;表示图片的通道数，&lt;code&gt;HxW&lt;/code&gt;是图片的大小&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;w&lt;/code&gt;，大小为&lt;code&gt;FxCxHHxWW&lt;/code&gt;，有&lt;code&gt;F&lt;/code&gt;个卷积核，每个卷积核大小都是&lt;code&gt;CxHHxWW&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;b&lt;/code&gt;，大小为哦&lt;code&gt;F&lt;/code&gt;，表示偏执&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;现在思考怎么计算经过卷积后的数据&lt;code&gt;out&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;卷积的过程&#34;&gt;卷积的过程
+&lt;/h2&gt;&lt;p&gt;首先，我们可以拿出一张图片来进行举例，那么这张图片就是&lt;code&gt;x[i, :, :, :]&lt;/code&gt;,同时，我们也拿出一个卷积核&lt;code&gt;w[i, :, :, :]&lt;/code&gt;。回想一下老师在课堂上举过的例子&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241201122339037.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241201122339037&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;这个输出是怎么得到的呢？因为图片是三通道的，所以在每一个通道上都要进行卷积操作，实际上得到的最后输出就是三通道上的总和，那么，对于图片来说，其计算过程就是这样的&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Hout&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Wout&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;shape&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 得到输出的size&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 假设步长是stride&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Hout&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Wout&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;c1&#34;&gt;# 这里假设输出和x有着同样size&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;c1&#34;&gt;# 三个通道的总和&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;n&#34;&gt;output&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;k&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;k&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;w&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;更一般的，当我们可以进行推广&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 输出图片的维度与步长stride和输入的填充有关&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;N&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;H&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;shape&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;F&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;HH&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WW&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;w&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;shape&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;H_out&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;H&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pad&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HH&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;//&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stride&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;W_out&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pad&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;WW&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;//&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stride&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;N&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;F&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;H_out&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W_out&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;c1&#34;&gt;# 计算第n个数据在第f个卷积核上的输出&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;n&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;w&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 三通道相乘的和&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;反向传播求梯度&#34;&gt;反向传播求梯度
+&lt;/h2&gt;&lt;p&gt;反向传播求梯度这里其实有点绕，假设我们已经知道损失函数对于输出的梯度&lt;code&gt;dout&lt;/code&gt;，那么我们就可以使用链式法则进行求导&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;out[0, 0, :, :]&lt;/code&gt;代表着第&lt;code&gt;1&lt;/code&gt;个图片在第一个卷积核上的输出，我们来分析一下它是由哪些部分计算得到的
+$$
+out[0, 0, :, :] = x[0, 0, :, :] * w[0, 0, :, :] + x[0, 1, :, :] * w[0, 1, :, :] + x[0, 2, :, :] * w[0, 2, :, :] + bias[0]
+$$
+现在把卷积核的个数拓展到&lt;code&gt;F&lt;/code&gt;个，那么求第&lt;code&gt;f&lt;/code&gt;个卷积核的输出就是
+$$
+out[0, f, :, :] = x[0, 0, :, :] * w[f, 0, :, :] + x[0, 1, :, :] * w[f, 1, :, :] + x[0, 2, :, :] * w[f, 2, :, :] + bias[f]
+$$
+转换为代码就是&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;out&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;w&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:],&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;axis&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bias&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;需要注意的是，要考虑的是，我们需要学习的参数在哪里参与运算，分层求解其梯度即可。&lt;/p&gt;
+&lt;h2 id=&#34;正则化技术&#34;&gt;正则化技术
+&lt;/h2&gt;&lt;p&gt;当网络变得很深的时候，网络通常会变得难以训练，这是因为在我们依赖的方法上的缺点，对于一个很深的网络来说，当前层的梯度来自与损失函数对参数的梯度，而梯度在流动的时候又是依赖于链式法则和反向传播，因此，假设上游梯度：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;所有的梯度都是小于1的数&lt;/p&gt;
+&lt;p&gt;那么在反向传播相乘的时候，很有可能出现梯度消失，即数值过小(&lt;code&gt;nan&lt;/code&gt;)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;当梯度全部都是大于1的数&lt;/p&gt;
+&lt;p&gt;那么在反向传播的过程中，多个大于&lt;code&gt;1&lt;/code&gt;的数也会导致数值过大而溢出&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;正则化的作用&#34;&gt;正则化的作用
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;why it works?&lt;/code&gt;，正则化就是调整数据之间的分布，例如，假设
+$$
+Y = X_1W_1 + X_2W_2
+$$
+而不幸的是，&lt;code&gt;X1&lt;/code&gt;可能是一些房屋面积的数据，例如&lt;code&gt;100平米，150平米&lt;/code&gt;，而&lt;code&gt;X2&lt;/code&gt;有可能是附近的医院个数，例如&lt;code&gt;10,15&lt;/code&gt;，显然，两者数据差别有点大，我们可以假设损失函数对于各个数据之间的梯度图，例如&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241207121003659.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241207121003659&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中&lt;code&gt;X1&lt;/code&gt;是数值比较大的数，&lt;code&gt;X2&lt;/code&gt;是数值比较小的数，中间的星号就是损失函数最小时&lt;code&gt;X1和X2&lt;/code&gt;的取值，可以看到，整个图像的分布就像是一个椭圆形数据，对于&lt;code&gt;X1&lt;/code&gt;来说，每次的变化值都要大于&lt;code&gt;X2&lt;/code&gt;的变化值，这就导致了每次在梯度下降的时候，很有可能导致下降时候的振荡和无法收敛。&lt;/p&gt;
+&lt;p&gt;使用正则化之后，可以把数据进行归一化操作，这样对于整个数据分布来说，其形状会更加接近于圆型，这样在梯度下降的时候，对于一些参数&lt;code&gt;learning_rate&lt;/code&gt;就可以调整的比较大，同时也可以加快模型的收敛，减少训练时间。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241207122004992.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241207122004992&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;同时，这里的正则化技术有很多，例如&lt;code&gt;batch normalization, layer normalization, xxx normalization&lt;/code&gt;，感兴趣的可以自行查阅&lt;/p&gt;
+&lt;p&gt;批正则化处理的技术一般放在全连接层之后或者卷积层之后，而且是放在非线性激活函数之前&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241207122318170.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20241207122318170&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;总结&#34;&gt;总结
+&lt;/h1&gt;&lt;p&gt;卷积神经网络的组成一般包括：卷积层、池化层和全连接层，其中每个层里面又有各种各样的细节，下次来看一看怎么更好的训练一个网络&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>神经网络——多层感知机</title>
         <link>https://XiaoPeng0x3.github.io/p/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/</link>
         <pubDate>Sat, 23 Nov 2024 16:48:55 +0800</pubDate>

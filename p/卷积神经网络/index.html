@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 全连接神经网络面临的问题 在此之前，我们一直是在全连接层神经网络进行讨论，全连接神经网络其实也有许多不便之处\n无法理解图像模板\n对于之前的所有的有关图像分类实现的任务，对于给定的图片(size:3x32x32)，我们并不考虑图片整体或者图片的一些局部特征是什么样的，而是直接把3x32x32的图片展平为一个一维向量(1x3072)，然后经过一些矩阵乘法，我们就可以得到这个图片的scores\n">
+<title>卷积神经网络</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/'>
+
+<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="卷积神经网络">
+<meta property='og:description' content="前言 全连接神经网络面临的问题 在此之前，我们一直是在全连接层神经网络进行讨论，全连接神经网络其实也有许多不便之处\n无法理解图像模板\n对于之前的所有的有关图像分类实现的任务，对于给定的图片(size:3x32x32)，我们并不考虑图片整体或者图片的一些局部特征是什么样的，而是直接把3x32x32的图片展平为一个一维向量(1x3072)，然后经过一些矩阵乘法，我们就可以得到这个图片的scores\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-11-25T17:12:53&#43;08:00'/><meta property='article:modified_time' content='2024-11-25T17:12:53&#43;08:00'/>
+<meta name="twitter:title" content="卷积神经网络">
+<meta name="twitter:description" content="前言 全连接神经网络面临的问题 在此之前，我们一直是在全连接层神经网络进行讨论，全连接神经网络其实也有许多不便之处\n无法理解图像模板\n对于之前的所有的有关图像分类实现的任务，对于给定的图片(size:3x32x32)，我们并不考虑图片整体或者图片的一些局部特征是什么样的，而是直接把3x32x32的图片展平为一个一维向量(1x3072)，然后经过一些矩阵乘法，我们就可以得到这个图片的scores\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😍</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#全连接神经网络面临的问题">全连接神经网络面临的问题</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#卷积层">卷积层</a>
+      <ol>
+        <li><a href="#卷积核">卷积核</a></li>
+        <li><a href="#输出大小">输出大小</a>
+          <ol>
+            <li><a href="#带来的新问题">带来的新问题</a></li>
+            <li><a href="#不同的步长">不同的步长</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#池化层">池化层</a></li>
+    <li><a href="#前向传播">前向传播</a></li>
+    <li><a href="#卷积的过程">卷积的过程</a></li>
+    <li><a href="#反向传播求梯度">反向传播求梯度</a></li>
+    <li><a href="#正则化技术">正则化技术</a>
+      <ol>
+        <li><a href="#正则化的作用">正则化的作用</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/eecs-498/007/" >
+                EECS-498/007
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">卷积神经网络</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-25</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><h2 id="全连接神经网络面临的问题">全连接神经网络面临的问题
+</h2><p>在此之前，我们一直是在全连接层神经网络进行讨论，全连接神经网络其实也有许多不便之处</p>
+<ul>
+<li>
+<p>无法理解图像模板</p>
+<p>对于之前的所有的有关图像分类实现的任务，对于给定的图片(<code>size:3x32x32</code>)，我们并不考虑图片整体或者图片的一些局部特征是什么样的，而是直接把<code>3x32x32</code>的图片展平为一个一维向量(<code>1x3072</code>)，然后经过一些矩阵乘法，我们就可以得到这个图片的<code>scores</code></p>
+</li>
+<li>
+<p>内存问题</p>
+<p><code>3072</code>维的向量似乎还是可以接受的，但是实际上这个图片是非常小的，假设我们使用了一些比较大的图片，那么输入的维度肯定会显著的提升。在进行神经网络全连接后，显然，每一层上都有着巨量的计算，而且为了有更好更复杂的模型，神经网络的层数也会增加，那么在此产生的计算和内存消耗将是巨大的</p>
+</li>
+</ul>
+<h1 id="卷积神经网络">卷积神经网络
+</h1><h2 id="卷积层">卷积层
+</h2><p>卷积神经网络的思路与全连接不同，卷积神经网络更加“尊重”图像的样子，它不会把输入图像进行压缩，而是在乎图像的整体特征，而保留整体特征的一个关键部分就是<code>卷积核</code></p>
+<h3 id="卷积核">卷积核
+</h3><p>卷积核可以保留提取一些图片中相似的特征，只要你了解卷积核是怎么提取图片的特征的，你就会明白为什么</p>
+<ul>
+<li>
+<p>卷积核的计算</p>
+<p>卷积核会在原来输入图片的维度上进行计算，假设我们使用的卷积核是<code>3x5x5</code>的</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126130207101.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241126130207101"
+	
+	
+></p>
+<p>对于图像中每个<code>5x5</code>的部分，我们使用点积去进行计算</p>
+</li>
+<li>
+<p>多个卷积核的使用</p>
+<p>在经过卷积核的计算后，我们得到了一个<code>1x28x28</code>的输出(计算公式后文给出)，更一般的，我们会使用多个卷积核进行卷积，此时卷积核的维度就是<code>Nx3x5x5</code>，那么输出就会是<code>Nx28x28</code>的</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126130742263.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241126130742263"
+	
+	
+></p>
+<p>更一般的，对于一批数据，我们会对着一批数据进行卷积操作，此时就变为</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126130846131.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241126130846131"
+	
+	
+></p>
+<p>下面是其公式表达形式</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126130920660.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241126130920660"
+	
+	
+></p>
+</li>
+<li>
+<p>卷积层的堆叠</p>
+<p>为了搭建更加复杂的网络，通常会堆积多个卷积层(像之前两层网络一样，在一定范围内层数越多越复杂，能力越高)，此时注意，为了确保引入多个卷积层而不是只是一个卷积层，这里也引入了非线性激活函数(<code>ReLu</code>)</p>
+</li>
+</ul>
+<h3 id="输出大小">输出大小
+</h3><p>卷积的过程就是在原始图片上进行滑动相乘的结果，当使用<code>5x5</code>的卷积核时，输入图片大小为<code>32x32</code>，那么在输入的长上的最后一次运算就是第<code>28, 29, 30, 31 ,32</code>的格子上；同样对于宽也是一样的，这样就可以得到输出图像的特征就是<code>28x28</code></p>
+<p>更一般的，对于输入特征<code>W</code>来说，我们使用大小为<code>K</code>的卷积核进行运算，那么输出特征就是**<code>W-K+1</code>**的，利用这个公式，我们就可以很方便的计算输入特征为<code>32x32</code>时，卷积核大小为<code>5x5</code>时的输出特征。</p>
+<h4 id="带来的新问题">带来的新问题
+</h4><p>经过<code>5x5</code>的卷积核运算后，一个肉眼可见的差别就是输出图像与原始输入图像维数是不同的，当我们使用很多个卷积核后，输出的图像看起来像是降维一样。</p>
+<p>为了保持输出图像与输入图像的维度(可能是减少损失的信息)，我们可以使用填充输入图像的方式来保证维度。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126141345424.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241126141345424"
+	
+	
+></p>
+<p>需要填充<code>0</code>的层数<code>p</code>就是<code>(k-1)/2</code>，经过填充，输出的图像大小与输入就有着相同的维度。</p>
+<h4 id="不同的步长">不同的步长
+</h4><p>在上面卷积核进行计算的时候，我们都是默认每次卷积的时候都是挨个滑动，事实上滑动的时候也可以跳跃着滑动，也就是说，在原先的基础上，如果每次都是<code>N</code>步去滑动卷积，那么输出的维度就会减小<code>N</code>倍，这个时候我们可以更新我们的计算公式</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241126201933314.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241126201933314"
+	
+	
+></p>
+<h2 id="池化层">池化层
+</h2><p>池化分为平均池化层和最大池化层，例如，当使用大小为<code>2x2</code>的卷积核进行最大池化的时候，实际上就是对卷积后的每层输出进行特征筛选</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241207114559652.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241207114559652"
+	
+	
+></p>
+<p>上图是一个使用最大层池化，步长为2的池化层，因为步长的原因，池化后的图片大小会发生变化，使用平均池化也是一样的原理，只需要计算<code>2x2</code>内的均值即可</p>
+<h2 id="前向传播">前向传播
+</h2><p>对于给定的数据，怎么实现前线传播的计算呢？假设下面是给定的数据</p>
+<ul>
+<li><code>x</code>, 大小为<code>NxCxHxW</code>，<code>N</code>代表这一批的数据，<code>C</code>表示图片的通道数，<code>HxW</code>是图片的大小</li>
+<li><code>w</code>，大小为<code>FxCxHHxWW</code>，有<code>F</code>个卷积核，每个卷积核大小都是<code>CxHHxWW</code></li>
+<li><code>b</code>，大小为哦<code>F</code>，表示偏执</li>
+</ul>
+<p>现在思考怎么计算经过卷积后的数据<code>out</code></p>
+<h2 id="卷积的过程">卷积的过程
+</h2><p>首先，我们可以拿出一张图片来进行举例，那么这张图片就是<code>x[i, :, :, :]</code>,同时，我们也拿出一个卷积核<code>w[i, :, :, :]</code>。回想一下老师在课堂上举过的例子</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241201122339037.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241201122339037"
+	
+	
+></p>
+<p>这个输出是怎么得到的呢？因为图片是三通道的，所以在每一个通道上都要进行卷积操作，实际上得到的最后输出就是三通道上的总和，那么，对于图片来说，其计算过程就是这样的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">Hout</span><span class="p">,</span> <span class="n">Wout</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span> <span class="c1"># 得到输出的size</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 假设步长是stride</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Hout</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Wout</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 这里假设输出和x有着同样size</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 三个通道的总和</span>
+</span></span><span class="line"><span class="cl">        <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>更一般的，当我们可以进行推广</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 输出图片的维度与步长stride和输入的填充有关</span>
+</span></span><span class="line"><span class="cl"><span class="n">N</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">H</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="cl"><span class="n">F</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">HH</span><span class="p">,</span><span class="n">WW</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="cl"><span class="n">H_out</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">H</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pad</span> <span class="o">-</span> <span class="n">HH</span><span class="p">)</span> <span class="o">//</span> <span class="n">stride</span>
+</span></span><span class="line"><span class="cl"><span class="n">W_out</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">W</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pad</span> <span class="o">-</span> <span class="n">WW</span><span class="p">)</span> <span class="o">//</span> <span class="n">stride</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">F</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">H_out</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">W_out</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 计算第n个数据在第f个卷积核上的输出</span>
+</span></span><span class="line"><span class="cl">                <span class="n">out</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">w</span><span class="p">[</span><span class="n">f</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="c1"># 三通道相乘的和</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="反向传播求梯度">反向传播求梯度
+</h2><p>反向传播求梯度这里其实有点绕，假设我们已经知道损失函数对于输出的梯度<code>dout</code>，那么我们就可以使用链式法则进行求导</p>
+<p><code>out[0, 0, :, :]</code>代表着第<code>1</code>个图片在第一个卷积核上的输出，我们来分析一下它是由哪些部分计算得到的
+$$
+out[0, 0, :, :] = x[0, 0, :, :] * w[0, 0, :, :] + x[0, 1, :, :] * w[0, 1, :, :] + x[0, 2, :, :] * w[0, 2, :, :] + bias[0]
+$$
+现在把卷积核的个数拓展到<code>F</code>个，那么求第<code>f</code>个卷积核的输出就是
+$$
+out[0, f, :, :] = x[0, 0, :, :] * w[f, 0, :, :] + x[0, 1, :, :] * w[f, 1, :, :] + x[0, 2, :, :] * w[f, 2, :, :] + bias[f]
+$$
+转换为代码就是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">w</span><span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">bias</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>需要注意的是，要考虑的是，我们需要学习的参数在哪里参与运算，分层求解其梯度即可。</p>
+<h2 id="正则化技术">正则化技术
+</h2><p>当网络变得很深的时候，网络通常会变得难以训练，这是因为在我们依赖的方法上的缺点，对于一个很深的网络来说，当前层的梯度来自与损失函数对参数的梯度，而梯度在流动的时候又是依赖于链式法则和反向传播，因此，假设上游梯度：</p>
+<ul>
+<li>
+<p>所有的梯度都是小于1的数</p>
+<p>那么在反向传播相乘的时候，很有可能出现梯度消失，即数值过小(<code>nan</code>)</p>
+</li>
+<li>
+<p>当梯度全部都是大于1的数</p>
+<p>那么在反向传播的过程中，多个大于<code>1</code>的数也会导致数值过大而溢出</p>
+</li>
+</ul>
+<h3 id="正则化的作用">正则化的作用
+</h3><p><code>why it works?</code>，正则化就是调整数据之间的分布，例如，假设
+$$
+Y = X_1W_1 + X_2W_2
+$$
+而不幸的是，<code>X1</code>可能是一些房屋面积的数据，例如<code>100平米，150平米</code>，而<code>X2</code>有可能是附近的医院个数，例如<code>10,15</code>，显然，两者数据差别有点大，我们可以假设损失函数对于各个数据之间的梯度图，例如</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241207121003659.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241207121003659"
+	
+	
+></p>
+<p>其中<code>X1</code>是数值比较大的数，<code>X2</code>是数值比较小的数，中间的星号就是损失函数最小时<code>X1和X2</code>的取值，可以看到，整个图像的分布就像是一个椭圆形数据，对于<code>X1</code>来说，每次的变化值都要大于<code>X2</code>的变化值，这就导致了每次在梯度下降的时候，很有可能导致下降时候的振荡和无法收敛。</p>
+<p>使用正则化之后，可以把数据进行归一化操作，这样对于整个数据分布来说，其形状会更加接近于圆型，这样在梯度下降的时候，对于一些参数<code>learning_rate</code>就可以调整的比较大，同时也可以加快模型的收敛，减少训练时间。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241207122004992.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241207122004992"
+	
+	
+></p>
+<p>同时，这里的正则化技术有很多，例如<code>batch normalization, layer normalization, xxx normalization</code>，感兴趣的可以自行查阅</p>
+<p>批正则化处理的技术一般放在全连接层之后或者卷积层之后，而且是放在非线性激活函数之前</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241207122318170.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20241207122318170"
+	
+	
+></p>
+<h1 id="总结">总结
+</h1><p>卷积神经网络的组成一般包括：卷积层、池化层和全连接层，其中每个层里面又有各种各样的细节，下次来看一看怎么更好的训练一个网络</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pytorch/">Pytorch</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">神经网络——多层感知机</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E4%BC%98%E5%8C%96%E4%B8%8E%E8%AE%AD%E7%BB%83/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">优化与训练</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E5%99%A8/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">线性分类器</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/image-classifier%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Image Classifier笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
