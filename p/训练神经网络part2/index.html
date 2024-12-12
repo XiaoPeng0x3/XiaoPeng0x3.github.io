@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 神经网络一个非常关键的地方就在于如何能够更快、更精确的求解出各种参数，这些参数一般是在学习的过程中可以得到，而有一些参数却需要人为的根据经验来进行初始化，例如学习率的大小、每次训练时batch size的大小、损失函数的选择以及激活函数的选择。下面来记录一下如何选择这些参数\n">
-<title>训练神经网络part1</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="学习率 学习率是一个很重要的参数，而且学习率决定了网络能否快速的收敛并趋于稳定。目前为止，我们接触到的网络实际上都是一个优化问题，即如何找到损失函数的极小值。对于多元函数使用的就是梯度下降法去找到极小值，其中又有很多梯度下降的优化版本，例如sgd + momentum、adam等方法，这些方法里面都要用到学习率这个参数\n">
+<title>训练神经网络part2</title>
 
-<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart1/'>
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/'>
 
-<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="训练神经网络part1">
-<meta property='og:description' content="前言 神经网络一个非常关键的地方就在于如何能够更快、更精确的求解出各种参数，这些参数一般是在学习的过程中可以得到，而有一些参数却需要人为的根据经验来进行初始化，例如学习率的大小、每次训练时batch size的大小、损失函数的选择以及激活函数的选择。下面来记录一下如何选择这些参数\n">
-<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart1/'>
+<link rel="stylesheet" href="/scss/style.min.5b550ba26982f5075093949245b3ef807958f8886bf8a7c08ec14bca7bda68e2.css"><meta property='og:title' content="训练神经网络part2">
+<meta property='og:description' content="学习率 学习率是一个很重要的参数，而且学习率决定了网络能否快速的收敛并趋于稳定。目前为止，我们接触到的网络实际上都是一个优化问题，即如何找到损失函数的极小值。对于多元函数使用的就是梯度下降法去找到极小值，其中又有很多梯度下降的优化版本，例如sgd + momentum、adam等方法，这些方法里面都要用到学习率这个参数\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-12-07T12:30:50&#43;08:00'/><meta property='article:modified_time' content='2024-12-07T12:30:50&#43;08:00'/>
-<meta name="twitter:title" content="训练神经网络part1">
-<meta name="twitter:description" content="前言 神经网络一个非常关键的地方就在于如何能够更快、更精确的求解出各种参数，这些参数一般是在学习的过程中可以得到，而有一些参数却需要人为的根据经验来进行初始化，例如学习率的大小、每次训练时batch size的大小、损失函数的选择以及激活函数的选择。下面来记录一下如何选择这些参数\n">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-12-07T12:30:58&#43;08:00'/><meta property='article:modified_time' content='2024-12-07T12:30:58&#43;08:00'/>
+<meta name="twitter:title" content="训练神经网络part2">
+<meta name="twitter:description" content="学习率 学习率是一个很重要的参数，而且学习率决定了网络能否快速的收敛并趋于稳定。目前为止，我们接触到的网络实际上都是一个优化问题，即如何找到损失函数的极小值。对于多元函数使用的就是梯度下降法去找到极小值，其中又有很多梯度下降的优化版本，例如sgd + momentum、adam等方法，这些方法里面都要用到学习率这个参数\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
@@ -285,26 +285,10 @@ var _hmt = _hmt || [];
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#类sigmoid函数">类sigmoid函数</a>
-      <ol>
-        <li><a href="#饱和区">饱和区</a></li>
-        <li><a href="#not-zero-centered">Not zero centered</a></li>
-        <li><a href="#计算代价高">计算代价高</a></li>
-        <li><a href="#tanh">tanh</a></li>
-      </ol>
-    </li>
-    <li><a href="#类relu">类ReLu</a>
-      <ol>
-        <li><a href="#dead-relu">dead ReLu</a></li>
-        <li><a href="#leaky-relu">Leaky ReLu</a></li>
-        <li><a href="#总结">总结</a></li>
-      </ol>
-    </li>
-  </ol>
-
-  <ol>
-    <li><a href="#xavier-初始化">Xavier 初始化</a></li>
-    <li><a href="#kaiming初始化">kaiming初始化</a></li>
+    <li><a href="#step-学习率">step 学习率</a></li>
+    <li><a href="#cos-学习率">cos 学习率</a></li>
+    <li><a href="#线性下降学习率">线性下降学习率</a></li>
+    <li><a href="#平方根学习率">平方根学习率</a></li>
   </ol>
 </nav>
         </div>
@@ -332,7 +316,7 @@ var _hmt = _hmt || [];
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart1/">训练神经网络part1</a>
+            <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/">训练神经网络part2</a>
         </h2>
     
         
@@ -369,7 +353,7 @@ var _hmt = _hmt || [];
 
 
                 <time class="article-time--reading">
-                    阅读时长: 6 分钟
+                    阅读时长: 3 分钟
                 </time>
             </div>
         
@@ -384,326 +368,232 @@ var _hmt = _hmt || [];
     <section class="article-content">
     
     
-    <h1 id="前言">前言
-</h1><p>神经网络一个非常关键的地方就在于如何能够更快、更精确的求解出各种参数，这些参数一般是在学习的过程中可以得到，而有一些参数却需要人为的根据经验来进行初始化，例如学习率的大小、每次训练时<code>batch size</code>的大小、损失函数的选择以及激活函数的选择。下面来记录一下如何选择这些参数</p>
-<h1 id="激活函数">激活函数
-</h1><p>激活函数在神经网络起到的是引入非线性的作用，当我们不选择激活函数的时候，实际上并没有增加有效层的层数，而激活函数又有很多种选择，早期的激活函数有<code>sigmoid、tanh</code>函数，而我们用的较多的有<code>ReLu</code>以及<code>ReLu</code>的变体</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208110652513.png"
+    <h1 id="学习率">学习率
+</h1><p>学习率是一个很重要的参数，而且学习率决定了网络能否快速的收敛并趋于稳定。目前为止，我们接触到的网络实际上都是一个优化问题，即如何找到损失函数的极小值。对于多元函数使用的就是梯度下降法去找到极小值，其中又有很多梯度下降的优化版本，例如<code>sgd + momentum</code>、<code>adam</code>等方法，这些方法里面都要用到学习率这个参数</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200057319.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208110652513"
+		alt="image-20241209200057319"
 	
 	
 ></p>
-<h2 id="类sigmoid函数">类sigmoid函数
-</h2><p><code>sigmoid</code>函数在早期十分受欢迎，函数的值域在<code>[0,1]</code>中，这个函数在早期受欢迎的原因是它很好的模拟了神经元接受刺激产生冲动的一个过程，但是在实践中它有着很多的缺点</p>
-<h3 id="饱和区">饱和区
-</h3><p>当<code>x</code>的取值变得很大或者很小时，其值趋近于<code>1</code>或者<code>0</code>，从图中可以近似估计一下，可以看到输出$\sigma(x)$对于<code>x</code>的梯度近似为0，那么在使用反向传播链式求导时，很容易将上游梯度的结果变为一个非常小的值，也就是所谓的<code>kill gradients</code>，导致梯度不能通过反向传播而传递至前一层。</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208112209892.png"
+<p>老师给出了许多学习率的选择方法</p>
+<h2 id="step-学习率">step 学习率
+</h2><p>step学习率的思路就是每经过给定的几个<code>epochs</code>，就重新设置学习率。可以这样做是因为在学习初期，即使学习率很大也没有关系，大的学习率反而可以减少训练时间，当经过几轮<code>epoch</code>后，把学习率降低可以减少模型的震荡，从而提高精度。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200554629.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208112209892"
+		alt="image-20241209200554629"
 	
 	
 ></p>
-<h3 id="not-zero-centered">Not zero centered
-</h3><p>从图中看出，<code>sigmoid</code>函数不是关于原点分布的，这就会导致在计算参数<code>W</code>的梯度依赖于上一层的梯度，例如，给定两个参数<code>W1</code>和<code>W2</code>，对于输出来说
-$$
-f = X_1W_1 + X_2W_2
-$$
-可以使用链式法则求得这两个参数的梯度
-$$
-\frac{dL}{dW_i} = \frac{dL}{df} \frac{df}{dW_i}
-$$
-也就是
-$$
-\frac{dL}{dW_i} = \frac{dL}{df} X_i
-$$
-而因为$X_i$恒为正(来自<code>sigmoid</code>的输出)，所以$\frac{dL}{dW_i}$的符号只取决于上游梯度，那么对于$W_1和W_2$这两个梯度来说，其符号要么同时为正，要么同时为负，所以从图上看就是这样的</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208114402776.png"
+<h2 id="cos-学习率">cos 学习率
+</h2><p>在训练过程中，学习率的参数变化是<code>cos</code>型的</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200715331.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208114402776"
+		alt="image-20241209200715331"
 	
 	
 ></p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208114628834.png"
+<h2 id="线性下降学习率">线性下降学习率
+</h2><p>学习率的选择是线性的</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200913799.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208114628834"
+		alt="image-20241209200913799"
 	
 	
 ></p>
-<p>这就使得网络很难训练</p>
-<h3 id="计算代价高">计算代价高
-</h3><p>显然，指数级别的计算代价要明显高于一般运算</p>
-<h3 id="tanh">tanh
-</h3><p>这里也介绍了<code>tanh</code>函数，从图像上来说，与<code>sigmoid</code>相比，<code>tanh</code>只是少了<code>not-zero-centered</code>这个缺点</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208114949679.png"
+<h2 id="平方根学习率">平方根学习率
+</h2><p>这个图片是反平方根的函数曲线&hellip;.</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200947963.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208114949679"
+		alt="image-20241209200947963"
 	
 	
 ></p>
-<h2 id="类relu">类ReLu
-</h2><p><code>ReLu</code>的激活函数是
-$$
-ReLu(x) = max(0, x)
-$$
-选择这个激活函数也是<code>AlexNet</code>一个创新点之一，与之前的类<code>sigmoid</code>函数相比，<code>ReLu</code>简单、收敛快、不存在饱和梯度，但是这个函数也是<code>not zero centered</code>，而且也有着其它的缺点</p>
-<h3 id="dead-relu">dead ReLu
-</h3><p>当输入<code>X</code>小于0时，<code>ReLu</code>只是简单的去把<code>X</code>设置为0，导致小于0的部分的梯度永远也不会去更新，当输入 $x≤0$，输出总是 0。因此，如果一个神经元的输入权重和偏置的组合导致它始终进入负区,该神经元在整个训练过程中都不会被激活，也不会对学习产生贡献。也就是该神经元是<code>dead</code>的，并不会增强模型的能力。</p>
-<p>为解决这个问题，研究人员又提出了<code>ReLu</code>的变体</p>
-<h3 id="leaky-relu">Leaky ReLu
-</h3><p><code>Leaky ReLu</code>的思路是小于0的部分不是简单的设置为0，而是设置为一个很小很小的数</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208120044330.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20241208120044330"
-	
-	
-></p>
-<p>把设置的这个很小的数叫做$\alpha$，在反向传播中可以学习这个参数</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208200504826.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20241208200504826"
-	
-	
-></p>
-<p>还有其它的各种变种</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208200612781.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20241208200612781"
-	
-	
-></p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208200629303.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20241208200629303"
-	
-	
-></p>
-<h3 id="总结">总结
-</h3><p>规则怪谈：</p>
+<h1 id="超参数选择">超参数选择
+</h1><p>选择超参数（hyperparameter）是深度学习和机器学习中关键的步骤，影响模型的性能和训练效率。</p>
+<p><strong>1. 检查初始损失 (Check initial loss)</strong></p>
 <ul>
-<li>当你不知道使用什么激活函数，或者真的不在乎那<code>0.1%</code>的精度提升，直接选择<code>ReLu</code></li>
-<li>当你需要极值的优化，那么可以尝试一下<code>ReLu</code>的变体</li>
-<li>不要使用<code>tanh</code>和<code>sigmoid</code></li>
+<li><strong>目的</strong>：确认模型和数据管道是否正确配置。</li>
+<li>细节
+<ul>
+<li>使用默认或初始超参数（如随机初始化权重，标准学习率）。</li>
+<li>检查初始损失是否异常高或为NaN。</li>
+<li>如果损失值异常，可能是数据预处理或模型设置的问题。</li>
 </ul>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208201342820.png"
+</li>
+</ul>
+<p><strong>2. 在小样本上过拟合 (Overfit a small sample)</strong></p>
+<ul>
+<li><strong>目的</strong>：验证模型是否有能力拟合数据（模型复杂度是否足够）。</li>
+<li>细节
+<ul>
+<li>使用数据集中的一小部分样本（例如5-10个）。</li>
+<li>调整模型直到它能够完全拟合这组数据，损失降到接近零。</li>
+<li>如果无法过拟合，检查模型架构或超参数（如学习率、网络深度等）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>3. 找到能使损失下降的学习率 (Find LR that makes loss go down)</strong></p>
+<ul>
+<li><strong>目的</strong>：找到一个合适的学习率，使损失能稳步下降。</li>
+<li>细节
+<ul>
+<li>采用 <em>learning rate finder</em> 技术。</li>
+<li>逐步增加学习率，绘制损失随学习率变化的曲线。</li>
+<li>选择损失开始明显下降但未发生震荡的学习率（通常在曲线的下降初期）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>4. 粗略网格搜索，训练1-5个epoch (Coarse grid, train for ~1-5 epochs)</strong></p>
+<ul>
+<li><strong>目的</strong>：快速筛选出表现较好的超参数范围。</li>
+<li>细节
+<ul>
+<li>在关键超参数（如学习率、权重衰减、batch size）上进行粗粒度的网格搜索。</li>
+<li>每次试验只训练1到5个epoch，足够观察趋势但不过多浪费计算资源。</li>
+<li>排除性能较差的参数组合。</li>
+</ul>
+</li>
+</ul>
+<p><strong>5. 精细网格搜索，延长训练时间 (Refine grid, train longer)</strong></p>
+<ul>
+<li>
+<p><strong>目的</strong>：进一步优化超参数，找到最佳的参数组合。</p>
+</li>
+<li>
+<p>细节</p>
+<ul>
+<li>缩小关键超参数的搜索范围，进行更精细的网格搜索。</li>
+<li>增加训练epoch（例如10到50个）以评估长期性能。</li>
+<li>检查模型在验证集上的表现以避免过拟合。</li>
+</ul>
+</li>
+</ul>
+<p><strong>6. 检查学习曲线 (Look at learning curves)</strong></p>
+<ul>
+<li>
+<p><strong>目的</strong>：通过学习曲线分析模型的训练动态。</p>
+</li>
+<li>
+<p>细节</p>
+<ul>
+<li>
+<p>学习曲线显示训练和验证损失或精度随时间变化的趋势。</p>
+</li>
+<li>
+<p>常见问题及解决办法</p>
+<ul>
+<li>如果验证损失明显高于训练损失：模型可能过拟合，需要正则化或增加数据。</li>
+<li>如果两者都较高：可能是学习率太低或模型复杂度不足。</li>
+<li>如果训练损失震荡：可能是学习率过高或模型过于复杂。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>这也是老师在课上提到的这几点，为了方便查看训练的进展，一个很好的习惯是把模型在测试集上的精确度和验证集上的精确度给可视化，老师这里提到了一些有用的建议。</p>
+<ul>
+<li>
+<p><code>loss</code>一开始不降低</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209201948555.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208201342820"
+		alt="image-20241209201948555"
 	
 	
 ></p>
-<h1 id="数据处理">数据处理
-</h1><p>对数据进行预处理可以更好的训练网络。</p>
-<p>下图是一个对原始数据进行<code>0-1</code>正态分布的处理过程</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208202254107.png"
+<p>你的初始化很bad!</p>
+</li>
+<li>
+<p><code>loss</code>很高而且随着训练的进行不发生变化</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202140502.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208202254107"
+		alt="image-20241209202140502"
 	
 	
 ></p>
-<p>这里有一个值得注意的代码细节</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">X</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这里对数据进行处理都是在同一类的数据进行处理，而在数据集里面按照一般约定，每一列是一个类的所有数据分布，所以这里是在<code>axis=0</code>(<code>torch</code>里面使用的是<code>dim</code>)上进行数据处理。</p>
-<p>对数据进行预处理可以使得在反向传播时更容易求解梯度和传播梯度</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208203144453.png"
+<p>学习率太大了，试试学习率衰减的办法吧！</p>
+</li>
+<li>
+<p>衰减的太早了，导致不能快速下降</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202317588.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208203144453"
+		alt="image-20241209202317588"
 	
 	
 ></p>
-<p>对于图像来说，可以减去图片的均值、减去每个通道上的均值以及在每个通道上做正态分布初始化</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208203353621.png"
+</li>
+<li>
+<p>准确率依旧在上升，应该训练更长的时间</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202413717.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208203353621"
+		alt="image-20241209202413717"
 	
 	
 ></p>
-<h1 id="权重参数初始化">权重参数初始化
-</h1><p>到目前为止，权重参数<code>W</code>一直是一个非常重要的参数，而且权重的初始化也是训练网络很重要的一部分，一个想法是，假设我们有着一个比较简单的网络，如果我们把权重参数全部初始化为<code>0</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">W</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>那么在前向传播的过程中，每一层的输入就都是<code>0</code>，那么这个网络实际上什么都做不了，一个比较常见的做法是把<code>W</code>按照高斯分布进行初始化</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">W</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span> <span class="o">*</span> <span class="n">weight_scale</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>例如，<code>weight_scale</code>可以初始化为<code>0.01</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">W</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这样初始化在网络层数比较小的时候没什么问题，但当网络层数非常多时，后面层获得的输入就会非常非常小，以至于无法表示</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241208204805391.png"
+</li>
+<li>
+<p>这种情况也是很常见的，即数据在训练集上精度很高，但是在测试集上精度却不增高，这是因为发生了过拟合，导致模型只能很好的识别出“见到”过的数据</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202548575.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241208204805391"
+		alt="image-20241209202548575"
 	
 	
 ></p>
-<h2 id="xavier-初始化">Xavier 初始化
-</h2><p>对于激活函数是<code>tanh</code>时，<code>xavier</code>激活函数可以很好的结果这个问题，这个方法的核心思想在于把输入和输出的分布尽可能相似，也就是输入的方差与输出的方差一致。</p>
-<p>对于输出来说
-$$
-y_i = \sum_{i = 0} ^ D X_iW_i
-$$
-为了使两者方差相等，即
-$$
-Var(y_i) = \sum_{i=0} ^ D Var(X_iW_i)
-$$
-因为输入<code>X</code>的方差是<code>1</code>，即
-$$
-Var(y_i) = D*Var(W_i)
-$$
-所以$W_i$的方差就是原来的$\frac{1}{D}$,只需要在原来初始化时除以输入维度数即可</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">W</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">Din</span><span class="p">,</span> <span class="n">Dout</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">)</span> <span class="c1"># 注意这里是方差</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209175245155.png"
+</li>
+<li>
+<p>训练集与验证集之间精度在训练过程中相差很小，假设数据来源可靠的话，那么说明模型还不够复杂，或者模型还是处于欠拟合的状态</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202929429.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241209175245155"
-	
 	
 ></p>
-<h2 id="kaiming初始化">kaiming初始化
-</h2><p>也叫做<code>He</code>初始化，这个初始化方法是专门为<code>ReLu</code>实现的，回想一下<code>ReLu</code>函数，在<code>ReLu</code>函数作用下，对于<code>0-1</code>分布来说，每次产生非0的概率就是<code>0.5</code>,所以对于这组数据来说，每次方差都要缩小一半。</p>
-<p>同样的，为了使输入和输出的分布近似相等，所以可以推导出在<code>ReLu</code>函数作用下的初始为</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">W</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">Din</span><span class="p">,</span> <span class="n">Dout</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="n">Din</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>同样的，对于<code>ResNet</code>来说，整个初始化就是这样的</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209175845492.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20241209175845492"
-	
-	
-></p>
-<p>这样可以保证在两个卷积层输出后方差不变。</p>
-<h1 id="正则化">正则化
-</h1><p>正则化技术是防止模型过拟合的一个关键技术，正则化可以从某种程度上减少模型的复杂度。</p>
-<p>在一开始，对于损失函数，我们讨论了<code>L1</code>正则化和<code>L2</code>正则化这两种简单有效的正则化方法</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209192726003.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20241209192726003"
-	
-	
-></p>
-<p>此外老师还介绍了一种正则化方法<code>DropOut</code>,<code>DropOut</code>一般用于全连接层的优化，对于一些神经元的输出，<code>DropOut</code>会按照<code>P</code>的概率把这些神经元的输出置为0，其结果就像是<strong>在复杂的网络中选择一些简单的子网络</strong></p>
-<p>一样，从而降低模型的复杂度。</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209193249375.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20241209193249375"
-	
-	
-></p>
-<p>为了保证这两个模型依旧是等价的，我们把未丢弃的那些值都除以p，这样可以保证在<code>DropOut</code>前后两者均值相同。</p>
-<h1 id="数据增广">数据增广
-</h1><p>数据增广的想法可能是更好的去模拟人类的思维，对于一张图片来说，我们可以对这张图片进行裁剪、旋转、增强亮度等操作，对于人类来说，即使经过这些操作，也还是很容易就可以辨别出这是同一张图片，这恰恰也是我们对机器也可以实现的能力。</p>
-<p>除此之外，在数据集较小、数据集图片质量不佳时，我们就可以人为的对数据进行一些操作，从而达到训练要求。</p>
-<h1 id="总结-1">总结
-</h1><p>这次老师分享了一些训练网络时的一些技巧，包括激活函数的选择、数据预处理的重要性、权重参数初始化的方法、正则化以及数据增广的办法，这些都会在作业中用到！</p>
+</li>
+</ul>
+<h1 id="总结">总结
+</h1><p>在这一部分，我们只介绍了学习率以及超参数选择的一些技巧，后面的内容与迁移学习以后再做总结！</p>
 
 </section>
 
@@ -770,12 +660,12 @@ $$
             
                 
 <article class="">
-    <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/">
+    <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart1/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">训练神经网络part2</h2>
+            <h2 class="article-title">训练神经网络part1</h2>
         </div>
     </a>
 </article>
