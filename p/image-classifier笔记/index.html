@@ -82,7 +82,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                        <img src="/img/avatar_hu_7eaeb6c857ea8f6f.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -583,12 +583,10 @@ var _hmt = _hmt || [];
 </h2><p>首先是计算两个向量之间的距离</p>
 <h3 id="双重循环">双重循环
 </h3><blockquote>
-<p>This implementation uses a naive set of nested loops over the training and    test data.     The input data may have any number of dimensions &ndash; for example this    function should be able to compute nearest neighbor between vectors, in    which case the inputs will have shape (num_{train, test}, D); it should    also be able to compute nearest neighbors between images, where the inputs    will have shape (num_{train, test}, C, H, W). More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p>
-</blockquote>
+<p>This implementation uses a naive set of nested loops over the training and    test data.     The input data may have any number of dimensions &ndash; for example this    function should be able to compute nearest neighbor between vectors, in    which case the inputs will have shape (num_{train, test}, D); it should    also be able to compute nearest neighbors between images, where the inputs    will have shape (num_{train, test}, C, H, W). More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p></blockquote>
 <p>这里是老师给的一些代码的预处理的关键提示</p>
 <blockquote>
-<p>More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p>
-</blockquote>
+<p>More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p></blockquote>
 <p>对于所有的输入向量，不管是什么维度的样本，我们都可以转换为一个二维张量，这样做可以简化一些计算，同时使得结果更加清晰。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -1108,7 +1106,9 @@ var _hmt = _hmt || [];
     <section class="copyright">
         &copy; 
         
-        2024 Xiao Peng
+            2024 - 
+        
+        2025 Xiao Peng
     </section>
     
     <section class="powerby">

@@ -82,7 +82,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                        <img src="/img/avatar_hu_7eaeb6c857ea8f6f.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -402,8 +402,8 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Tree</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="nx">Val</span> <span class="kt">int</span> <span class="c1">// 值域
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Left</span> <span class="o">*</span><span class="nx">Tree</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Val</span> <span class="kt">int</span> <span class="c1">// 值域</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Left</span> <span class="o">*</span><span class="nx">Tree</span>
 </span></span><span class="line"><span class="cl">    <span class="nx">Right</span> <span class="o">*</span><span class="nx">Tree</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
@@ -443,8 +443,7 @@ var _hmt = _hmt || [];
 		alt="{\displaystyle 2^{\begin{aligned}k\end{aligned}}-1}"
 	
 	
->个节点。</p>
-</blockquote>
+>个节点。</p></blockquote>
 <p>通俗点来说，完全二叉树就是满二叉树从后向前去除子节点后剩下的二叉树。简单来说，堆按照根节点与子节点的大小关系可以分为<strong>大根堆</strong>和<strong>小根堆</strong>。大根堆的根节点比所有的子节点大，小根堆的根节点比子节点都小。所以按照这种规则，大根堆的根节点一定是数组里面的最大值，小根堆的根节点一定是数组里面的最小值。</p>
 <h2 id="堆的实现">堆的实现
 </h2><p>首先，对于一个不是堆结构的数组来说，第一步要做的就是<code>heapify</code>堆化，堆化需要用到两个辅助函数，</p>
@@ -489,18 +488,18 @@ var _hmt = _hmt || [];
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">sink</span><span class="p">(</span><span class="nx">k</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 孩子结点
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 孩子结点</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">child</span> <span class="o">:=</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span> <span class="o">+</span> <span class="mi">1</span>
 </span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">child</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="nx">child</span> <span class="p">=</span> <span class="nx">child</span> <span class="o">+</span> <span class="mi">1</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 没必要交换
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 没必要交换</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="k">break</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 交换两个元素
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 交换两个元素</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">child</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">k</span> <span class="p">=</span> <span class="nx">child</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
@@ -520,8 +519,8 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">heapify</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 从非叶子结点开始
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 从非叶子结点开始</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">this</span><span class="p">.</span><span class="nf">sink</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
@@ -544,10 +543,10 @@ var _hmt = _hmt || [];
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">swim</span><span class="p">(</span><span class="nx">k</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">k</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 父节点比自己小
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">k</span> <span class="p">=</span> <span class="p">(</span><span class="nx">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="c1">// 注意这里啊
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 父节点比自己小</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[(</span><span class="nx">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">k</span> <span class="p">=</span> <span class="p">(</span><span class="nx">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="c1">// 注意这里啊</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -585,8 +584,8 @@ var _hmt = _hmt || [];
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">delMax</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">ans</span> <span class="o">:=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">item</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">// 删除
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">this</span><span class="p">.</span><span class="nf">sink</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">item</span> <span class="p">=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="nx">this</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">// 删除</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nf">sink</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">ans</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">MaxHeap</span><span class="p">)</span> <span class="nf">getMax</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
@@ -741,16 +740,16 @@ var _hmt = _hmt || [];
 </span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">// ConstructMaxHeap 将输入数组转换为最大堆。
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">ConstructMaxHeap</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// ConstructMaxHeap 将输入数组转换为最大堆。</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ConstructMaxHeap</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nf">sink</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">// sink 是辅助函数，用于下沉元素以保持最大堆性质。
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">sink</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">k</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// sink 是辅助函数，用于下沉元素以保持最大堆性质。</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">sink</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">k</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">child</span> <span class="o">:=</span> <span class="mi">2</span><span class="o">*</span><span class="nx">k</span> <span class="o">+</span> <span class="mi">1</span>
 </span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">child</span><span class="o">+</span><span class="mi">1</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">child</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">child</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="p">{</span>
@@ -764,14 +763,14 @@ var _hmt = _hmt || [];
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">// heapSort 使用堆排序算法对输入的切片进行排序。
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">heapSort</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// heapSort 使用堆排序算法对输入的切片进行排序。</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">heapSort</span><span class="p">(</span><span class="nx">nums</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="nf">ConstructMaxHeap</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="c1">// 交换最大元素到正确位置
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">sink</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>                    <span class="c1">// 重新构建堆
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="c1">// 交换最大元素到正确位置</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">sink</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>                    <span class="c1">// 重新构建堆</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
@@ -899,7 +898,9 @@ var _hmt = _hmt || [];
     <section class="copyright">
         &copy; 
         
-        2024 Xiao Peng
+            2024 - 
+        
+        2025 Xiao Peng
     </section>
     
     <section class="powerby">

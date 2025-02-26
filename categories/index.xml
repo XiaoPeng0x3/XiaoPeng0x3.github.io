@@ -7,7 +7,23 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Xiao Peng</copyright>
-        <lastBuildDate>Sat, 07 Dec 2024 12:30:58 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 26 Feb 2025 20:08:05 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Java</title>
+        <link>https://XiaoPeng0x3.github.io/categories/java/</link>
+        <pubDate>Wed, 26 Feb 2025 20:08:05 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/categories/java/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Pytorch</title>
+        <link>https://XiaoPeng0x3.github.io/categories/pytorch/</link>
+        <pubDate>Fri, 03 Jan 2025 16:29:50 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/categories/pytorch/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>EECS-498/007</title>
         <link>https://XiaoPeng0x3.github.io/categories/eecs-498/007/</link>
         <pubDate>Sat, 07 Dec 2024 12:30:58 +0800</pubDate>

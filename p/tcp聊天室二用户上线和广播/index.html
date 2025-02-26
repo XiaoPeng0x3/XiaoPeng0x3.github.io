@@ -82,7 +82,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                        <img src="/img/avatar_hu_7eaeb6c857ea8f6f.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -410,12 +410,12 @@ var _hmt = _hmt || [];
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Server</span> <span class="kd">struct</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">Ip</span>   <span class="kt">string</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">Port</span> <span class="kt">int</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 创建用户表
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">OnlineMap</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">User</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 同步的锁
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">mapLock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 负责全局广播的chan
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Message</span> <span class="kd">chan</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 创建用户表</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">OnlineMap</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="nx">User</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 同步的锁</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">mapLock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 负责全局广播的chan</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Message</span> <span class="kd">chan</span> <span class="kt">string</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -458,36 +458,36 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nf">Start</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 创建好一个监听对象
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 这个函数会有两个返回值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 一个是创建的 listen对象， 一个是是否创建成功
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">listener</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s:%d&#34;</span><span class="p">,</span> <span class="nx">this</span><span class="p">.</span><span class="nx">Ip</span><span class="p">,</span> <span class="nx">this</span><span class="p">.</span><span class="nx">Port</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 创建失败的话， err就会有一个失败code
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// err != nil 就是说明创建失败
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 创建好一个监听对象</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 这个函数会有两个返回值</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 一个是创建的 listen对象， 一个是是否创建成功</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">listener</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s:%d&#34;</span><span class="p">,</span> <span class="nx">this</span><span class="p">.</span><span class="nx">Ip</span><span class="p">,</span> <span class="nx">this</span><span class="p">.</span><span class="nx">Port</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 创建失败的话， err就会有一个失败code</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// err != nil 就是说明创建失败</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;创建监听对象失败！, err&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
 </span></span><span class="line"><span class="cl">		<span class="k">return</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 启动之后记得关闭，避免浪费资源
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">defer</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 然后就是使用accept方法
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 在一个循环里面不停的接受数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 监听
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 全局管道
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">go</span> <span class="nx">this</span><span class="p">.</span><span class="nf">ListenMessage</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 启动之后记得关闭，避免浪费资源</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 然后就是使用accept方法</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 在一个循环里面不停的接受数据</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 监听</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 全局管道</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nx">this</span><span class="p">.</span><span class="nf">ListenMessage</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 这里的 meaage 是net.Coon类型
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 说明接收到了数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 这里的 meaage 是net.Coon类型</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 说明接收到了数据</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;监听失败！&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">			<span class="k">continue</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 打开一个协程去处理
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">go</span> <span class="nx">this</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="c1">// 下面的代码不会阻塞
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 打开一个协程去处理</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nx">this</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 下面的代码不会阻塞</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
@@ -544,8 +544,8 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewUser</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="p">)</span> <span class="o">*</span><span class="nx">User</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">userAddr</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nf">RemoteAddr</span><span class="p">().</span><span class="nf">String</span><span class="p">()</span> <span class="c1">// 可以得到客户端的地址
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">user</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">userAddr</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nf">RemoteAddr</span><span class="p">().</span><span class="nf">String</span><span class="p">()</span> <span class="c1">// 可以得到客户端的地址</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">user</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">Name</span><span class="p">:</span> <span class="nx">userAddr</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">Addr</span><span class="p">:</span> <span class="nx">userAddr</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">C</span><span class="p">:</span>    <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">),</span>
@@ -555,8 +555,8 @@ var _hmt = _hmt || [];
 </span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">user</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">// ListenMessage 监听User的chan
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="nf">ListenMessage</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// ListenMessage 监听User的chan</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="nf">ListenMessage</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">mes</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">this</span><span class="p">.</span><span class="nx">C</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">this</span><span class="p">.</span><span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">mes</span> <span class="o">+</span> <span class="s">&#34;\n&#34;</span><span class="p">))</span>
@@ -582,16 +582,16 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nf">Handle</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// fmt.Println(&#34;连接成功！&#34;)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 执行到这里，说明已经有一个用户上线
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">newUser</span> <span class="o">:=</span> <span class="nf">NewUser</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// fmt.Println(&#34;连接成功！&#34;)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 执行到这里，说明已经有一个用户上线</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">newUser</span> <span class="o">:=</span> <span class="nf">NewUser</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">mapLock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">OnlineMap</span><span class="p">[</span><span class="nx">newUser</span><span class="p">.</span><span class="nx">Name</span><span class="p">]</span> <span class="p">=</span> <span class="nx">newUser</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">mapLock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// 广播该用户已上线
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">this</span><span class="p">.</span><span class="nf">Boardcast</span><span class="p">(</span><span class="nx">newUser</span><span class="p">,</span> <span class="s">&#34;I am in!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 广播该用户已上线</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nf">Boardcast</span><span class="p">(</span><span class="nx">newUser</span><span class="p">,</span> <span class="s">&#34;I am in!&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -607,10 +607,10 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nf">Boardcast</span><span class="p">(</span><span class="nx">u</span> <span class="nx">User</span><span class="p">,</span> <span class="nx">mes</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// 把上线的消息发送给message chan
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">sendMes</span> <span class="o">:=</span> <span class="s">&#34;[&#34;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">Name</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">Addr</span> <span class="o">+</span> <span class="nx">mes</span> <span class="o">+</span> <span class="s">&#34;]&#34;</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">Message</span> <span class="o">&lt;-</span> <span class="nx">sendMes</span> <span class="c1">// 发送给管道
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 把上线的消息发送给message chan</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">sendMes</span> <span class="o">:=</span> <span class="s">&#34;[&#34;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">Name</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">Addr</span> <span class="o">+</span> <span class="nx">mes</span> <span class="o">+</span> <span class="s">&#34;]&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">this</span><span class="p">.</span><span class="nx">Message</span> <span class="o">&lt;-</span> <span class="nx">sendMes</span> <span class="c1">// 发送给管道</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>在发送给管道后，<code>server</code>中的管道就就得到了数据，因此，就可以直接通过<code>server</code>中的<code>chan</code>进行消息的传输，遍历<code>Onlinemap</code>即可</p>
@@ -632,9 +632,9 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Server</span><span class="p">)</span> <span class="nf">ShareMessage</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 只要message有消息
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 那么就发送给在线的所有用户
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 只要message有消息</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 那么就发送给在线的所有用户</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">mes</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">this</span><span class="p">.</span><span class="nx">Message</span>
 </span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">user</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">this</span><span class="p">.</span><span class="nx">OnlineMap</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="nx">this</span><span class="p">.</span><span class="nx">mapLock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
@@ -795,7 +795,9 @@ var _hmt = _hmt || [];
     <section class="copyright">
         &copy; 
         
-        2024 Xiao Peng
+            2024 - 
+        
+        2025 Xiao Peng
     </section>
     
     <section class="powerby">

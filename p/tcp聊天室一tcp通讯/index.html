@@ -82,7 +82,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu14570580908038796829.png" width="300"
+                        <img src="/img/avatar_hu_7eaeb6c857ea8f6f.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -393,8 +393,8 @@ var _hmt = _hmt || [];
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="c1">// The network must be &#34;tcp&#34;, &#34;tcp4&#34;, &#34;tcp6&#34;, &#34;unix&#34; or &#34;unixpacket&#34;.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Listen</span><span class="p">(</span><span class="nx">network</span><span class="p">,</span> <span class="nx">address</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Listener</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="c1">// The network must be &#34;tcp&#34;, &#34;tcp4&#34;, &#34;tcp6&#34;, &#34;unix&#34; or &#34;unixpacket&#34;.</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Listen</span><span class="p">(</span><span class="nx">network</span><span class="p">,</span> <span class="nx">address</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Listener</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">lc</span> <span class="nx">ListenConfig</span>
 </span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">lc</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">network</span><span class="p">,</span> <span class="nx">address</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
@@ -412,8 +412,8 @@ var _hmt = _hmt || [];
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="nx">listener</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:8080&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// To do
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// To do</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>就创建好了一个<code>scoket</code></p>
@@ -437,8 +437,8 @@ var _hmt = _hmt || [];
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// To do
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// To do</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>其中，返回的是一个<code>net.Conn</code>类型的参数，可以通过<code>conn</code>在<code>socket</code>之间传递数据</p>
@@ -471,29 +471,29 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Conn</span> <span class="kd">interface</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// Read reads data from the connection.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// Read can be made to time out and return an error after a fixed
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// time limit; see SetDeadline and SetReadDeadline.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Read</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Read reads data from the connection.</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Read can be made to time out and return an error after a fixed</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// time limit; see SetDeadline and SetReadDeadline.</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Read</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// Write writes data to the connection.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// Write can be made to time out and return an error after a fixed
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// time limit; see SetDeadline and SetWriteDeadline.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Write</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Write writes data to the connection.</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Write can be made to time out and return an error after a fixed</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// time limit; see SetDeadline and SetWriteDeadline.</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Write</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// Close closes the connection.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// Any blocked Read or Write operations will be unblocked and return errors.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Close closes the connection.</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Any blocked Read or Write operations will be unblocked and return errors.</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// LocalAddr returns the local network address, if known.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">LocalAddr</span><span class="p">()</span> <span class="nx">Addr</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// LocalAddr returns the local network address, if known.</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">LocalAddr</span><span class="p">()</span> <span class="nx">Addr</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// RemoteAddr returns the remote network address, if known.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">RemoteAddr</span><span class="p">()</span> <span class="nx">Addr</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// RemoteAddr returns the remote network address, if known.</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">RemoteAddr</span><span class="p">()</span> <span class="nx">Addr</span>
 </span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl">    <span class="c1">// ........
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// ........
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ........</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ........</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>conn.Read</code>可以从连接中读取数据(<code>server</code>可以<code>read</code>来自<code>client</code>的数据)， 同时<code>conn.Write</code>可以从连接中发送数据(<code>server</code>向<code>client</code>发送数据)</p>
@@ -552,8 +552,8 @@ var _hmt = _hmt || [];
 </span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">ip</span> <span class="o">:=</span> <span class="s">&#34;127.0.0.1&#34;</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">port</span> <span class="o">:=</span> <span class="mi">8080</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//CreateServer(ip, port)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">listener</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s:%d&#34;</span><span class="p">,</span> <span class="nx">ip</span><span class="p">,</span> <span class="nx">port</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//CreateServer(ip, port)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">listener</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s:%d&#34;</span><span class="p">,</span> <span class="nx">ip</span><span class="p">,</span> <span class="nx">port</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Eror!&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
@@ -567,10 +567,10 @@ var _hmt = _hmt || [];
 </span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;connect fail&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">			<span class="k">return</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="c1">// 读取数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">conn</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="c1">// 写回数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">ToUpper</span><span class="p">(</span><span class="nx">buf</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 读取数据</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 写回数据</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">ToUpper</span><span class="p">(</span><span class="nx">buf</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
@@ -586,8 +586,7 @@ var _hmt = _hmt || [];
 </div>
 </div><p>当我们发送<code>hello</code>的时候，<code>server</code>正确的返回了<code>HELLO</code></p>
 <blockquote>
-<p>思考：当有多个<code>client</code>的时候怎么办？</p>
-</blockquote>
+<p>思考：当有多个<code>client</code>的时候怎么办？</p></blockquote>
 <h2 id="协程处理">协程处理
 </h2><p>只有一个用户创建连接的时候可以正常返回，但此时有多个用户创建了连接请求，由于我们只<code>accept</code>了一次连接请求，所以当多个用户尝试连接的时候，第二个及之后的那些用户无法与服务器建立连接。</p>
 <p>解决办法</p>
@@ -613,18 +612,18 @@ var _hmt = _hmt || [];
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="c1">// .....
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span> <span class="c1">// 把这里添加到循环中
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="c1">// .....</span>
+</span></span><span class="line"><span class="cl"><span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span> <span class="c1">// 把这里添加到循环中</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;connect fail&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">			<span class="k">return</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="c1">// 读取数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">conn</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="c1">// 写回数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">ToUpper</span><span class="p">(</span><span class="nx">buf</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 读取数据</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 写回数据</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">ToUpper</span><span class="p">(</span><span class="nx">buf</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
@@ -648,18 +647,18 @@ var _hmt = _hmt || [];
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="c1">// ......
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+<pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="c1">// ......</span>
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;connect fail&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">			<span class="k">return</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="c1">// 读取数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">conn</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="c1">// 写回数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">ToUpper</span><span class="p">(</span><span class="nx">buf</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 读取数据</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 写回数据</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">bytes</span><span class="p">.</span><span class="nf">ToUpper</span><span class="p">(</span><span class="nx">buf</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
@@ -741,15 +740,15 @@ var _hmt = _hmt || [];
 </span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">ip</span> <span class="o">:=</span> <span class="s">&#34;127.0.0.1&#34;</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">port</span> <span class="o">:=</span> <span class="mi">8080</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//CreateServer(ip, port)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">listener</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s:%d&#34;</span><span class="p">,</span> <span class="nx">ip</span><span class="p">,</span> <span class="nx">port</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//CreateServer(ip, port)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">listener</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s:%d&#34;</span><span class="p">,</span> <span class="nx">ip</span><span class="p">,</span> <span class="nx">port</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Eror!&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">		<span class="k">return</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">//defer conn.Close()
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//defer conn.Close()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;connect fail&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
@@ -909,7 +908,9 @@ var _hmt = _hmt || [];
     <section class="copyright">
         &copy; 
         
-        2024 Xiao Peng
+            2024 - 
+        
+        2025 Xiao Peng
     </section>
     
     <section class="powerby">
