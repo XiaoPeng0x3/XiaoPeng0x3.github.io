@@ -380,6 +380,18 @@ var _hmt = _hmt || [];
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>来登入<code>redis</code></p>
+<p>这个时候需要如果我们要执行一些查询或者删除操作的话，<code>redis</code>会提示我们没有权限，这是因为我们在安装<code>redis</code>的时候就已经制定好了登录密码，此时可以使用<code>auth</code>命令来登录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">redis-cli <span class="c1"># 登录</span>
+</span></span><span class="line"><span class="cl">auth name password <span class="c1"># 验证密码登录</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果没有<code>name</code>，那么就可以直接输入密码登录。</p>
 <h2 id="创建一个字段">创建一个字段
 </h2><h3 id="set">set
 </h3><p>由于<code>redis</code>的数据结构就是基础<code>key-value</code>的形式，所以创建对象时要指定对象的名称和值。</p>

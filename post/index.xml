@@ -25,6 +25,18 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;来登入&lt;code&gt;redis&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;这个时候需要如果我们要执行一些查询或者删除操作的话，&lt;code&gt;redis&lt;/code&gt;会提示我们没有权限，这是因为我们在安装&lt;code&gt;redis&lt;/code&gt;的时候就已经制定好了登录密码，此时可以使用&lt;code&gt;auth&lt;/code&gt;命令来登录&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;redis-cli &lt;span class=&#34;c1&#34;&gt;# 登录&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;auth name password &lt;span class=&#34;c1&#34;&gt;# 验证密码登录&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果没有&lt;code&gt;name&lt;/code&gt;，那么就可以直接输入密码登录。&lt;/p&gt;
 &lt;h2 id=&#34;创建一个字段&#34;&gt;创建一个字段
 &lt;/h2&gt;&lt;h3 id=&#34;set&#34;&gt;set
 &lt;/h3&gt;&lt;p&gt;由于&lt;code&gt;redis&lt;/code&gt;的数据结构就是基础&lt;code&gt;key-value&lt;/code&gt;的形式，所以创建对象时要指定对象的名称和值。&lt;/p&gt;
