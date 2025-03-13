@@ -7,7 +7,15 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Xiao Peng</copyright>
-        <lastBuildDate>Sun, 09 Mar 2025 20:41:19 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 13 Mar 2025 14:20:01 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Redis</title>
+        <link>https://XiaoPeng0x3.github.io/categories/redis/</link>
+        <pubDate>Thu, 13 Mar 2025 14:20:01 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/categories/redis/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>Java</title>
         <link>https://XiaoPeng0x3.github.io/categories/java/</link>
         <pubDate>Sun, 09 Mar 2025 20:41:19 +0800</pubDate>
