@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 今天开始进阶篇的内容。\n存储引擎 上图是mysql数据库的全部架构，按照分层的思路，可以分为\n连接层 服务层 引擎层 存储层 存储引擎介绍 在创建表时，可以指定使用的存储引擎，在默认情况下，mysql使用的是InnoDB存储引擎。\n">
+<title>Mysql补全计划(三)</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%B8%89/'>
+
+<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Mysql补全计划(三)">
+<meta property='og:description' content="前言 今天开始进阶篇的内容。\n存储引擎 上图是mysql数据库的全部架构，按照分层的思路，可以分为\n连接层 服务层 引擎层 存储层 存储引擎介绍 在创建表时，可以指定使用的存储引擎，在默认情况下，mysql使用的是InnoDB存储引擎。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%B8%89/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-15T12:46:17&#43;08:00'/><meta property='article:modified_time' content='2025-06-15T12:46:17&#43;08:00'/>
+<meta name="twitter:title" content="Mysql补全计划(三)">
+<meta name="twitter:description" content="前言 今天开始进阶篇的内容。\n存储引擎 上图是mysql数据库的全部架构，按照分层的思路，可以分为\n连接层 服务层 引擎层 存储层 存储引擎介绍 在创建表时，可以指定使用的存储引擎，在默认情况下，mysql使用的是InnoDB存储引擎。\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8121279679071600"
+     crossorigin="anonymous"></script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_7eaeb6c857ea8f6f.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😍</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#存储引擎介绍">存储引擎介绍</a>
+      <ol>
+        <li><a href="#查看当前支持的存储引擎">查看当前支持的存储引擎</a></li>
+        <li><a href="#建表时指定引擎">建表时指定引擎</a></li>
+      </ol>
+    </li>
+    <li><a href="#主流存储引擎介绍">主流存储引擎介绍</a>
+      <ol>
+        <li><a href="#innodb存储引擎">InnoDB存储引擎</a>
+          <ol>
+            <li><a href="#逻辑存储结构">逻辑存储结构</a></li>
+          </ol>
+        </li>
+        <li><a href="#myisam">MyISAM</a></li>
+        <li><a href="#memory">Memory</a></li>
+      </ol>
+    </li>
+    <li><a href="#区别汇总">区别汇总</a></li>
+    <li><a href="#如何选择存储引擎">如何选择存储引擎</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#b-tree">B-Tree</a></li>
+    <li><a href="#b-tree-1">B+ Tree</a></li>
+    <li><a href="#mysql-b树索引">Mysql B+树索引</a></li>
+    <li><a href="#hash索引">Hash索引</a></li>
+    <li><a href="#索引分类">索引分类</a></li>
+    <li><a href="#innodb的索引">InnoDB的索引</a>
+      <ol>
+        <li><a href="#聚集索引">聚集索引</a></li>
+        <li><a href="#二级索引">二级索引</a></li>
+        <li><a href="#按索引搜索的顺序">按索引搜索的顺序</a></li>
+        <li><a href="#索引总结">索引总结</a></li>
+      </ol>
+    </li>
+    <li><a href="#创建索引">创建索引</a></li>
+    <li><a href="#查看表的索引">查看表的索引</a>
+      <ol>
+        <li><a href="#删除索引">删除索引</a></li>
+      </ol>
+    </li>
+    <li><a href="#sql性能分析">SQL性能分析</a>
+      <ol>
+        <li><a href="#分析sql的执行频率">分析sql的执行频率</a></li>
+        <li><a href="#慢查询日志">慢查询日志</a>
+          <ol>
+            <li><a href="#查看是否开启慢查询日志">查看是否开启慢查询日志</a></li>
+            <li><a href="#查看慢日志存放的位置">查看慢日志存放的位置</a></li>
+          </ol>
+        </li>
+        <li><a href="#设置慢日志查询">设置慢日志查询</a></li>
+        <li><a href="#profile详情">profile详情</a>
+          <ol>
+            <li><a href="#查看是否支持profile优化">查看是否支持profile优化</a></li>
+            <li><a href="#开启profile">开启profile</a></li>
+            <li><a href="#查看sql的耗时">查看sql的耗时</a></li>
+            <li><a href="#查看具体的耗时时间">查看具体的耗时时间</a></li>
+            <li><a href="#查看指定id的sql的cpu的使用情况">查看指定id的sql的cpu的使用情况</a></li>
+            <li><a href="#explain">explain</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#索引使用">索引使用</a>
+      <ol>
+        <li><a href="#最左前缀原则">最左前缀原则</a>
+          <ol>
+            <li><a href="#索引生效的情况">索引生效的情况</a></li>
+            <li><a href="#索引失效情况">索引失效情况</a></li>
+          </ol>
+        </li>
+        <li><a href="#范围查询导致索引失效">范围查询导致索引失效</a></li>
+      </ol>
+    </li>
+    <li><a href="#索引失效的情况">索引失效的情况</a>
+      <ol>
+        <li><a href="#索引列运算">索引列运算</a></li>
+        <li><a href="#字符串不加引号">字符串不加引号</a></li>
+        <li><a href="#模糊查询">模糊查询</a></li>
+        <li><a href="#or连接条件">or连接条件</a></li>
+        <li><a href="#数据分布影响">数据分布影响</a></li>
+      </ol>
+    </li>
+    <li><a href="#sql提示">SQL提示</a></li>
+    <li><a href="#覆盖索引">覆盖索引</a></li>
+    <li><a href="#前缀索引">前缀索引</a></li>
+    <li><a href="#单列索引和联合索引">单列索引和联合索引</a></li>
+    <li><a href="#索引设计原则">索引设计原则</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/mysql/" >
+                Mysql
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%B8%89/">Mysql补全计划(三)</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-06-15</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 11 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p>今天开始进阶篇的内容。</p>
+<h1 id="存储引擎">存储引擎
+</h1><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250615193016039.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250615193016039"
+	
+	
+></p>
+<p>上图是<code>mysql</code>数据库的全部架构，按照分层的思路，可以分为</p>
+<ul>
+<li>连接层</li>
+<li>服务层</li>
+<li>引擎层</li>
+<li>存储层</li>
+</ul>
+<h2 id="存储引擎介绍">存储引擎介绍
+</h2><p>在创建表时，可以指定使用的存储引擎，在默认情况下，<code>mysql</code>使用的是<code>InnoDB</code>存储引擎。</p>
+<h3 id="查看当前支持的存储引擎">查看当前支持的存储引擎
+</h3><p>可以使用<code>show engines</code>来查看当前支持的引擎</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">engines</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------------+---------+----------------------------------------------------------------+--------------+------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="kp">Engine</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="n">Support</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Comment</span><span class="w">                                                        </span><span class="o">|</span><span class="w"> </span><span class="n">Transactions</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">XA</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">Savepoints</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------------+---------+----------------------------------------------------------------+--------------+------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">MEMORY</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="n">Hash</span><span class="w"> </span><span class="n">based</span><span class="p">,</span><span class="w"> </span><span class="n">stored</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">memory</span><span class="p">,</span><span class="w"> </span><span class="n">useful</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">temporary</span><span class="w"> </span><span class="kp">tables</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">MRG_MYISAM</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="n">Collection</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">identical</span><span class="w"> </span><span class="n">MyISAM</span><span class="w"> </span><span class="kp">tables</span><span class="w">                          </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">CSV</span><span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="n">CSV</span><span class="w"> </span><span class="n">storage</span><span class="w"> </span><span class="kp">engine</span><span class="w">                                             </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">FEDERATED</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="n">Federated</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="n">storage</span><span class="w"> </span><span class="kp">engine</span><span class="w">                                 </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">       </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">PERFORMANCE_SCHEMA</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="n">Performance</span><span class="w"> </span><span class="k">Schema</span><span class="w">                                             </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">MyISAM</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="n">MyISAM</span><span class="w"> </span><span class="n">storage</span><span class="w"> </span><span class="kp">engine</span><span class="w">                                          </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">InnoDB</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Supports</span><span class="w"> </span><span class="n">transactions</span><span class="p">,</span><span class="w"> </span><span class="n">row</span><span class="o">-</span><span class="n">level</span><span class="w"> </span><span class="n">locking</span><span class="p">,</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">foreign</span><span class="w"> </span><span class="k">keys</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">        </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">ndbinfo</span><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="n">Cluster</span><span class="w"> </span><span class="n">system</span><span class="w"> </span><span class="n">information</span><span class="w"> </span><span class="n">storage</span><span class="w"> </span><span class="kp">engine</span><span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">       </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">BLACKHOLE</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="no">null</span><span class="w"> </span><span class="n">storage</span><span class="w"> </span><span class="kp">engine</span><span class="w"> </span><span class="p">(</span><span class="n">anything</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="k">write</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">disappears</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">ARCHIVE</span><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="n">Archive</span><span class="w"> </span><span class="n">storage</span><span class="w"> </span><span class="kp">engine</span><span class="w">                                         </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">ndbcluster</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="n">NO</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="n">Clustered</span><span class="p">,</span><span class="w"> </span><span class="n">fault</span><span class="o">-</span><span class="n">tolerant</span><span class="w"> </span><span class="kp">tables</span><span class="w">                               </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">       </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------------+---------+----------------------------------------------------------------+--------------+------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">11</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="建表时指定引擎">建表时指定引擎
+</h3><p>之前的建表语句不变，发生变化的是在最后指定存储引擎的部分</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="nf">xxx</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="kp">engine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">innodb</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="主流存储引擎介绍">主流存储引擎介绍
+</h2><p>这里主要包括<code>InnoDB</code>、<code>MyISAM</code>和<code>Memory</code>这三种引擎。</p>
+<h3 id="innodb存储引擎">InnoDB存储引擎
+</h3><p>在之前使用<code>show engines</code>命令中，有一些对于<code>InnoDB</code>存储引擎的介绍。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">InnoDB</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Supports</span><span class="w"> </span><span class="n">transactions</span><span class="p">,</span><span class="w"> </span><span class="n">row</span><span class="o">-</span><span class="n">level</span><span class="w"> </span><span class="n">locking</span><span class="p">,</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">foreign</span><span class="w"> </span><span class="k">keys</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">        </span><span class="o">|</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>其中一项描述很关键</p>
+<blockquote>
+<p>Supports transactions, row-level locking, and foreign keys</p></blockquote>
+<p>支持事务、行级锁和外键。</p>
+<p><code>innodb</code>引擎的每张表都会对应一个表空间文件。存储该表的表结构、数据和索引。但是这种文件并不是一定会生成的。</p>
+<p>我们可以查询一下当前是否开启了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;innodb_file_per_table&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-----------------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Variable_name</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="n">Value</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-----------------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">innodb_file_per_table</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">ON</span><span class="w">    </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-----------------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nf">warning</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到确实是开启了。</p>
+<h4 id="逻辑存储结构">逻辑存储结构
+</h4><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250615200513103.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250615200513103"
+	
+	
+></p>
+<p>包括表空间、段、区、页、行。</p>
+<ul>
+<li>表空间：表空间是由多个段组成的，是存储引擎逻辑的最高层</li>
+<li>段：常见段有数据段、索引段、回滚段等，一个段包含多个区。</li>
+<li>区：区是表空间的单元结构，每个区的大小为1M。</li>
+<li>页：页是组成区的最小单元，页是<code>InnoDB</code>存储引擎磁盘管理的最小单元，每个页的默认大小是<code>16kb</code></li>
+<li>行：数据存储是按照行来进行存储的。</li>
+</ul>
+<h3 id="myisam">MyISAM
+</h3><p><code>MyISAM</code>的特点是</p>
+<ul>
+<li>不支持事务</li>
+<li>不支持外键</li>
+<li>不支持行级锁</li>
+<li>支持表锁</li>
+</ul>
+<p>对于启用了<code>MyISAM</code>存储引擎的表来说，其文件一般是以下面这几种格式结尾的</p>
+<ul>
+<li>xxx.sdi，存储表的结构信息</li>
+<li>xxx.myd， 存储数据</li>
+<li>xxx.myi，存储索引</li>
+</ul>
+<h3 id="memory">Memory
+</h3><p>基于内存的，使用哈希索引作为默认索引的数据。</p>
+<h2 id="区别汇总">区别汇总
+</h2><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250616094933296.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250616094933296"
+	
+	
+></p>
+<h2 id="如何选择存储引擎">如何选择存储引擎
+</h2><p>一般的，直接默认使用<code>InnoDB</code>即可。而<code>MyISAM</code>一般可以用来读和插入操作比较多的常见。而如果不希望将表数据持久化，这个时候就可以考虑使用<code>Memory</code>.</p>
+<h1 id="索引">索引
+</h1><p>索引是一种特殊的数据结构，本质上是空间换时间的一种做法，对于数据库来说，索引一般是在引擎层实现的，不同的存储引擎也有着不同的支持策略。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250616100259061.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250616100259061"
+	
+	
+></p>
+<h2 id="b-tree">B-Tree
+</h2><p><code>B</code>树是一种树的结构，其目的就是去避免二叉搜索树的退化和红黑树复杂实现而采用的一种策略。</p>
+<p>在<code>B</code>树中，叶子结点和非叶子结点都会存放数据。</p>
+<h2 id="b-tree-1">B+ Tree
+</h2><p><code>B+</code>树是<code>B</code>树的改良版，<code>B+</code>树叶子结点才是存储的真正的数据，而非叶子结点只是起到索引的作用。</p>
+<p>而且，为了方便叶子结点之间的查找，叶子之间又组成了一个链表结构。</p>
+<p>这样设计的一个很大好处是，每一个非叶子结点只负责对数据进行索引，不负责存储，这样可以一级一级将整个树设计的非常大。</p>
+<h2 id="mysql-b树索引">Mysql B+树索引
+</h2><p><code>Mysql</code>在<code>B+</code>树的基础上还将叶子结点的链表进行了优化设计。即将叶子结点之间使用双向链表进行相连，同时首尾链表也进行相连，这样在查找时更加高效。</p>
+<h2 id="hash索引">Hash索引
+</h2><p><code>Mysql</code>还有一种索引是<code>Hash</code>索引，这种索引基本上是特指<code>Memory</code>引擎，不过<code>InnoDB</code>引擎也有自适应<code>hash</code>。</p>
+<p>关于<code>hash</code>算法，相信大家已经特别熟悉了，就不再都说了。</p>
+<h2 id="索引分类">索引分类
+</h2><p>索引主要分为下面这几类</p>
+<ul>
+<li>主键索引,<code>primary key</code></li>
+<li>唯一索引，<code>unique</code>修饰</li>
+<li>常规索引，可以通过<code>create</code>关键字来创建</li>
+<li>全文索引，<code>fulltext</code>关键字，不常用，不进行讨论。</li>
+</ul>
+<h2 id="innodb的索引">InnoDB的索引
+</h2><h3 id="聚集索引">聚集索引
+</h3><p>聚集索引的意思是，索引和存储数据放在了一块，索引的叶子结点保存了行数据。</p>
+<p>这种索引是必须有的，而且只有一个。</p>
+<p>聚集索引选取规则：</p>
+<ul>
+<li>一般的，当指定主键后，主键索引就是聚集索引。</li>
+<li>如果不存在主键，那么<code>unique</code>索引就是聚集索引</li>
+<li>如果上述都没有，那么<code>InnoDB</code>会自动生成一个<code>rowid</code>作为隐藏的聚集索引。</li>
+</ul>
+<h3 id="二级索引">二级索引
+</h3><p>索引与数据分开存储，索引的叶子结点存储的值是对应数据行的主键。二级索引可以存在多个。</p>
+<h3 id="按索引搜索的顺序">按索引搜索的顺序
+</h3><p>首先要看当前要搜索的字段是什么？假设这里有一个<code>user</code>表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">id</span><span class="w"> </span><span class="err">主键</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">name</span><span class="w"> </span><span class="err">二级索引</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">age</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，如果我们是按照<code>id</code>进行搜索的，那么搜索语句看起来是这样的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">?</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>因为<strong>主键是聚集索引</strong>，也就是说，这个索引的叶子结点就是对应的行数据，那么在进行搜索的时候，直接返回数据即可。</p>
+<p>如果我们要根据姓名来进行查询，那么<code>sql</code>语句可能如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;xxx&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于姓名是二级索引，<strong>二级索引的索引与数据是分开存放的</strong>，所以在进行搜索时，最后查找到叶子结点的值是对应行数据的<code>id</code>。</p>
+<p>由于拿到的是主键值，所以，<strong>还需要再次去表中查找</strong>，这个过程就叫做<strong>回表</strong>。</p>
+<h3 id="索引总结">索引总结
+</h3><p><code>InnoDB</code>根据存储结构的不同，将索引分为聚集索引和二级索引。</p>
+<p>聚集索引每张表只有一个，当指定<code>primary key</code>或<code>unique</code>时主键时会自动创建。注意，此索引的叶子结点就是对应的行数据。所以查询这个索引可以直接找到对应的数据，不用回表再次查询。</p>
+<p>而二级索引获取的是一个主键，需要根据拿到的主键值再次进行回表操作，效率比聚集索引差。</p>
+<h2 id="创建索引">创建索引
+</h2><p>下面来看看怎么创建索引</p>
+<p>给<code>user</code>表的<code>age</code>字段创建一个索引</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="n">idx_user_age</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="k">user</span><span class="p">(</span><span class="n">age</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>除此之外，还可以创建联合索引</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_user_pro_age_sta</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="nf">tb_user</span><span class="p">(</span><span class="n">profession</span><span class="p">,</span><span class="n">age</span><span class="p">,</span><span class="n">status</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="查看表的索引">查看表的索引
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="删除索引">删除索引
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">drop</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="n">index_name</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">table_name</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="sql性能分析">SQL性能分析
+</h2><h3 id="分析sql的执行频率">分析sql的执行频率
+</h3><p>一般的，对于<code>sql</code>来说，无非就是一些读写操作。我们可以看看当前数据库哪些<code>sql</code>执行频率比较高</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="p">[</span><span class="n">session</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">global</span><span class="p">]</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;Com______&#39;</span><span class="p">;</span><span class="w"> </span><span class="c1">-- 下划线的个数是6个
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;Com_______&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Variable_name</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Value</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_binlog</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_commit</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_delete</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_import</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_insert</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_repair</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_revoke</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_select</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">2</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_signal</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_update</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Com_xa_end</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---------------+-------+</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个有什么用呢？</p>
+<p>实际上，索引并不是一劳永逸的，他也是需要代价的！任何的效率高的查找本质上都是时间换空间。</p>
+<p>而且，请考虑一种场景，对于频繁的插入、删除、更新数据，也就意味着频繁的调整<code>B+</code>树，此时，索引甚至可能成为累赘。</p>
+<p>通过查询当前<code>sql</code>语句的执行频率，如果是读特别多的数据，那么建立索引就非常的合适。如果是写数据特别多，那么就要<strong>只给合适的字段添加索引</strong>！</p>
+<h3 id="慢查询日志">慢查询日志
+</h3><p>慢日志是所有<code>sql</code>语句耗时超过指定时间(<code>long_query_time</code>)的一个记录日志。</p>
+<h4 id="查看是否开启慢查询日志">查看是否开启慢查询日志
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;slow_query_log&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Variable_name</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">Value</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">slow_query_log</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">OFF</span><span class="w">   </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nf">warning</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，并没有开启慢日志。</p>
+<h4 id="查看慢日志存放的位置">查看慢日志存放的位置
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;slow_query%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---------------------+---------------------------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Variable_name</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">Value</span><span class="w">                                       </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---------------------+---------------------------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">slow_query_log</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="n">OFF</span><span class="w">                                         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">slow_query_log_file</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">D</span><span class="p">:</span><span class="err">\</span><span class="n">mysql_file</span><span class="err">\</span><span class="n">data</span><span class="err">\</span><span class="n">localhost</span><span class="p">.</span><span class="n">log</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---------------------+---------------------------------------------+</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="设置慢日志查询">设置慢日志查询
+</h3><ul>
+<li>
+<p>通过修改全局参数的方式</p>
+<p>可以修改全局参数来开启慢日志查询</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="kt">set</span><span class="w"> </span><span class="n">global</span><span class="w"> </span><span class="n">slow_query_log</span><span class="o">=</span><span class="s1">&#39;ON&#39;</span><span class="p">;</span><span class="w"> 
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>设置操作超时时间</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="kt">set</span><span class="w"> </span><span class="n">global</span><span class="w"> </span><span class="n">long_query_time</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>通过修改配置文件</p>
+<p>一般是<code>etc/my.cnf</code></p>
+<p>需要添加一下内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 慢日志开关</span>
+</span></span><span class="line"><span class="cl"><span class="nv">slow_query_log</span><span class="o">=</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置慢日志超时时间</span>
+</span></span><span class="line"><span class="cl"><span class="nv">long_query_time</span><span class="o">=</span>2<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后重启服务器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">systemctl restart mysqld
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>可以执行一个耗时操作看一下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="nf">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>看一眼慢日志</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Time                 Id Command    Argument
+</span></span><span class="line"><span class="cl"><span class="c1"># Time: 2025-06-16T09:45:16.135675Z</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># User@Host: root[root] @ localhost [::1]  Id:     9</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Query_time: 3.000487  Lock_time: 0.000000 Rows_sent: 1  Rows_examined: 1</span>
+</span></span><span class="line"><span class="cl">use test1<span class="p">;</span>
+</span></span><span class="line"><span class="cl">SET <span class="nv">timestamp</span><span class="o">=</span>1750067113<span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">select</span> sleep<span class="o">(</span>3<span class="o">)</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，在<code>test1</code>数据库下的<code>select</code>操作耗时越为3s，是一个慢日志。</p>
+<h3 id="profile详情">profile详情
+</h3><p><code>show profiles</code>可以帮助我们了解事件都耗费到哪里去了，通过<code>have_profiling</code>参数可以查看当前<code>Mysql</code>是否支持<code>profile</code>优化</p>
+<h4 id="查看是否支持profile优化">查看是否支持profile优化
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="n">have_profiling</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="o">@@</span><span class="n">have_profiling</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">YES</span><span class="w">              </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+------------------+</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>查看是否开启</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="n">profiling</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="o">@@</span><span class="n">profiling</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">           </span><span class="mi">0</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nf">warning</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="开启profile">开启profile
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="kt">set</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">profiling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="查看sql的耗时">查看sql的耗时
+</h4><p>在开启<code>profile</code>后，可以使用<code>show profiles</code>来查看当前执行过的所有<code>sql</code>的情况</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1">-- 查看每一条`sql`耗时的基本情况
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profiles</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----------+------------+---------------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Query_ID</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Duration</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">Query</span><span class="w">                           </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----------+------------+---------------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">        </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">00029800</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="n">profiling</span><span class="w">              </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">        </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">00042275</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w">              </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">        </span><span class="mi">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">00045525</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----------+------------+---------------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">3</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nf">warning</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="查看具体的耗时时间">查看具体的耗时时间
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1">-- 查看指定`id`的各个阶段的耗时情况
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------------------------+----------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Status</span><span class="w">                         </span><span class="o">|</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------------------------+----------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="k">starting</span><span class="w">                       </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000131</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Executing</span><span class="w"> </span><span class="n">hook</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">transaction</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000008</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="k">starting</span><span class="w">                       </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000009</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">checking</span><span class="w"> </span><span class="n">permissions</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000006</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Opening</span><span class="w"> </span><span class="kp">tables</span><span class="w">                 </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000053</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">init</span><span class="w">                           </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000005</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">System</span><span class="w"> </span><span class="k">lock</span><span class="w">                    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000010</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">optimizing</span><span class="w">                     </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000013</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">statistics</span><span class="w">                     </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000074</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">preparing</span><span class="w">                      </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000016</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">executing</span><span class="w">                      </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000012</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">end</span><span class="w">                            </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000003</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">end</span><span class="w">                      </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000003</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">waiting</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">handler</span><span class="w"> </span><span class="n">commit</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000011</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">closing</span><span class="w"> </span><span class="kp">tables</span><span class="w">                 </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000009</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">freeing</span><span class="w"> </span><span class="n">items</span><span class="w">                  </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000080</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">cleaning</span><span class="w"> </span><span class="n">up</span><span class="w">                    </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000014</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------------------------+----------+</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="查看指定id的sql的cpu的使用情况">查看指定id的sql的cpu的使用情况
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="n">cpu</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----------------------+----------+----------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Status</span><span class="w">               </span><span class="o">|</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">CPU_user</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">CPU_system</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----------------------+----------+----------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="k">starting</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000139</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">checking</span><span class="w"> </span><span class="n">permissions</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000007</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Opening</span><span class="w"> </span><span class="kp">tables</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000019</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">init</span><span class="w">                 </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000006</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">optimizing</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000014</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">executing</span><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000015</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">end</span><span class="w">                  </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000003</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">end</span><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000009</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">closing</span><span class="w"> </span><span class="kp">tables</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000003</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">freeing</span><span class="w"> </span><span class="n">items</span><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000072</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">cleaning</span><span class="w"> </span><span class="n">up</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000012</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">0</span><span class="p">.</span><span class="mi">000000</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----------------------+----------+----------+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">11</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nf">warning</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="explain">explain
+</h4><p><code>explain</code>也是分析<code>sql</code>执行的一个好工具，我们只需要在对应的查询语句前加上<code>explain</code>或者<code>desc</code>即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">explain</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select_type</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">partitions</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">possible_keys</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">key</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">key_len</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ref</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">filtered</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Extra</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">SIMPLE</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="k">user</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="k">ALL</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="o">|</span><span class="w">    </span><span class="mi">5</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">100</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w">  </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nf">warning</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250616204520752.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250616204520752"
+	
+	
+></p>
+<h2 id="索引使用">索引使用
+</h2><h3 id="最左前缀原则">最左前缀原则
+</h3><p>在联合索引时，例如<code>user</code>表里面有</p>
+<ul>
+<li><code>name</code></li>
+<li><code>age</code></li>
+<li><code>status</code></li>
+</ul>
+<p>这三个字段，我们可以给这三个字段创建联合索引</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="n">idx_user_name_age_status</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="索引生效的情况">索引生效的情况
+</h4><p>下面这三种情况都是索引生效的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;xxx&#39;</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xxx</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xxx</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这种情况也是生效的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;xxx&#39;</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xxx</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这种情况也是生效的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;xxx&#39;</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xxx</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>但是这种情况是<strong>索引部分生效</strong>，也就是说，在查找数据时，跳过了<code>age</code>索引</p>
+<p>上面这几种情况都是索引生效的，即，我们将<code>a,b,c</code>三个字段作为联合索引</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">a</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这都是索引生效的情况。</p>
+<h4 id="索引失效情况">索引失效情况
+</h4><p><strong>如果查询条件缺乏最左侧那个字段，就会造成索引失效</strong>，实际上，下面这段也是索引生效的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>只要存在最左侧那一列，就满足最左前缀原则，与字段先后顺序无关</strong>。</p>
+<h3 id="范围查询导致索引失效">范围查询导致索引失效
+</h3><p>联合索引中，出现范围查询<code>(&gt;,&lt;)</code>，会导致范围查询右侧的列索引失效。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;xxx&#39;</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>age &gt; 20</code>这个范围查询会使<code>status</code>失效。</p>
+<p>而使用<code>&gt;=</code>或<code>&lt;=</code>这类的范围查询不会使得范围查询右侧的字段索引失效，所以应该尽量使用<code>&gt;=</code>或者<code>&lt;=</code>来进行范围查询，避免索引失效。</p>
+<h2 id="索引失效的情况">索引失效的情况
+</h2><h3 id="索引列运算">索引列运算
+</h3><p>如果对索引的字段进行运算操作，那么就会导致索引失败，例如，这里有一个<code>substring</code>函数，假设我们的<code>name</code>是一个<strong>单索引</strong>。</p>
+<ul>
+<li>
+<p>精确匹配不会导致索引失效</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;zxp1&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>对<code>name</code>字段进行再操作就会导致失效</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">substring</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;zx&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="字符串不加引号">字符串不加引号
+</h3><p>对于一个字符串类型的字段，在查询的时候可以不加引号，看下面的一个例子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">phone_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1234567890</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>和</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">phone_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;1234567890&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>实际上，<code>mysql</code>会做隐式转换，但是，转换后索引并不会起作用，所以查询字符串类型时<strong>加引号</strong></p>
+<h3 id="模糊查询">模糊查询
+</h3><p>在使用<code>like</code>进行模糊查询时，如果左侧没有通配符，那么索引还是可以生效的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;zxp%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面这个语句是可以走索引进行查询的。</p>
+<p>下面这两个都是索引失效的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;%xp&#39;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>和</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;%xp%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="or连接条件">or连接条件
+</h3><p>如果<code>or</code>左右两侧需要查询的字段有一个没有索引的话，就会造成索引失效。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;zxp1&#39;</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">18</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果<code>name</code>字段有索引而<code>age</code>字段没有的话，那么<code>name</code>和<code>age</code>都不会去走索引，这就要求两边字段都要有索引。</p>
+<h3 id="数据分布影响">数据分布影响
+</h3><p>索引在大量数据时才会体现出其优势，如果数据量很小，有些时候直接全表扫描也会很快。所以，在<code>mysql</code>执行的时候，其内部就会进行评价。</p>
+<p>如果它认为走索引不如全表扫描，那么索引就会失效。</p>
+<h2 id="sql提示">SQL提示
+</h2><p><code>SQL</code>语句中可以加入一些人为提示来进行操作优化。</p>
+<ul>
+<li>
+<p><code>use index</code></p>
+<p>建议<code>mysql</code>使用哪个索引来完成查询，仅仅是建议，不一定使用，内部还会进行评估。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="k">index</span><span class="p">(</span><span class="n">idx_user_name</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;zxp&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><code>ignore index</code></p>
+<p>查询时忽略某个索引</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">ignore</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="p">(</span><span class="n">idx_user_name</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;zxp&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><code>force index</code></p>
+<p>查询是强制使用索引</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">force</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="p">(</span><span class="n">idx_user_name</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;zxp&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="覆盖索引">覆盖索引
+</h2><p>覆盖索引指的是需要查询的字段全部都是索引值，不需要回表。</p>
+<p>对于其它字段来说，因为聚集索引只能有一个(多余会造成数据冗余)，所以其它都是二级索引。</p>
+<p>二级索引中，叶子结点全部都存储的是<strong>索引字段值+主键id</strong>。</p>
+<p>例如，对于，对于<code>name</code>字段来说，其叶子结点就是<code>(name，id)</code>。</p>
+<h2 id="前缀索引">前缀索引
+</h2><p>当需要创建的字段值是字符串或者<code>text</code>类型的时候，全部把字段值作为索引来使用会导致占用大量的空间，此时就可以使用前缀索引来进行空间优化。</p>
+<p>前缀索引的意思是，使用一部分前缀来作为索引值</p>
+<p>例如，我们要使用<code>email</code>的前7个字符作为索引</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="n">idx_email_7</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="k">user</span><span class="p">(</span><span class="nf">email</span><span class="p">(</span><span class="mi">7</span><span class="p">));</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="单列索引和联合索引">单列索引和联合索引
+</h2><p>单列索引即索引只包含了单个列，联合索引是指索引包含了多个列。</p>
+<p>需要注意的是，如果查询的字段都是单列索引，那么只会选择其中的一个进行查询。</p>
+<p>相反，如果两个字段是联合索引的话，就可以全部查询到，从而避免二次回表查询。</p>
+<h2 id="索引设计原则">索引设计原则
+</h2><ul>
+<li>数据量大，读多写少的操作建立索引</li>
+<li>经常作为查询条件的字段应该建立索引</li>
+<li>字符串类型的字段，可以考虑建立前缀索引</li>
+<li>尽量使用联合索引，可以避免回表查询</li>
+<li>索引不是越多越好！</li>
+<li>设计表时，尽量给每个字段添加一定的约束，像<code>unique</code>,<code>not null</code>等</li>
+</ul>
+<h1 id="总结">总结
+</h1><p>这部分是<code>mysql</code>进阶的第一部分！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%8C/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql补全计划(二)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%B8%80/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql补全计划(一)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/mysql%E7%9A%84%E7%99%BB%E9%99%86/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql的登陆</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2025 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
