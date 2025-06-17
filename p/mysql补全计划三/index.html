@@ -288,94 +288,101 @@ var _hmt = _hmt || [];
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#存储引擎介绍">存储引擎介绍</a>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#存储引擎">存储引擎</a>
       <ol>
-        <li><a href="#查看当前支持的存储引擎">查看当前支持的存储引擎</a></li>
-        <li><a href="#建表时指定引擎">建表时指定引擎</a></li>
-      </ol>
-    </li>
-    <li><a href="#主流存储引擎介绍">主流存储引擎介绍</a>
-      <ol>
-        <li><a href="#innodb存储引擎">InnoDB存储引擎</a>
+        <li><a href="#存储引擎介绍">存储引擎介绍</a>
           <ol>
-            <li><a href="#逻辑存储结构">逻辑存储结构</a></li>
+            <li><a href="#查看当前支持的存储引擎">查看当前支持的存储引擎</a></li>
+            <li><a href="#建表时指定引擎">建表时指定引擎</a></li>
           </ol>
         </li>
-        <li><a href="#myisam">MyISAM</a></li>
-        <li><a href="#memory">Memory</a></li>
-      </ol>
-    </li>
-    <li><a href="#区别汇总">区别汇总</a></li>
-    <li><a href="#如何选择存储引擎">如何选择存储引擎</a></li>
-  </ol>
-
-  <ol>
-    <li><a href="#b-tree">B-Tree</a></li>
-    <li><a href="#b-tree-1">B+ Tree</a></li>
-    <li><a href="#mysql-b树索引">Mysql B+树索引</a></li>
-    <li><a href="#hash索引">Hash索引</a></li>
-    <li><a href="#索引分类">索引分类</a></li>
-    <li><a href="#innodb的索引">InnoDB的索引</a>
-      <ol>
-        <li><a href="#聚集索引">聚集索引</a></li>
-        <li><a href="#二级索引">二级索引</a></li>
-        <li><a href="#按索引搜索的顺序">按索引搜索的顺序</a></li>
-        <li><a href="#索引总结">索引总结</a></li>
-      </ol>
-    </li>
-    <li><a href="#创建索引">创建索引</a></li>
-    <li><a href="#查看表的索引">查看表的索引</a>
-      <ol>
-        <li><a href="#删除索引">删除索引</a></li>
-      </ol>
-    </li>
-    <li><a href="#sql性能分析">SQL性能分析</a>
-      <ol>
-        <li><a href="#分析sql的执行频率">分析sql的执行频率</a></li>
-        <li><a href="#慢查询日志">慢查询日志</a>
+        <li><a href="#主流存储引擎介绍">主流存储引擎介绍</a>
           <ol>
-            <li><a href="#查看是否开启慢查询日志">查看是否开启慢查询日志</a></li>
-            <li><a href="#查看慢日志存放的位置">查看慢日志存放的位置</a></li>
+            <li><a href="#innodb存储引擎">InnoDB存储引擎</a>
+              <ol>
+                <li><a href="#逻辑存储结构">逻辑存储结构</a></li>
+              </ol>
+            </li>
+            <li><a href="#myisam">MyISAM</a></li>
+            <li><a href="#memory">Memory</a></li>
           </ol>
         </li>
-        <li><a href="#设置慢日志查询">设置慢日志查询</a></li>
-        <li><a href="#profile详情">profile详情</a>
+        <li><a href="#区别汇总">区别汇总</a></li>
+        <li><a href="#如何选择存储引擎">如何选择存储引擎</a></li>
+      </ol>
+    </li>
+    <li><a href="#索引">索引</a>
+      <ol>
+        <li><a href="#b-tree">B-Tree</a></li>
+        <li><a href="#b-tree-1">B+ Tree</a></li>
+        <li><a href="#mysql-b树索引">Mysql B+树索引</a></li>
+        <li><a href="#hash索引">Hash索引</a></li>
+        <li><a href="#索引分类">索引分类</a></li>
+        <li><a href="#innodb的索引">InnoDB的索引</a>
           <ol>
-            <li><a href="#查看是否支持profile优化">查看是否支持profile优化</a></li>
-            <li><a href="#开启profile">开启profile</a></li>
-            <li><a href="#查看sql的耗时">查看sql的耗时</a></li>
-            <li><a href="#查看具体的耗时时间">查看具体的耗时时间</a></li>
-            <li><a href="#查看指定id的sql的cpu的使用情况">查看指定id的sql的cpu的使用情况</a></li>
-            <li><a href="#explain">explain</a></li>
+            <li><a href="#聚集索引">聚集索引</a></li>
+            <li><a href="#二级索引">二级索引</a></li>
+            <li><a href="#按索引搜索的顺序">按索引搜索的顺序</a></li>
+            <li><a href="#索引总结">索引总结</a></li>
           </ol>
         </li>
-      </ol>
-    </li>
-    <li><a href="#索引使用">索引使用</a>
-      <ol>
-        <li><a href="#最左前缀原则">最左前缀原则</a>
+        <li><a href="#创建索引">创建索引</a></li>
+        <li><a href="#查看表的索引">查看表的索引</a>
           <ol>
-            <li><a href="#索引生效的情况">索引生效的情况</a></li>
-            <li><a href="#索引失效情况">索引失效情况</a></li>
+            <li><a href="#删除索引">删除索引</a></li>
           </ol>
         </li>
-        <li><a href="#范围查询导致索引失效">范围查询导致索引失效</a></li>
+        <li><a href="#sql性能分析">SQL性能分析</a>
+          <ol>
+            <li><a href="#分析sql的执行频率">分析sql的执行频率</a></li>
+            <li><a href="#慢查询日志">慢查询日志</a>
+              <ol>
+                <li><a href="#查看是否开启慢查询日志">查看是否开启慢查询日志</a></li>
+                <li><a href="#查看慢日志存放的位置">查看慢日志存放的位置</a></li>
+              </ol>
+            </li>
+            <li><a href="#设置慢日志查询">设置慢日志查询</a></li>
+            <li><a href="#profile详情">profile详情</a>
+              <ol>
+                <li><a href="#查看是否支持profile优化">查看是否支持profile优化</a></li>
+                <li><a href="#开启profile">开启profile</a></li>
+                <li><a href="#查看sql的耗时">查看sql的耗时</a></li>
+                <li><a href="#查看具体的耗时时间">查看具体的耗时时间</a></li>
+                <li><a href="#查看指定id的sql的cpu的使用情况">查看指定id的sql的cpu的使用情况</a></li>
+                <li><a href="#explain">explain</a></li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li><a href="#索引使用">索引使用</a>
+          <ol>
+            <li><a href="#最左前缀原则">最左前缀原则</a>
+              <ol>
+                <li><a href="#索引生效的情况">索引生效的情况</a></li>
+                <li><a href="#索引失效情况">索引失效情况</a></li>
+              </ol>
+            </li>
+            <li><a href="#范围查询导致索引失效">范围查询导致索引失效</a></li>
+          </ol>
+        </li>
+        <li><a href="#索引失效的情况">索引失效的情况</a>
+          <ol>
+            <li><a href="#索引列运算">索引列运算</a></li>
+            <li><a href="#字符串不加引号">字符串不加引号</a></li>
+            <li><a href="#模糊查询">模糊查询</a></li>
+            <li><a href="#or连接条件">or连接条件</a></li>
+            <li><a href="#数据分布影响">数据分布影响</a></li>
+          </ol>
+        </li>
+        <li><a href="#sql提示">SQL提示</a></li>
+        <li><a href="#覆盖索引">覆盖索引</a></li>
+        <li><a href="#前缀索引">前缀索引</a></li>
+        <li><a href="#单列索引和联合索引">单列索引和联合索引</a></li>
+        <li><a href="#索引设计原则">索引设计原则</a></li>
       </ol>
     </li>
-    <li><a href="#索引失效的情况">索引失效的情况</a>
-      <ol>
-        <li><a href="#索引列运算">索引列运算</a></li>
-        <li><a href="#字符串不加引号">字符串不加引号</a></li>
-        <li><a href="#模糊查询">模糊查询</a></li>
-        <li><a href="#or连接条件">or连接条件</a></li>
-        <li><a href="#数据分布影响">数据分布影响</a></li>
-      </ol>
-    </li>
-    <li><a href="#sql提示">SQL提示</a></li>
-    <li><a href="#覆盖索引">覆盖索引</a></li>
-    <li><a href="#前缀索引">前缀索引</a></li>
-    <li><a href="#单列索引和联合索引">单列索引和联合索引</a></li>
-    <li><a href="#索引设计原则">索引设计原则</a></li>
+    <li><a href="#总结">总结</a></li>
   </ol>
 </nav>
         </div>
