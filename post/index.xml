@@ -7,7 +7,239 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Xiao Peng</copyright>
-        <lastBuildDate>Mon, 16 Jun 2025 14:46:17 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 17 Jun 2025 14:46:17 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Mysql补全计划(五)</title>
+        <link>https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/</link>
+        <pubDate>Tue, 17 Jun 2025 14:46:17 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/</guid>
+        <description>&lt;h1 id=&#34;前言&#34;&gt;前言
+&lt;/h1&gt;&lt;p&gt;今天继续来完成补全计划！&lt;/p&gt;
+&lt;h1 id=&#34;innodb存储引擎&#34;&gt;InnoDB存储引擎
+&lt;/h1&gt;&lt;h2 id=&#34;逻辑存储结构&#34;&gt;逻辑存储结构
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;表空间&lt;/p&gt;
+&lt;p&gt;表空间是&lt;code&gt;InnoDB&lt;/code&gt;存储引擎逻辑的最高层，当用户启用了参数&lt;code&gt;innodb_file——per_table&lt;/code&gt;，则每张表就会有一个表空间，一个&lt;code&gt;mysql&lt;/code&gt;实例可以对应多个表空间，用于存储记录、索引。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;段&lt;/p&gt;
+&lt;p&gt;分为数据段、索引段、回滚段，&lt;code&gt;InnoDB&lt;/code&gt;是索引组织表，数据段就是&lt;code&gt;B+&lt;/code&gt;树的叶子结点。段可以用来管理多个区。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;区&lt;/p&gt;
+&lt;p&gt;每个区的大小为&lt;code&gt;1M&lt;/code&gt;，默认情况下，&lt;code&gt;InnoDB&lt;/code&gt;存储引擎页大小为&lt;code&gt;16k&lt;/code&gt;，即一个区里面有&lt;code&gt;64&lt;/code&gt;个连续的页。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;页&lt;/p&gt;
+&lt;p&gt;页是磁盘管理的最小单元，每个页大小默认为&lt;code&gt;16kb&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;行&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;InnoDB&lt;/code&gt;存储数据是按照行进行存放的。&lt;/p&gt;
+&lt;p&gt;在行中，默认有两个隐藏字段：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Trx_id&lt;/code&gt;：每次对某条记录进行改动时，都会把对应的事务&lt;code&gt;id&lt;/code&gt;赋值给&lt;code&gt;trx_id&lt;/code&gt;隐藏列&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Roll_pointer&lt;/code&gt;：每次对某条记录进行改动时，都会把旧的版本写入&lt;code&gt;undo&lt;/code&gt;日志，然后这个隐藏列就相当于一个指针，可以通过它来找到该记录修改前的信息，也就是可以用这个指针来进行&lt;code&gt;undo&lt;/code&gt;日志的操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;内存结构&#34;&gt;内存结构
+&lt;/h2&gt;&lt;p&gt;主要分为四大块，&lt;code&gt;Buffer Pool、Change buffer、Adaptive Hash Index、Log Buffer&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;buffer-pool&#34;&gt;Buffer Pool
+&lt;/h3&gt;&lt;p&gt;缓存池的思想我们已经很熟悉了，如果每次操作都是进行磁盘&lt;code&gt;IO&lt;/code&gt;，那么效率会很慢，，我们可以把经常使用的数据加载到缓存池里面，这样就可以避免每次访问的时候都进行磁盘&lt;code&gt;IO&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;在执行增删改查操作时，先操作缓存池中的数据，然后再以一定的频率刷新到磁盘中，从而减少磁盘&lt;code&gt;IO&lt;/code&gt;，加快处理速度。&lt;/p&gt;
+&lt;h3 id=&#34;change-buffer&#34;&gt;Change Buffer
+&lt;/h3&gt;&lt;p&gt;这个其实也是缓存而已，只不过是专门对于&lt;strong&gt;二级索引&lt;/strong&gt;建立的，在修改二级索引有关的数据时，会把修改的遍历提交到这个缓存中，等待某个时机后会与&lt;code&gt;buffer pool&lt;/code&gt;合并刷新到磁盘中。&lt;/p&gt;
+&lt;h3 id=&#34;自适应hash&#34;&gt;自适应hash
+&lt;/h3&gt;&lt;p&gt;自适应&lt;code&gt;hash&lt;/code&gt;索引，用于优化对&lt;code&gt;Buffer Pool&lt;/code&gt;数据的查询。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;hash索引在进行等值匹配时，一般性能是要高于&lt;code&gt;B+&lt;/code&gt;树&lt;/strong&gt;，但是&lt;code&gt;hash&lt;/code&gt;索引又不适合做范围查询、模糊匹配等。&lt;/p&gt;
+&lt;p&gt;自适应&lt;code&gt;hash&lt;/code&gt;可以理解为是&lt;code&gt;InnoDB&lt;/code&gt;存储引擎对热点数据、热点页加快访问而自动创建管理的索引。&lt;/p&gt;
+&lt;h3 id=&#34;log-buffer&#34;&gt;Log Buffer
+&lt;/h3&gt;&lt;p&gt;日志缓冲区，用来保存需要写入到磁盘中的日志数据。像&lt;code&gt;redo log&lt;/code&gt;等。在进行进行修改或删除语句时，&lt;code&gt;mysql&lt;/code&gt;会开启自动事务提交。在提交时，为了保证事务的一致性和完整性，我们通常会使用&lt;code&gt;redo log&lt;/code&gt;，即将事务写道&lt;code&gt;log buffer&lt;/code&gt;中，等待一定时机把这个事务刷新到磁盘里面，这样，就算&lt;code&gt;mysql&lt;/code&gt;崩溃了，也会去重新加载磁盘上的&lt;code&gt;redo log&lt;/code&gt;，然后更新事务。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;🙅‍自动事务提交不支持事务回滚(RollBack)&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;事务什么时候提交到磁盘有三种选择：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每次事务提交的时候写入缓存并立即刷新到磁盘中，是默认选项&lt;/li&gt;
+&lt;li&gt;每秒将日志刷新到磁盘中&lt;/li&gt;
+&lt;li&gt;日志提交到缓存中后，每秒刷新日志到磁盘中。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;磁盘结构&#34;&gt;磁盘结构
+&lt;/h2&gt;&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620093407461.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20250620093407461&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;后台线程&#34;&gt;后台线程
+&lt;/h2&gt;&lt;p&gt;主要包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Master Thread&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;IO Thread&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Purge Thread&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Page Cleaner Thread&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;master-thread&#34;&gt;Master Thread
+&lt;/h3&gt;&lt;p&gt;核心后台线程，负责调度其它线程，还负责将缓冲池中的数据异步刷新到磁盘中。&lt;/p&gt;
+&lt;h3 id=&#34;io-thread&#34;&gt;IO Thread
+&lt;/h3&gt;&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620093931699.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20250620093931699&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;可以通过下面这条指令来查看&lt;code&gt;InnoDB&lt;/code&gt;的状态信息&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-mysql&#34; data-lang=&#34;mysql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;show&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kp&#34;&gt;engine&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;innodb&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;status&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;err&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;D&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;purge净化-thread&#34;&gt;Purge(净化) Thread
+&lt;/h3&gt;&lt;p&gt;用于回收事务已经提交的&lt;code&gt;undo log&lt;/code&gt;，在事务提交后，&lt;code&gt;undo log&lt;/code&gt;可能就不用了&lt;/p&gt;
+&lt;h3 id=&#34;page-cleaner-thread&#34;&gt;Page Cleaner Thread
+&lt;/h3&gt;&lt;p&gt;协助&lt;code&gt;Master Thread&lt;/code&gt;刷新脏页到磁盘的线程，减轻&lt;code&gt;Master Thread&lt;/code&gt;的压力。&lt;/p&gt;
+&lt;h1 id=&#34;事务&#34;&gt;事务
+&lt;/h1&gt;&lt;h2 id=&#34;事务四大特性&#34;&gt;事务四大特性
+&lt;/h2&gt;&lt;h3 id=&#34;原子性&#34;&gt;原子性
+&lt;/h3&gt;&lt;p&gt;要么全部成功提交，要么全部失败，不存在中间状态。&lt;/p&gt;
+&lt;h3 id=&#34;一致性&#34;&gt;一致性
+&lt;/h3&gt;&lt;p&gt;事务完成时，所有数据必须保证一致性。&lt;/p&gt;
+&lt;h3 id=&#34;隔离性&#34;&gt;隔离性
+&lt;/h3&gt;&lt;p&gt;多个事务之间互不影响，而且事务在不受外界影响的隔离环境中运行。&lt;/p&gt;
+&lt;h3 id=&#34;持久性&#34;&gt;持久性
+&lt;/h3&gt;&lt;p&gt;事务一旦提交或者回滚，它对数据库中的数据改变就是永久的。&lt;/p&gt;
+&lt;p&gt;对于这四大特性，由实现原理分为两部分，其中原子性、一致性、持久性是通过&lt;code&gt;redo log&lt;/code&gt;和&lt;code&gt;undo log&lt;/code&gt;保障的。&lt;/p&gt;
+&lt;p&gt;隔离性是通过数据库的锁和&lt;strong&gt;MVCC&lt;/strong&gt;保证的。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620095105250.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20250620095105250&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;log日志&#34;&gt;Log日志
+&lt;/h2&gt;&lt;p&gt;最重要的就是&lt;code&gt;redo log&lt;/code&gt;和&lt;code&gt;undo log&lt;/code&gt;，下面来详细说一下啊这些日志。&lt;/p&gt;
+&lt;h3 id=&#34;redo-log和wal预写日志&#34;&gt;Redo log和WAL预写日志
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;Redo log&lt;/code&gt;主要分为两类，一种是存在于磁盘上，另一种就是存在于内存中。&lt;/p&gt;
+&lt;p&gt;内存中主要是重做缓存的部分，也就是&lt;code&gt;log buffer&lt;/code&gt;缓存，当事务提交时，就会把所有修改信息全部保存在缓存中，然后根据一定的刷新时机，把所有信息全部存储在该日志文件中。&lt;/p&gt;
+&lt;p&gt;可以重载恢复的一部分是存在于磁盘上，从而做到了持久化恢复，当发生错误时，就可以进行数据恢复。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;记住，&lt;code&gt;redo log&lt;/code&gt;是帮助&lt;code&gt;Mysql&lt;/code&gt;服务器崩溃重启而建立的，当数据库崩溃时，再次重启就可以从磁盘中的&lt;code&gt;redo log&lt;/code&gt;日志中加载未提交恢复的事务。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;在业务操作中，我们操作数据一般是随机读写磁盘的，而不是顺序读写磁盘的。而&lt;code&gt;redo log&lt;/code&gt;在往磁盘中写入文件，由于是日志文件，都是顺序写的。顺序写的效率要远大于随机写。这种先写日志的方式，叫做&lt;code&gt;WAL&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;其实上面这段话有些绕，这种方式也算是一种独特的持久化策略。因为每次修改一个数据、删除数据基本上都是随机的，此时，每次都写一个数据实际上就会造成一次随机读取。而对于&lt;code&gt;redo log&lt;/code&gt;日志来说，先写入内存中，然后再刷新到磁盘中，对于磁盘中的日志文件来说，就是**(顺序读写的(连续追加**)&lt;/p&gt;
+&lt;h3 id=&#34;undo-log&#34;&gt;Undo log
+&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;事务的一个关键特点就是支持回滚&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;当事务进行回滚时，之前对数据的修改“都不算话”！&lt;/p&gt;
+&lt;p&gt;其实现思路是&lt;strong&gt;反着来&lt;/strong&gt;，例如，当执行一条&lt;code&gt;insert&lt;/code&gt;语句时，就在&lt;code&gt;undo log&lt;/code&gt;中保存一条相反语句即可，属于是&lt;strong&gt;逻辑日志&lt;/strong&gt;。&lt;/p&gt;
+&lt;h1 id=&#34;多版本并发控制mvcc&#34;&gt;多版本并发控制MVCC
+&lt;/h1&gt;&lt;p&gt;我觉得&lt;code&gt;MVCC&lt;/code&gt;就是为各种事务的隔离级别所设置的。实际上，&lt;code&gt;MVCC&lt;/code&gt;把各种读写分为多个版本，从而做到可重复读。&lt;/p&gt;
+&lt;h2 id=&#34;当前读&#34;&gt;当前读
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;当前读&lt;/strong&gt;读的是最新的版本，读取时还要确保其它并发事务不能修改当前记录，下面这些操作都是一种当前读&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-mysql&#34; data-lang=&#34;mysql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;select&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;lock&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;in&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;share&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;-- 共享锁
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-mysql&#34; data-lang=&#34;mysql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;update&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;insert&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;delete&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;-- 排他锁
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;都是一种当前读。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;快照读&#34;&gt;快照读
+&lt;/h2&gt;&lt;p&gt;简单的&lt;code&gt;select &lt;/code&gt;就是快照读，快照读的意思就是在某个时候对数据进行一个“拍照”，记录下那个时候的数据。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;还记得我们的几种事务隔离级别吗？他们解决什么问题来着？&lt;/p&gt;
+&lt;p&gt;RC，读提交，解决的是“一个线程可以读到另一个线程未提交的事务”的问题，对应问题是脏读&lt;/p&gt;
+&lt;p&gt;RR，可重复读，解决的是“一个线程前后读到的数据不一致的情况”，对应问题是不可重复读&lt;/p&gt;
+&lt;p&gt;序列化，解决的是“一个线程之前可以读到数据，之后发现读不了这个数据”的问题，对应的问题是幻读&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;对于&lt;code&gt;Rc&lt;/code&gt;隔离级别，一个线程&lt;strong&gt;只可以&lt;/strong&gt;读到另一个线程已经&lt;strong&gt;提交&lt;/strong&gt;过的事务，所以，当另一个线程的事务未提交时，每次&lt;code&gt;select&lt;/code&gt;的时候都生成一个快照读。&lt;/p&gt;
+&lt;p&gt;对于&lt;code&gt;RR&lt;/code&gt;的隔离级别，实际上，为了解决可重复读，一个很容易想到的思路是，在&lt;strong&gt;第一次对某个数据进行查询操作&lt;/strong&gt;的时候，就生成这个数据的快照，这样，每次都去读这个数据的快照，也就解决了“不可重复读”的问题。&lt;/p&gt;
+&lt;p&gt;对于”序列化“的隔离级别来说，快照读会变为当前读，总是保证事务提交后再去读，也就是说，序列化读到的数据&lt;strong&gt;永远都是最正确&lt;/strong&gt;的，也就解决了幻读。&lt;/p&gt;
+&lt;h2 id=&#34;mvcc&#34;&gt;MVCC
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;MVCC&lt;/code&gt;的含义就是去维护一份数据的多个版本，从而避免了在并发场景下同一份数据被争抢而导致的频繁&lt;code&gt;lock/unlock&lt;/code&gt;操作。&lt;/p&gt;
+&lt;p&gt;下面我们来分析一下&lt;code&gt;InnoDB&lt;/code&gt;表中的一些个隐藏字段&lt;/p&gt;
+&lt;h3 id=&#34;隐藏字段&#34;&gt;隐藏字段
+&lt;/h3&gt;&lt;p&gt;在创建表时，除了我们手动创建的字段类型外，还有一些辅助字段。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620210722727.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20250620210722727&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;undo-log-1&#34;&gt;undo log
+&lt;/h3&gt;&lt;p&gt;前面已经介绍了一些&lt;code&gt;undo log&lt;/code&gt;的基本思想，实际上，当事务成功提交后，所产生的&lt;code&gt;undo log&lt;/code&gt;就会被删除。&lt;/p&gt;
+&lt;p&gt;下面我们来看一看上面这些隐藏字段和&lt;code&gt;undo log&lt;/code&gt;是怎么做到事务回滚的吧！&lt;/p&gt;
+&lt;p&gt;假设有一张表为&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620211530107.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20250620211530107&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;在刚开始，这个表的某行数据还没有被修改过，所以也就没有需要回滚的版本。&lt;/p&gt;
+&lt;p&gt;假设有多个事务在并发执行，我们假设为&lt;code&gt;事务1 事务2 事务3 事务4&lt;/code&gt;，当事务1进行数据提交时，我们需要修改三个地方&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;生成对应的&lt;code&gt;undo log&lt;/code&gt;日志，以免日后数据回滚&lt;/li&gt;
+&lt;li&gt;修改&lt;code&gt;DB_TRX_ID&lt;/code&gt;字段，把这个值改为1，意思是”事务id为1的事务修改了这行数据&lt;/li&gt;
+&lt;li&gt;修改当前数据的&lt;code&gt;DB_ROLL_PTR&lt;/code&gt;数据字段，把当前字段指向&lt;code&gt;undo log&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;同样的，这几个事务在并发执行的时候，也就会轮流修改这些数据，由于事务还未提交，对应的&lt;code&gt;undo log&lt;/code&gt;日志也会一直存在，从而变成一个&lt;code&gt;undo log&lt;/code&gt;日志链&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620212214150.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20250620212214150&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;总结&#34;&gt;总结
+&lt;/h1&gt;&lt;p&gt;下次来讨论一下视图以及&lt;code&gt;MVCC&lt;/code&gt;实现的一些具体原理。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Mysql补全计划(四)</title>
         <link>https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E5%9B%9B/</link>
         <pubDate>Mon, 16 Jun 2025 14:46:17 +0800</pubDate>
@@ -1436,10 +1668,10 @@
 &lt;h3 id=&#34;脏读read-uncommit&#34;&gt;脏读/read uncommit
 &lt;/h3&gt;&lt;p&gt;脏读的意思是读到了未提交事务的数据。例如，在并发操作下，这里有一个变量&lt;code&gt;money&lt;/code&gt;，假设此时余额是100，对于&lt;code&gt;A&lt;/code&gt;来说，他消费了&lt;code&gt;50&lt;/code&gt;元，此时数据还未提交。这个时候，&lt;code&gt;B&lt;/code&gt;也来进行消费了，他想要消费100元，由于此时的事务隔离级别是&lt;code&gt;read uncommit&lt;/code&gt;，此时&lt;code&gt;B&lt;/code&gt;发现只剩50元，所以操作失败。&lt;/p&gt;
 &lt;p&gt;如果&lt;code&gt;A&lt;/code&gt;操作成功的话，那么&lt;code&gt;B&lt;/code&gt;这样做实际上是没有问题的，但是假设银行服务器出现了波动，那么&lt;code&gt;A&lt;/code&gt;事务操作失败，就要发生回滚，也就是说，此时&lt;code&gt;A&lt;/code&gt;消费失败，&lt;code&gt;B&lt;/code&gt;可以进行消费，但是&lt;code&gt;B&lt;/code&gt;读到了未提交的数据，造成消费失败。&lt;/p&gt;
-&lt;h2 id=&#34;不可重复读-read-commit&#34;&gt;不可重复读/ read commit
-&lt;/h2&gt;&lt;p&gt;不可重复读的意思是，在一个事务中，前后两次读到的同一个变量的值不相同。这是很有可能发生的，也就是说，事务&lt;code&gt;A&lt;/code&gt;可以读到事务&lt;code&gt;B&lt;/code&gt;对同一变量的修改。实际上这样做是有很大问题的。&lt;/p&gt;
-&lt;h2 id=&#34;幻读--repetable-read&#34;&gt;幻读 / repetable read
-&lt;/h2&gt;&lt;p&gt;幻读的意思是，第一次读的时候发现某某数据不存在，然后插入数据时又发现数据存在了，像是幻觉一样。&lt;/p&gt;
+&lt;h3 id=&#34;不可重复读-read-commit&#34;&gt;不可重复读/ read commit
+&lt;/h3&gt;&lt;p&gt;不可重复读的意思是，在一个事务中，前后两次读到的同一个变量的值不相同。这是很有可能发生的，也就是说，事务&lt;code&gt;A&lt;/code&gt;可以读到事务&lt;code&gt;B&lt;/code&gt;对同一变量的修改。实际上这样做是有很大问题的。&lt;/p&gt;
+&lt;h3 id=&#34;幻读--repetable-read&#34;&gt;幻读 / repetable read
+&lt;/h3&gt;&lt;p&gt;幻读的意思是，第一次读的时候发现某某数据不存在，然后插入数据时又发现数据存在了，像是幻觉一样。&lt;/p&gt;
 &lt;p&gt;思考一种常见，假设&lt;code&gt;A&lt;/code&gt;要插入一条员工信息，插入时先查看一下是否存在该用户，发现不存在，这个时候&lt;code&gt;B&lt;/code&gt;插入了这条信息，此时&lt;code&gt;A&lt;/code&gt;再插入，发现已经存在了。&lt;/p&gt;
 &lt;p&gt;其实，调整隔离级别就可以避免这些问题。&lt;/p&gt;
 &lt;h2 id=&#34;隔离级别&#34;&gt;隔离级别

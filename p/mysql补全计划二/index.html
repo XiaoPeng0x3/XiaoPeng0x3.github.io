@@ -317,10 +317,10 @@ var _hmt = _hmt || [];
         <li><a href="#并发事务问题">并发事务问题</a>
           <ol>
             <li><a href="#脏读read-uncommit">脏读/read uncommit</a></li>
+            <li><a href="#不可重复读-read-commit">不可重复读/ read commit</a></li>
+            <li><a href="#幻读--repetable-read">幻读 / repetable read</a></li>
           </ol>
         </li>
-        <li><a href="#不可重复读-read-commit">不可重复读/ read commit</a></li>
-        <li><a href="#幻读--repetable-read">幻读 / repetable read</a></li>
         <li><a href="#隔离级别">隔离级别</a>
           <ol>
             <li><a href="#查看隔离级别">查看隔离级别</a></li>
@@ -553,10 +553,10 @@ var _hmt = _hmt || [];
 <h3 id="脏读read-uncommit">脏读/read uncommit
 </h3><p>脏读的意思是读到了未提交事务的数据。例如，在并发操作下，这里有一个变量<code>money</code>，假设此时余额是100，对于<code>A</code>来说，他消费了<code>50</code>元，此时数据还未提交。这个时候，<code>B</code>也来进行消费了，他想要消费100元，由于此时的事务隔离级别是<code>read uncommit</code>，此时<code>B</code>发现只剩50元，所以操作失败。</p>
 <p>如果<code>A</code>操作成功的话，那么<code>B</code>这样做实际上是没有问题的，但是假设银行服务器出现了波动，那么<code>A</code>事务操作失败，就要发生回滚，也就是说，此时<code>A</code>消费失败，<code>B</code>可以进行消费，但是<code>B</code>读到了未提交的数据，造成消费失败。</p>
-<h2 id="不可重复读-read-commit">不可重复读/ read commit
-</h2><p>不可重复读的意思是，在一个事务中，前后两次读到的同一个变量的值不相同。这是很有可能发生的，也就是说，事务<code>A</code>可以读到事务<code>B</code>对同一变量的修改。实际上这样做是有很大问题的。</p>
-<h2 id="幻读--repetable-read">幻读 / repetable read
-</h2><p>幻读的意思是，第一次读的时候发现某某数据不存在，然后插入数据时又发现数据存在了，像是幻觉一样。</p>
+<h3 id="不可重复读-read-commit">不可重复读/ read commit
+</h3><p>不可重复读的意思是，在一个事务中，前后两次读到的同一个变量的值不相同。这是很有可能发生的，也就是说，事务<code>A</code>可以读到事务<code>B</code>对同一变量的修改。实际上这样做是有很大问题的。</p>
+<h3 id="幻读--repetable-read">幻读 / repetable read
+</h3><p>幻读的意思是，第一次读的时候发现某某数据不存在，然后插入数据时又发现数据存在了，像是幻觉一样。</p>
 <p>思考一种常见，假设<code>A</code>要插入一条员工信息，插入时先查看一下是否存在该用户，发现不存在，这个时候<code>B</code>插入了这条信息，此时<code>A</code>再插入，发现已经存在了。</p>
 <p>其实，调整隔离级别就可以避免这些问题。</p>
 <h2 id="隔离级别">隔离级别
@@ -705,6 +705,19 @@ var _hmt = _hmt || [];
     <h2 class="section-title">相关文章</h2>
     <div class="related-content">
         <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql补全计划(五)</h2>
+        </div>
+    </a>
+</article>
+
             
                 
 <article class="">

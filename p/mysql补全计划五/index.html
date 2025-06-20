@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="启动服务 在win下可以使用net启动mysql服务。\n首先打开具有管理员权限的cmd窗口，否则将会被禁止访问\n在窗口中输入\n1 net start mysql 然后就可以等待服务开启\n如果想要关闭服务，只需要输入\n">
-<title>Mysql的登陆</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 今天继续来完成补全计划！\nInnoDB存储引擎 逻辑存储结构 表空间\n表空间是InnoDB存储引擎逻辑的最高层，当用户启用了参数innodb_file——per_table，则每张表就会有一个表空间，一个mysql实例可以对应多个表空间，用于存储记录、索引。\n">
+<title>Mysql补全计划(五)</title>
 
-<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/mysql%E7%9A%84%E7%99%BB%E9%99%86/'>
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Mysql的登陆">
-<meta property='og:description' content="启动服务 在win下可以使用net启动mysql服务。\n首先打开具有管理员权限的cmd窗口，否则将会被禁止访问\n在窗口中输入\n1 net start mysql 然后就可以等待服务开启\n如果想要关闭服务，只需要输入\n">
-<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/mysql%E7%9A%84%E7%99%BB%E9%99%86/'>
+<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Mysql补全计划(五)">
+<meta property='og:description' content="前言 今天继续来完成补全计划！\nInnoDB存储引擎 逻辑存储结构 表空间\n表空间是InnoDB存储引擎逻辑的最高层，当用户启用了参数innodb_file——per_table，则每张表就会有一个表空间，一个mysql实例可以对应多个表空间，用于存储记录、索引。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='mysql' /><meta property='article:published_time' content='2025-03-04T10:22:06&#43;08:00'/><meta property='article:modified_time' content='2025-03-04T10:22:06&#43;08:00'/>
-<meta name="twitter:title" content="Mysql的登陆">
-<meta name="twitter:description" content="启动服务 在win下可以使用net启动mysql服务。\n首先打开具有管理员权限的cmd窗口，否则将会被禁止访问\n在窗口中输入\n1 net start mysql 然后就可以等待服务开启\n如果想要关闭服务，只需要输入\n">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-17T14:46:17&#43;08:00'/><meta property='article:modified_time' content='2025-06-17T14:46:17&#43;08:00'/>
+<meta name="twitter:title" content="Mysql补全计划(五)">
+<meta name="twitter:description" content="前言 今天继续来完成补全计划！\nInnoDB存储引擎 逻辑存储结构 表空间\n表空间是InnoDB存储引擎逻辑的最高层，当用户启用了参数innodb_file——per_table，则每张表就会有一个表空间，一个mysql实例可以对应多个表空间，用于存储记录、索引。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
@@ -288,14 +288,60 @@ var _hmt = _hmt || [];
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#启动服务">启动服务</a></li>
-    <li><a href="#登录服务">登录服务</a></li>
-    <li><a href="#密码相关">密码相关</a>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#innodb存储引擎">InnoDB存储引擎</a>
       <ol>
-        <li><a href="#修改密码">修改密码</a></li>
-        <li><a href="#忘记密码">忘记密码</a></li>
+        <li><a href="#逻辑存储结构">逻辑存储结构</a></li>
+        <li><a href="#内存结构">内存结构</a>
+          <ol>
+            <li><a href="#buffer-pool">Buffer Pool</a></li>
+            <li><a href="#change-buffer">Change Buffer</a></li>
+            <li><a href="#自适应hash">自适应hash</a></li>
+            <li><a href="#log-buffer">Log Buffer</a></li>
+          </ol>
+        </li>
+        <li><a href="#磁盘结构">磁盘结构</a></li>
+        <li><a href="#后台线程">后台线程</a>
+          <ol>
+            <li><a href="#master-thread">Master Thread</a></li>
+            <li><a href="#io-thread">IO Thread</a></li>
+            <li><a href="#purge净化-thread">Purge(净化) Thread</a></li>
+            <li><a href="#page-cleaner-thread">Page Cleaner Thread</a></li>
+          </ol>
+        </li>
       </ol>
     </li>
+    <li><a href="#事务">事务</a>
+      <ol>
+        <li><a href="#事务四大特性">事务四大特性</a>
+          <ol>
+            <li><a href="#原子性">原子性</a></li>
+            <li><a href="#一致性">一致性</a></li>
+            <li><a href="#隔离性">隔离性</a></li>
+            <li><a href="#持久性">持久性</a></li>
+          </ol>
+        </li>
+        <li><a href="#log日志">Log日志</a>
+          <ol>
+            <li><a href="#redo-log和wal预写日志">Redo log和WAL预写日志</a></li>
+            <li><a href="#undo-log">Undo log</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#多版本并发控制mvcc">多版本并发控制MVCC</a>
+      <ol>
+        <li><a href="#当前读">当前读</a></li>
+        <li><a href="#快照读">快照读</a></li>
+        <li><a href="#mvcc">MVCC</a>
+          <ol>
+            <li><a href="#隐藏字段">隐藏字段</a></li>
+            <li><a href="#undo-log-1">undo log</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
   </ol>
 </nav>
         </div>
@@ -323,7 +369,7 @@ var _hmt = _hmt || [];
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/mysql%E7%9A%84%E7%99%BB%E9%99%86/">Mysql的登陆</a>
+            <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/">Mysql补全计划(五)</a>
         </h2>
     
         
@@ -345,7 +391,7 @@ var _hmt = _hmt || [];
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">2025-03-04</time>
+                <time class="article-time--published">2025-06-17</time>
             </div>
         
 
@@ -360,7 +406,7 @@ var _hmt = _hmt || [];
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 7 分钟
                 </time>
             </div>
         
@@ -375,137 +421,156 @@ var _hmt = _hmt || [];
     <section class="article-content">
     
     
-    <h1 id="启动服务">启动服务
-</h1><p>在<code>win</code>下可以使用<code>net</code>启动<code>mysql</code>服务。</p>
+    <h1 id="前言">前言
+</h1><p>今天继续来完成补全计划！</p>
+<h1 id="innodb存储引擎">InnoDB存储引擎
+</h1><h2 id="逻辑存储结构">逻辑存储结构
+</h2><ul>
+<li>
+<p>表空间</p>
+<p>表空间是<code>InnoDB</code>存储引擎逻辑的最高层，当用户启用了参数<code>innodb_file——per_table</code>，则每张表就会有一个表空间，一个<code>mysql</code>实例可以对应多个表空间，用于存储记录、索引。</p>
+</li>
+<li>
+<p>段</p>
+<p>分为数据段、索引段、回滚段，<code>InnoDB</code>是索引组织表，数据段就是<code>B+</code>树的叶子结点。段可以用来管理多个区。</p>
+</li>
+<li>
+<p>区</p>
+<p>每个区的大小为<code>1M</code>，默认情况下，<code>InnoDB</code>存储引擎页大小为<code>16k</code>，即一个区里面有<code>64</code>个连续的页。</p>
+</li>
+<li>
+<p>页</p>
+<p>页是磁盘管理的最小单元，每个页大小默认为<code>16kb</code></p>
+</li>
+<li>
+<p>行</p>
+<p><code>InnoDB</code>存储数据是按照行进行存放的。</p>
+<p>在行中，默认有两个隐藏字段：</p>
+<ul>
+<li><code>Trx_id</code>：每次对某条记录进行改动时，都会把对应的事务<code>id</code>赋值给<code>trx_id</code>隐藏列</li>
+<li><code>Roll_pointer</code>：每次对某条记录进行改动时，都会把旧的版本写入<code>undo</code>日志，然后这个隐藏列就相当于一个指针，可以通过它来找到该记录修改前的信息，也就是可以用这个指针来进行<code>undo</code>日志的操作。</li>
+</ul>
+</li>
+</ul>
+<h2 id="内存结构">内存结构
+</h2><p>主要分为四大块，<code>Buffer Pool、Change buffer、Adaptive Hash Index、Log Buffer</code></p>
+<h3 id="buffer-pool">Buffer Pool
+</h3><p>缓存池的思想我们已经很熟悉了，如果每次操作都是进行磁盘<code>IO</code>，那么效率会很慢，，我们可以把经常使用的数据加载到缓存池里面，这样就可以避免每次访问的时候都进行磁盘<code>IO</code>。</p>
+<p>在执行增删改查操作时，先操作缓存池中的数据，然后再以一定的频率刷新到磁盘中，从而减少磁盘<code>IO</code>，加快处理速度。</p>
+<h3 id="change-buffer">Change Buffer
+</h3><p>这个其实也是缓存而已，只不过是专门对于<strong>二级索引</strong>建立的，在修改二级索引有关的数据时，会把修改的遍历提交到这个缓存中，等待某个时机后会与<code>buffer pool</code>合并刷新到磁盘中。</p>
+<h3 id="自适应hash">自适应hash
+</h3><p>自适应<code>hash</code>索引，用于优化对<code>Buffer Pool</code>数据的查询。</p>
+<p><strong>hash索引在进行等值匹配时，一般性能是要高于<code>B+</code>树</strong>，但是<code>hash</code>索引又不适合做范围查询、模糊匹配等。</p>
+<p>自适应<code>hash</code>可以理解为是<code>InnoDB</code>存储引擎对热点数据、热点页加快访问而自动创建管理的索引。</p>
+<h3 id="log-buffer">Log Buffer
+</h3><p>日志缓冲区，用来保存需要写入到磁盘中的日志数据。像<code>redo log</code>等。在进行进行修改或删除语句时，<code>mysql</code>会开启自动事务提交。在提交时，为了保证事务的一致性和完整性，我们通常会使用<code>redo log</code>，即将事务写道<code>log buffer</code>中，等待一定时机把这个事务刷新到磁盘里面，这样，就算<code>mysql</code>崩溃了，也会去重新加载磁盘上的<code>redo log</code>，然后更新事务。</p>
+<blockquote>
+<p>🙅‍自动事务提交不支持事务回滚(RollBack)</p></blockquote>
+<p>事务什么时候提交到磁盘有三种选择：</p>
+<ul>
+<li>每次事务提交的时候写入缓存并立即刷新到磁盘中，是默认选项</li>
+<li>每秒将日志刷新到磁盘中</li>
+<li>日志提交到缓存中后，每秒刷新日志到磁盘中。</li>
+</ul>
+<h2 id="磁盘结构">磁盘结构
+</h2><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620093407461.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250620093407461"
+	
+	
+></p>
+<h2 id="后台线程">后台线程
+</h2><p>主要包括</p>
+<ul>
+<li><code>Master Thread</code></li>
+<li><code>IO Thread</code></li>
+<li><code>Purge Thread</code></li>
+<li><code>Page Cleaner Thread</code></li>
+</ul>
+<h3 id="master-thread">Master Thread
+</h3><p>核心后台线程，负责调度其它线程，还负责将缓冲池中的数据异步刷新到磁盘中。</p>
+<h3 id="io-thread">IO Thread
+</h3><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620093931699.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250620093931699"
+	
+	
+></p>
+<p>可以通过下面这条指令来查看<code>InnoDB</code>的状态信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="kp">engine</span><span class="w"> </span><span class="n">innodb</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="err">\</span><span class="n">D</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="purge净化-thread">Purge(净化) Thread
+</h3><p>用于回收事务已经提交的<code>undo log</code>，在事务提交后，<code>undo log</code>可能就不用了</p>
+<h3 id="page-cleaner-thread">Page Cleaner Thread
+</h3><p>协助<code>Master Thread</code>刷新脏页到磁盘的线程，减轻<code>Master Thread</code>的压力。</p>
+<h1 id="事务">事务
+</h1><h2 id="事务四大特性">事务四大特性
+</h2><h3 id="原子性">原子性
+</h3><p>要么全部成功提交，要么全部失败，不存在中间状态。</p>
+<h3 id="一致性">一致性
+</h3><p>事务完成时，所有数据必须保证一致性。</p>
+<h3 id="隔离性">隔离性
+</h3><p>多个事务之间互不影响，而且事务在不受外界影响的隔离环境中运行。</p>
+<h3 id="持久性">持久性
+</h3><p>事务一旦提交或者回滚，它对数据库中的数据改变就是永久的。</p>
+<p>对于这四大特性，由实现原理分为两部分，其中原子性、一致性、持久性是通过<code>redo log</code>和<code>undo log</code>保障的。</p>
+<p>隔离性是通过数据库的锁和<strong>MVCC</strong>保证的。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620095105250.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250620095105250"
+	
+	
+></p>
+<h2 id="log日志">Log日志
+</h2><p>最重要的就是<code>redo log</code>和<code>undo log</code>，下面来详细说一下啊这些日志。</p>
+<h3 id="redo-log和wal预写日志">Redo log和WAL预写日志
+</h3><p><code>Redo log</code>主要分为两类，一种是存在于磁盘上，另一种就是存在于内存中。</p>
+<p>内存中主要是重做缓存的部分，也就是<code>log buffer</code>缓存，当事务提交时，就会把所有修改信息全部保存在缓存中，然后根据一定的刷新时机，把所有信息全部存储在该日志文件中。</p>
+<p>可以重载恢复的一部分是存在于磁盘上，从而做到了持久化恢复，当发生错误时，就可以进行数据恢复。</p>
+<blockquote>
+<p>记住，<code>redo log</code>是帮助<code>Mysql</code>服务器崩溃重启而建立的，当数据库崩溃时，再次重启就可以从磁盘中的<code>redo log</code>日志中加载未提交恢复的事务。</p></blockquote>
+<p>在业务操作中，我们操作数据一般是随机读写磁盘的，而不是顺序读写磁盘的。而<code>redo log</code>在往磁盘中写入文件，由于是日志文件，都是顺序写的。顺序写的效率要远大于随机写。这种先写日志的方式，叫做<code>WAL</code>。</p>
+<p>其实上面这段话有些绕，这种方式也算是一种独特的持久化策略。因为每次修改一个数据、删除数据基本上都是随机的，此时，每次都写一个数据实际上就会造成一次随机读取。而对于<code>redo log</code>日志来说，先写入内存中，然后再刷新到磁盘中，对于磁盘中的日志文件来说，就是**(顺序读写的(连续追加**)</p>
+<h3 id="undo-log">Undo log
+</h3><blockquote>
+<p>事务的一个关键特点就是支持回滚</p></blockquote>
+<p>当事务进行回滚时，之前对数据的修改“都不算话”！</p>
+<p>其实现思路是<strong>反着来</strong>，例如，当执行一条<code>insert</code>语句时，就在<code>undo log</code>中保存一条相反语句即可，属于是<strong>逻辑日志</strong>。</p>
+<h1 id="多版本并发控制mvcc">多版本并发控制MVCC
+</h1><p>我觉得<code>MVCC</code>就是为各种事务的隔离级别所设置的。实际上，<code>MVCC</code>把各种读写分为多个版本，从而做到可重复读。</p>
+<h2 id="当前读">当前读
+</h2><p><strong>当前读</strong>读的是最新的版本，读取时还要确保其它并发事务不能修改当前记录，下面这些操作都是一种当前读</p>
 <ul>
 <li>
-<p>首先打开具有管理员权限的<code>cmd</code>窗口，否则将会被禁止访问</p>
-</li>
-<li>
-<p>在窗口中输入</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">net start mysql
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>然后就可以等待服务开启</p>
-</li>
-<li>
-<p>如果想要关闭服务，只需要输入</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">net stop mysql
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-</ul>
-<h1 id="登录服务">登录服务
-</h1><p>在<code>mysql</code>中可以指定用户的登录，其命令格式如下‘</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -u root -p password
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>-u</code>参数后面接的是登录时的用户名</p>
-<p>如果想要登出<code>mysql</code>，</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">quit</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><h1 id="密码相关">密码相关
-</h1><h2 id="修改密码">修改密码
-</h2><p>假设已经知道原来的密码，比如原来的密码是<code>123</code>，想要把密码修改为<code>123456</code>。</p>
-<ol>
-<li>
-<p>登录<code>mysql</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -u root -p <span class="m">123</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>修改表</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="kt">SET</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;root&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;123456&#39;</span><span class="p">;</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">lock</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">share</span><span class="w"> </span><span class="n">mode</span><span class="p">;</span><span class="w"> </span><span class="c1">-- 共享锁
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div></li>
 <li>
-<p>刷新权限</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">FLUSH</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">EXIT</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>登出</p>
-</li>
-<li>
-<p>可以进行验证</p>
-</li>
-</ol>
-<h2 id="忘记密码">忘记密码
-</h2><ol>
-<li>
-<p>关闭所有正在运行的<code>mysql</code>服务</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">net stop mysql
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>以跳过授权的方式登录</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysqld --skip-grant-tables --skip-networking
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>直接登录</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -u root
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>然后进行修改</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -513,39 +578,79 @@ var _hmt = _hmt || [];
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ALTER USER <span class="s1">&#39;root&#39;</span>@<span class="s1">&#39;localhost&#39;</span> IDENTIFIED BY <span class="s1">&#39;123456&#39;</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">FLUSH PRIVILEGES<span class="p">;</span>
-</span></span><span class="line"><span class="cl">EXIT<span class="p">;</span>
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">update</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">delete</span><span class="w"> </span><span class="c1">-- 排他锁
+</span></span></span></code></pre></td></tr></table>
 </div>
-</div></li>
-<li>
-<p>重启mysql</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">net start mysql
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>进行验证</p>
+</div><p>都是一种当前读。</p>
 </li>
-</ol>
+</ul>
+<h2 id="快照读">快照读
+</h2><p>简单的<code>select </code>就是快照读，快照读的意思就是在某个时候对数据进行一个“拍照”，记录下那个时候的数据。</p>
+<blockquote>
+<p>还记得我们的几种事务隔离级别吗？他们解决什么问题来着？</p>
+<p>RC，读提交，解决的是“一个线程可以读到另一个线程未提交的事务”的问题，对应问题是脏读</p>
+<p>RR，可重复读，解决的是“一个线程前后读到的数据不一致的情况”，对应问题是不可重复读</p>
+<p>序列化，解决的是“一个线程之前可以读到数据，之后发现读不了这个数据”的问题，对应的问题是幻读</p></blockquote>
+<p>对于<code>Rc</code>隔离级别，一个线程<strong>只可以</strong>读到另一个线程已经<strong>提交</strong>过的事务，所以，当另一个线程的事务未提交时，每次<code>select</code>的时候都生成一个快照读。</p>
+<p>对于<code>RR</code>的隔离级别，实际上，为了解决可重复读，一个很容易想到的思路是，在<strong>第一次对某个数据进行查询操作</strong>的时候，就生成这个数据的快照，这样，每次都去读这个数据的快照，也就解决了“不可重复读”的问题。</p>
+<p>对于”序列化“的隔离级别来说，快照读会变为当前读，总是保证事务提交后再去读，也就是说，序列化读到的数据<strong>永远都是最正确</strong>的，也就解决了幻读。</p>
+<h2 id="mvcc">MVCC
+</h2><p><code>MVCC</code>的含义就是去维护一份数据的多个版本，从而避免了在并发场景下同一份数据被争抢而导致的频繁<code>lock/unlock</code>操作。</p>
+<p>下面我们来分析一下<code>InnoDB</code>表中的一些个隐藏字段</p>
+<h3 id="隐藏字段">隐藏字段
+</h3><p>在创建表时，除了我们手动创建的字段类型外，还有一些辅助字段。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620210722727.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250620210722727"
+	
+	
+></p>
+<h3 id="undo-log-1">undo log
+</h3><p>前面已经介绍了一些<code>undo log</code>的基本思想，实际上，当事务成功提交后，所产生的<code>undo log</code>就会被删除。</p>
+<p>下面我们来看一看上面这些隐藏字段和<code>undo log</code>是怎么做到事务回滚的吧！</p>
+<p>假设有一张表为</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620211530107.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250620211530107"
+	
+	
+></p>
+<p>在刚开始，这个表的某行数据还没有被修改过，所以也就没有需要回滚的版本。</p>
+<p>假设有多个事务在并发执行，我们假设为<code>事务1 事务2 事务3 事务4</code>，当事务1进行数据提交时，我们需要修改三个地方</p>
+<ul>
+<li>生成对应的<code>undo log</code>日志，以免日后数据回滚</li>
+<li>修改<code>DB_TRX_ID</code>字段，把这个值改为1，意思是”事务id为1的事务修改了这行数据</li>
+<li>修改当前数据的<code>DB_ROLL_PTR</code>数据字段，把当前字段指向<code>undo log</code></li>
+</ul>
+<p>同样的，这几个事务在并发执行的时候，也就会轮流修改这些数据，由于事务还未提交，对应的<code>undo log</code>日志也会一直存在，从而变成一个<code>undo log</code>日志链</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250620212214150.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250620212214150"
+	
+	
+></p>
+<h1 id="总结">总结
+</h1><p>下次来讨论一下视图以及<code>MVCC</code>实现的一些具体原理。</p>
 
 </section>
 
 
     <footer class="article-footer">
     
-    <section class="article-tags">
-        
-            <a href="/tags/mysql/">Mysql</a>
-        
-    </section>
-
 
     
     <section class="article-copyright">
@@ -600,19 +705,6 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Mysql补全计划(五)</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
     <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E5%9B%9B/">
         
         
@@ -658,6 +750,19 @@ var _hmt = _hmt || [];
 
         <div class="article-details">
             <h2 class="article-title">Mysql补全计划(一)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/mysql%E7%9A%84%E7%99%BB%E9%99%86/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql的登陆</h2>
         </div>
     </a>
 </article>
