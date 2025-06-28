@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="启动服务 在win下可以使用net启动mysql服务。\n首先打开具有管理员权限的cmd窗口，否则将会被禁止访问\n在窗口中输入\n1 net start mysql 然后就可以等待服务开启\n如果想要关闭服务，只需要输入\n">
-<title>Mysql的登陆</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 好耶！是MySQL补全计划六！\nMVCC MVCC的意义就在于可以使不同的事务并发读数据不会阻塞，我们接着上篇，来说一下MVCC的核心概念。\nreadview readview是快照读sql执行时mvcc读取数据的依据，包括四个核心字段。\n">
+<title>Mysql补全计划(六)</title>
 
-<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/mysql%E7%9A%84%E7%99%BB%E9%99%86/'>
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E5%85%AD/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Mysql的登陆">
-<meta property='og:description' content="启动服务 在win下可以使用net启动mysql服务。\n首先打开具有管理员权限的cmd窗口，否则将会被禁止访问\n在窗口中输入\n1 net start mysql 然后就可以等待服务开启\n如果想要关闭服务，只需要输入\n">
-<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/mysql%E7%9A%84%E7%99%BB%E9%99%86/'>
+<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Mysql补全计划(六)">
+<meta property='og:description' content="前言 好耶！是MySQL补全计划六！\nMVCC MVCC的意义就在于可以使不同的事务并发读数据不会阻塞，我们接着上篇，来说一下MVCC的核心概念。\nreadview readview是快照读sql执行时mvcc读取数据的依据，包括四个核心字段。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E5%85%AD/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='mysql' /><meta property='article:published_time' content='2025-03-04T10:22:06&#43;08:00'/><meta property='article:modified_time' content='2025-03-04T10:22:06&#43;08:00'/>
-<meta name="twitter:title" content="Mysql的登陆">
-<meta name="twitter:description" content="启动服务 在win下可以使用net启动mysql服务。\n首先打开具有管理员权限的cmd窗口，否则将会被禁止访问\n在窗口中输入\n1 net start mysql 然后就可以等待服务开启\n如果想要关闭服务，只需要输入\n">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-18T14:46:17&#43;08:00'/><meta property='article:modified_time' content='2025-06-18T14:46:17&#43;08:00'/>
+<meta name="twitter:title" content="Mysql补全计划(六)">
+<meta name="twitter:description" content="前言 好耶！是MySQL补全计划六！\nMVCC MVCC的意义就在于可以使不同的事务并发读数据不会阻塞，我们接着上篇，来说一下MVCC的核心概念。\nreadview readview是快照读sql执行时mvcc读取数据的依据，包括四个核心字段。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
@@ -288,14 +288,29 @@ var _hmt = _hmt || [];
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#启动服务">启动服务</a></li>
-    <li><a href="#登录服务">登录服务</a></li>
-    <li><a href="#密码相关">密码相关</a>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#mvcc">MVCC</a>
       <ol>
-        <li><a href="#修改密码">修改密码</a></li>
-        <li><a href="#忘记密码">忘记密码</a></li>
+        <li><a href="#readview">readview</a></li>
+        <li><a href="#readview对版本链的访问规则">readview对版本链的访问规则</a></li>
       </ol>
     </li>
+    <li><a href="#视图存储过程触发器">视图/存储过程/触发器</a>
+      <ol>
+        <li><a href="#什么是视图">什么是视图</a></li>
+        <li><a href="#创建视图view">创建视图view</a></li>
+        <li><a href="#查询当前数据库的view">查询当前数据库的view</a></li>
+        <li><a href="#修改视图">修改视图</a></li>
+        <li><a href="#删除视图">删除视图</a></li>
+      </ol>
+    </li>
+    <li><a href="#mysql管理">MySQL管理</a>
+      <ol>
+        <li><a href="#系统数据库">系统数据库</a></li>
+        <li><a href="#数据库备份">数据库备份</a></li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
   </ol>
 </nav>
         </div>
@@ -323,7 +338,7 @@ var _hmt = _hmt || [];
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/mysql%E7%9A%84%E7%99%BB%E9%99%86/">Mysql的登陆</a>
+            <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E5%85%AD/">Mysql补全计划(六)</a>
         </h2>
     
         
@@ -345,7 +360,7 @@ var _hmt = _hmt || [];
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">2025-03-04</time>
+                <time class="article-time--published">2025-06-18</time>
             </div>
         
 
@@ -360,7 +375,7 @@ var _hmt = _hmt || [];
 
 
                 <time class="article-time--reading">
-                    阅读时长: 1 分钟
+                    阅读时长: 4 分钟
                 </time>
             </div>
         
@@ -375,177 +390,248 @@ var _hmt = _hmt || [];
     <section class="article-content">
     
     
-    <h1 id="启动服务">启动服务
-</h1><p>在<code>win</code>下可以使用<code>net</code>启动<code>mysql</code>服务。</p>
+    <h1 id="前言">前言
+</h1><blockquote>
+<p>好耶！是<code>MySQL</code>补全计划六！</p></blockquote>
+<h1 id="mvcc">MVCC
+</h1><p><code>MVCC</code>的意义就在于<strong>可以使不同的事务并发读数据不会阻塞</strong>，我们接着上篇，来说一下<code>MVCC</code>的核心概念。</p>
+<h2 id="readview">readview
+</h2><p><code>readview</code>是快照读<code>sql</code>执行时<code>mvcc</code>读取数据的依据，包括四个核心字段。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250621232000312.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250621232000312"
+	
+	
+></p>
+<p>上篇我们说到，除了我们自己添加的数据外，<code>mysql</code>还会自动给我们添加一些隐藏字段。</p>
 <ul>
-<li>
-<p>首先打开具有管理员权限的<code>cmd</code>窗口，否则将会被禁止访问</p>
-</li>
-<li>
-<p>在窗口中输入</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">net start mysql
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>然后就可以等待服务开启</p>
-</li>
-<li>
-<p>如果想要关闭服务，只需要输入</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">net stop mysql
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
+<li><code>DB_TRX_ID</code>：当前是哪个事务修改了这行数据，记录<code>ID</code>，而且，<code>ID</code>还是自增的</li>
+<li><code>DB_ROLL_PTR</code>：当进行回滚时，需要回滚到的版本，这个指针是指向<code>undo log</code>的</li>
 </ul>
-<h1 id="登录服务">登录服务
-</h1><p>在<code>mysql</code>中可以指定用户的登录，其命令格式如下‘</p>
+<p>所以，我们是否可以读某个事务(<code>ID</code>可以区分)修改的数据，就可以与这个事务的<code>ID</code>进行比较。</p>
+<p>而<code>read view</code>正好帮我们维护了一些还未提交的事务<code>id</code>，<code>read view</code>把这些个未提交的事务叫做<strong>活跃事务</strong>。</p>
+<h2 id="readview对版本链的访问规则">readview对版本链的访问规则
+</h2><p><strong>事务开始时（开启手动提交）</strong>：</p>
+<ul>
+<li>系统会为这个事务分配一个新的事务 ID（<code>trx_id</code>）</li>
+<li>如果该事务第一次执行<strong>快照读</strong>（普通的 <code>SELECT</code>），就会<strong>创建一个 <code>ReadView</code></strong></li>
+</ul>
+<p><strong>ReadView 的组成：</strong></p>
+<ul>
+<li><code>creator_trx_id</code>：表示这个 ReadView 是哪个事务创建的</li>
+<li><code>m_ids</code>：当前系统中活跃的事务 ID（还没提交的）</li>
+<li><code>min_trx_id</code>：<code>m_ids</code> 中最小的 ID</li>
+<li><code>max_trx_id</code>：创建 ReadView 时，系统中下一个即将分配的事务 ID</li>
+</ul>
+<p><strong>其他事务在执行写操作时：</strong></p>
+<ul>
+<li>修改数据不直接覆盖旧数据，而是：
+<ul>
+<li>把旧值写入 undo log，形成版本链（由 <code>roll_pointer</code> 连接）</li>
+<li>将新值写到页中，标记新的 <code>trx_id</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>当前事务读取数据时：</strong></p>
+<ul>
+<li>遇到一条记录的当前版本</li>
+<li><strong>根据该记录的 <code>trx_id</code> 和本事务的 <code>ReadView</code> 判断它是否可见</strong>
+<ul>
+<li>如果不可见，顺着 <code>undo log</code> 中的版本链回退</li>
+<li>找到第一个符合 ReadView 可见性规则的旧版本</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>ReadView 决定你“能不能看”某个版本，undo log 提供你“可以看的版本”。</p></blockquote>
+<p>不同的隔离级别，生成<code>read view</code>的时机是不同的</p>
+<ul>
+<li><code>read commit</code>，在这个隔离级别中，只可以读到已经提交的事务的数据，不保证可重复读，也就是在每次快照读的时候都会生成<code>read view</code></li>
+<li><code>rr</code>，保证可重复读，仅在第一次执行快照读的时候生成<code>read view</code>，后续复用<code>read view</code></li>
+</ul>
+<h1 id="视图存储过程触发器">视图/存储过程/触发器
+</h1><h2 id="什么是视图">什么是视图
+</h2><p>视图时一种虚拟存在的表。视图中的数据并不在数据库中存在，行和列的数据来自定义视图查询中使用的表，并且是动态生成的。</p>
+<h2 id="创建视图view">创建视图view
+</h2><p>我们可以使用<code>create</code>和<code>replace with</code>关键字来创建或修改视图。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -u root -p password
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>-u</code>参数后面接的是登录时的用户名</p>
-<p>如果想要登出<code>mysql</code>，</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">quit</span><span class="p">;</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">replace</span><span class="w"> </span><span class="n">view</span><span class="w"> </span><span class="err">视图名称</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">col1</span><span class="p">,</span><span class="w"> </span><span class="n">col2</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="p">...;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h1 id="密码相关">密码相关
-</h1><h2 id="修改密码">修改密码
-</h2><p>假设已经知道原来的密码，比如原来的密码是<code>123</code>，想要把密码修改为<code>123456</code>。</p>
-<ol>
-<li>
-<p>登录<code>mysql</code></p>
+</div><p>意思就是说，<code>select</code>的返回结果其实也是一张表，根据返回结果，我们来创建对应的视图结构</p>
+<p>这里有一张<code>user</code>表，其内容如下</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -u root -p <span class="m">123</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>修改表</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="kt">SET</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;root&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;123456&#39;</span><span class="p">;</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">age</span><span class="w">  </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp1</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">18</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp2</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">19</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp3</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">20</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">4</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp4</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">22</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">5</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp5</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">23</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">5</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div></li>
-<li>
-<p>刷新权限</p>
+</div><p>假设我们要创建只有两列关键字的视图</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">FLUSH</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">EXIT</span><span class="p">;</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">create</span><span class="w">  </span><span class="k">or</span><span class="w"> </span><span class="k">replace</span><span class="w"> </span><span class="n">view</span><span class="w"> </span><span class="n">view_id_name</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div></li>
-<li>
-<p>登出</p>
-</li>
-<li>
-<p>可以进行验证</p>
-</li>
-</ol>
-<h2 id="忘记密码">忘记密码
-</h2><ol>
-<li>
-<p>关闭所有正在运行的<code>mysql</code>服务</p>
+</div><p>当创建好视图后，就可以像正常操作<code>sql</code>数据库中其它的表一样</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">view_id_name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp1</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp2</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp3</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">4</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp4</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">5</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp5</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，只有两列字段，剩余的<code>age</code>字段在创建视图的时候我们没有选择这个字段，所以视图中不包含这个字段。</p>
+<h2 id="查询当前数据库的view">查询当前数据库的view
+</h2><p>查看创建视图的语句</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">net stop mysql
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="k">create</span><span class="w"> </span><span class="n">view</span><span class="w"> </span><span class="err">视图名</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
-</div></li>
-<li>
-<p>以跳过授权的方式登录</p>
+</div><p>例如</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysqld --skip-grant-tables --skip-networking
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="k">create</span><span class="w"> </span><span class="n">view</span><span class="w"> </span><span class="n">view_id_name</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
-</div></li>
-<li>
-<p>直接登录</p>
+</div><p>其中就包含我们创建这个视图时所使用到的<code>sql</code>语句。</p>
+<h2 id="修改视图">修改视图
+</h2><p>修改视图，一种是重新创建</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -u root
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">replace</span><span class="w"> </span><span class="n">view</span><span class="w"> </span><span class="err">视图名称</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="p">.....;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>然后进行修改</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ALTER USER <span class="s1">&#39;root&#39;</span>@<span class="s1">&#39;localhost&#39;</span> IDENTIFIED BY <span class="s1">&#39;123456&#39;</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">FLUSH PRIVILEGES<span class="p">;</span>
-</span></span><span class="line"><span class="cl">EXIT<span class="p">;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>重启mysql</p>
+</div><p>就是使用<code>replace</code>语句来替代原始的那个视图。</p>
+<p>或者直接把视图当作表来使用，即使用<code>alter</code>关键字。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">net start mysql
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">alter</span><span class="w"> </span><span class="n">view</span><span class="w"> </span><span class="err">视图名</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="p">....</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
-</div></li>
-<li>
-<p>进行验证</p>
-</li>
-</ol>
+</div><p>重新进行选择即可。</p>
+<h2 id="删除视图">删除视图
+</h2><p>使用<code>drop</code>关键字</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">drop</span><span class="w"> </span><span class="n">view</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="err">视图名</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="mysql管理">MySQL管理
+</h1><h2 id="系统数据库">系统数据库
+</h2><p><code>Mysql</code>数据库安装完后，自带了四个数据库，我们可以看看当前所有的数据库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="k">databases</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250625221243683.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250625221243683"
+	
+	
+></p>
+<h2 id="数据库备份">数据库备份
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysqldump</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250625221659199.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250625221659199"
+	
+	
+></p>
+<h1 id="总结">总结
+</h1><p>下面我们来看一看一些更加高级的操作，例如，分库分表、读写分离等这些操作！</p>
 
 </section>
 
 
     <footer class="article-footer">
     
-    <section class="article-tags">
-        
-            <a href="/tags/mysql/">Mysql</a>
-        
-    </section>
-
 
     
     <section class="article-copyright">
@@ -600,19 +686,6 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E5%85%AD/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Mysql补全计划(六)</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
     <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/">
         
         
@@ -658,6 +731,19 @@ var _hmt = _hmt || [];
 
         <div class="article-details">
             <h2 class="article-title">Mysql补全计划(二)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%B8%80/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql补全计划(一)</h2>
         </div>
     </a>
 </article>
