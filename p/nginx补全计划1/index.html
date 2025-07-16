@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 nginx是服务器的代理，我们习惯称之为“反向代理”。什么是正向代理，什么是反向代理呢？\n服务端——客户端模型的概念可以说是深入人心了，而在这两个的中间，我们就可以进行一些中间件的添加，来保证整个服务更加可靠高效。\n">
+<title>Nginx补全计划1</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/nginx%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%921/'>
+
+<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Nginx补全计划1">
+<meta property='og:description' content="前言 nginx是服务器的代理，我们习惯称之为“反向代理”。什么是正向代理，什么是反向代理呢？\n服务端——客户端模型的概念可以说是深入人心了，而在这两个的中间，我们就可以进行一些中间件的添加，来保证整个服务更加可靠高效。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/nginx%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%921/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='nginx' /><meta property='article:published_time' content='2025-07-15T17:26:57&#43;08:00'/><meta property='article:modified_time' content='2025-07-15T17:26:57&#43;08:00'/>
+<meta name="twitter:title" content="Nginx补全计划1">
+<meta name="twitter:description" content="前言 nginx是服务器的代理，我们习惯称之为“反向代理”。什么是正向代理，什么是反向代理呢？\n服务端——客户端模型的概念可以说是深入人心了，而在这两个的中间，我们就可以进行一些中间件的添加，来保证整个服务更加可靠高效。\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8121279679071600"
+     crossorigin="anonymous"></script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😸</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#环境配置">环境配置</a>
+      <ol>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#启动和测试">启动和测试</a></li>
+      </ol>
+    </li>
+    <li><a href="#小测试">小测试</a>
+      <ol>
+        <li><a href="#实现http反向代理">实现http反向代理</a></li>
+        <li><a href="#改写nginx配置">改写nginx配置</a></li>
+        <li><a href="#验证">验证</a></li>
+      </ol>
+    </li>
+    <li><a href="#负载均衡测试">负载均衡测试</a>
+      <ol>
+        <li><a href="#nginx实现负载均衡">nginx实现负载均衡</a>
+          <ol>
+            <li><a href="#轮询">轮询</a></li>
+            <li><a href="#加权轮询">加权轮询</a></li>
+          </ol>
+        </li>
+        <li><a href="#测试">测试</a>
+          <ol>
+            <li><a href="#jmeter测试轮询">Jmeter测试轮询</a></li>
+            <li><a href="#jmeter测试加权轮询">Jmeter测试加权轮询</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/nginx/" >
+                Nginx
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/nginx%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%921/">Nginx补全计划1</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-07-15</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p><code>nginx</code>是服务器的代理，我们习惯称之为“反向代理”。什么是正向代理，什么是反向代理呢？</p>
+<p>服务端——客户端模型的概念可以说是深入人心了，而在这两个的中间，我们就可以进行一些中间件的添加，来保证整个服务更加可靠高效。</p>
+<ul>
+<li>我们习惯把<strong>代理客户端</strong>的服务器作为正向代理，常见的有<code>VPN</code>技术，即用户与目标服务器之间的网络可能是不可达的，但是有某些服务器是可以到达目标服务器的，于是，一种很自然的想法就是去让我们的客户端与代理服务器进行连接，中间的代理服务器把请求转发给目标服务器，这样中继一下，就可以实现通信。</li>
+<li>而反向代理是中间服务器作为目标服务器的代理，换言之，我们<strong>只知道中间代理服务器的地址</strong>，而不知道目标服务器的地址。</li>
+</ul>
+<p>这样做的一个好处是，当请求到达中间服务器时，中间服务器就可以做<strong>负载均衡</strong>，即把请求比较均匀的分配给集群的服务器；还有一个好处是，可以隐藏目标服务器的地址。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250715174058562.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="反向代理"
+	
+	
+></p>
+<h1 id="环境配置">环境配置
+</h1><h2 id="安装">安装
+</h2><p>我们可以很方便的使用<code>apt</code>来进行安装，无非就那几步</p>
+<ul>
+<li>
+<p>首先是更新<code>apt</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo apt update
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>然后是安装<code>nginx</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo apt install nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>然后是启动<code>nginx</code>服务</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl start nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>如果你想要设置为开机自启动</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl <span class="nb">enable</span> nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="启动和测试">启动和测试
+</h2><p>安装好后，我们看一下<code>nginx</code>是否启动了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl status nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果看到<code>activate</code>的字样，说明启动成功了</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250715203259894.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250715203259894"
+	
+	
+></p>
+<p>启动好后，我们来打开浏览器，输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">localhost
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>试一试，可以看到对应的欢迎界面</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250715203410993.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250715203410993"
+	
+	
+></p>
+<h1 id="小测试">小测试
+</h1><p>我始终认为，上手实战要远比在哪什么都不动要好，我们先不关注<code>nginx</code>的那些高级配置，我们就先来关注一下<code>nginx</code>的基本的功能，也就是反向代理。</p>
+<h2 id="实现http反向代理">实现http反向代理
+</h2><p>众所周知啊，即然<code>http</code>实现的是反向代理的功能，那么，当我访问<code>localhost</code>的时候，<code>nginx</code>应该会自动帮我实现请求转发。下面我们来实现一下这个功能。</p>
+<p>首先是启动我们的后端程序，这个后端程序很简单，就返回一句<code>Hello, World</code>就行，为了方便起见，我这里直接使用<code>net/http</code>来进行演示。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">index</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;&lt;H1&gt; Hello, World &lt;/H1&gt;&#34;</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;访问index!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">http</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:5000&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这段代码的意思是，当我访问<code>localhost:5000</code>这个地址的时候，会输出一句话，如下图所示</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250715205553285.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250715205553285"
+	
+	
+></p>
+<p>好了，现在，我们就可以改写<code>nginx</code>转发的配置，目的就是，当直接访问<code>nginx</code>的地址时，会直接出现<code>Hello, World</code>这行字。</p>
+<h2 id="改写nginx配置">改写nginx配置
+</h2><p>我们需要修改的文件在</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/etc/nginx/sites-available/default
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>就是这个配置文件。把对应的<code>location</code>的部分给修改了。</p>
+<p>修改为以下内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">		<span class="c1"># 自己的配置</span>
+</span></span><span class="line"><span class="cl">		location / <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			proxy_pass http://localhost:5000<span class="p">;</span>
+</span></span><span class="line"><span class="cl">			proxy_set_header Host <span class="nv">$host</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          	proxy_set_header X-Real-IP <span class="nv">$remote_addr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后可以使用<code>-t</code>参数来测试以下修改是否生效。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo nginx -t
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+</span></span><span class="line"><span class="cl">nginx: configuration file /etc/nginx/nginx.conf <span class="nb">test</span> is successful
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>说明没有问题。</p>
+<p>然后<strong>重启nginx</strong></p>
+<h2 id="验证">验证
+</h2><p>此时，我们可以直接去访问<code>nginx</code>服务器对应的网址，也就是<code>localhost</code>，看看是否转发成功</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250715211846936.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250715211846936"
+	
+	
+></p>
+<p>我们此时发现，转发确实成功了！</p>
+<h1 id="负载均衡测试">负载均衡测试
+</h1><p>使用<code>nginx</code>的一个好处就是可以使用负载均衡，常见的负载均衡有</p>
+<ul>
+<li>轮询：可以理解为遍历每个服务器，每一次把一个请求发送给服务器，然后转着圈循环着去发送。</li>
+<li>加权：权重越大，收到请求的概率也就越高</li>
+<li><code>IP</code>哈希：同一IP的请求需要某个机器负责</li>
+<li><code>url</code>哈希：同一<code>url</code>请求某个机器负责</li>
+</ul>
+<p>对于<strong>轮询</strong>算法来说，其最大的优势就是简单，但这是建立在所有服务器性能一样的基础上的；</p>
+<p><strong>加权</strong>则可以表示为权限越大的服务器性能越好，其收到请求的概率也就越大；</p>
+<p>而<strong>IP哈希</strong>则可以很好的将一个IP地址固定在某个机器上，这样做的好处就是在使用<code>session</code>这类鉴权系统时可以做到集中<code>session</code></p>
+<p>我们来看看怎么实现一个<strong>加权负载均衡</strong></p>
+<h2 id="nginx实现负载均衡">nginx实现负载均衡
+</h2><p>我们先把负载均衡的配置给搞清楚，这里我们就用单机来模拟一下多台机器同时在线的情况，即不同的端口就表示不同的服务在运行，也就是说，我们得改写一下之前写的那个后端程序。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;os&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">port</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">index</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">msg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;&lt;h1&gt;Hello from port %s&lt;/h1&gt;&#34;</span><span class="p">,</span> <span class="nx">port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">msg</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;收到请求，响应端口：%s\n&#34;</span><span class="p">,</span> <span class="nx">port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 默认端口</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">port</span> <span class="p">=</span> <span class="s">&#34;5000&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 如果传入了命令行参数，则使用它作为端口</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">port</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">http</span><span class="p">.</span><span class="nf">HandleFunc</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">addr</span> <span class="o">:=</span> <span class="s">&#34;:&#34;</span> <span class="o">+</span> <span class="nx">port</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;服务正在端口 %s 上运行...\n&#34;</span><span class="p">,</span> <span class="nx">port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="nx">addr</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;启动失败：&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样，我们就可以从命令行输入多个参数进行启动。我们将启动过程可以封装为一个脚本，这样就可以通过脚本启动。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;开始编译main.go&#34;</span>
+</span></span><span class="line"><span class="cl">go build main.go
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;编译完毕&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;开始启动...&#34;</span>
+</span></span><span class="line"><span class="cl">./main <span class="nv">$1</span> <span class="p">&amp;</span>
+</span></span><span class="line"><span class="cl">./main <span class="nv">$2</span> <span class="p">&amp;</span>
+</span></span><span class="line"><span class="cl">./main <span class="nv">$3</span> <span class="p">&amp;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;启动完成！&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样，我们的多个服务就可以成功启动了，当我们进行访问的时候，就可以从浏览器的页面中快速的看到是访问了哪个服务器。</p>
+<p>当然，我们还得对nginx做一些负载均衡的配置。</p>
+<h3 id="轮询">轮询
+</h3><p>首先是负载均衡的关键字<code>upstream</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"><span class="k">upstream</span> <span class="s">testServer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">loalhost</span><span class="p">:</span><span class="mi">5001</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">5002</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="加权轮询">加权轮询
+</h3><p>更高级的，我们可以把权重值加载后面，从而形成加权轮询</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"><span class="k">upstream</span> <span class="s">testServer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span> <span class="s">weight=1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">loalhost</span><span class="p">:</span><span class="mi">5001</span> <span class="s">weight=3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">5002</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们要把这段<code>upstream</code>的内容放在<code>nginx.conf</code>的<code>http{}</code>内，然后，把原来的<code>server</code>地址就可以替换为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl">		<span class="k">location</span> <span class="s">/</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="kn">proxy_pass</span> <span class="s">http://testServer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">			<span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$host</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="kn">proxy_set_header</span> <span class="s">X-Real-IP</span> <span class="nv">$remote_addr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后重启<code>nginx</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl restart nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>一切准备完毕，现在我们来看看是否真的可以做到负载均衡！</p>
+<h2 id="测试">测试
+</h2><p><strong>预期效果</strong>：当我们访问<code>localhost</code>的时候，应该可以看到</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">Hello from port 5000
+</span></span><span class="line"><span class="cl">Hello from port 5001
+</span></span><span class="line"><span class="cl">Hello from port 5002
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样的结果。</p>
+<p>我们来试一下。</p>
+<p>第一次测试：</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250716101042080.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250716101042080"
+	
+	
+></p>
+<p>刷新一下看看</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250716101107189.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250716101107189"
+	
+	
+></p>
+<p>再刷新一下看看</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250716101124182.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250716101124182"
+	
+	
+></p>
+<p>由于我们实现的负载均衡是轮询，即每次请求一定会按照循序把所有请求分发给不同的服务器。更直观的，我们用<code>Jmeter</code>来测试一下。</p>
+<h3 id="jmeter测试轮询">Jmeter测试轮询
+</h3><p>在<code>jmeter</code>中，创建一个测试工程，其目录结构如下</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250716102517014.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250716102517014"
+	
+	
+></p>
+<p>然后在<code>线程组/HTTP请求</code>下，填写我们需要测试的<code>url</code>。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250716102628138.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20250716102628138"
+	
+	
+></p>
+<p>然后就可以直接开始测试，我设置的是一组10个线程，所以单次运行，一次会创建10个请求。</p>
+<p>按照预期，每个请求都是均匀出现的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~/go4test ❯ 收到请求，响应端口：5000
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5002
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5000
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5002
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5000
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5002
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>符合预期！</p>
+<h3 id="jmeter测试加权轮询">Jmeter测试加权轮询
+</h3><p>按照我们的预期，权限越大，被访问的几率也就越大。根据配置，应该是<code>5001 &gt; 5000 &gt; 5002</code>出现的次数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"><span class="k">upstream</span> <span class="s">testServer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span> <span class="s">weight=1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">loalhost</span><span class="p">:</span><span class="mi">5001</span> <span class="s">weight=3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">5002</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们来测试一下试试！</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">~/go4test ❯ 收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5002
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5001
+</span></span><span class="line"><span class="cl">收到请求，响应端口：5000
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，<code>5001</code>的出现频率远大于其它两个。</p>
+<h1 id="总结">总结
+</h1><p>这次我们配置了<code>nginx</code>的环境，同时也实现了一个反向代理服务器的功能，最后也演示了一下<code>nginx</code>的负载均衡功能，包括轮询负载均衡、加权负载均衡等。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/nginx/">Nginx</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2025 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
