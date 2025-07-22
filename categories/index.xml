@@ -7,7 +7,15 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Xiao Peng</copyright>
-        <lastBuildDate>Wed, 16 Jul 2025 10:26:57 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 22 Jul 2025 16:36:55 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Linux命令</title>
+        <link>https://XiaoPeng0x3.github.io/categories/linux%E5%91%BD%E4%BB%A4/</link>
+        <pubDate>Tue, 22 Jul 2025 16:36:55 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/categories/linux%E5%91%BD%E4%BB%A4/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>Nginx</title>
         <link>https://XiaoPeng0x3.github.io/categories/nginx/</link>
         <pubDate>Wed, 16 Jul 2025 10:26:57 +0800</pubDate>
