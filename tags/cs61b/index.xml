@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Cs61b on 卖紫薯的紫薯精</title>
+        <link>https://XiaoPeng0x3.github.io/tags/cs61b/</link>
+        <description>Recent content in Cs61b on 卖紫薯的紫薯精</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>Xiao Peng</copyright>
+        <lastBuildDate>Sun, 27 Jul 2025 20:31:54 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/tags/cs61b/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>CS61B: 环境配置与实验设置</title>
+        <link>https://XiaoPeng0x3.github.io/p/cs61b-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE/</link>
+        <pubDate>Sun, 27 Jul 2025 20:31:54 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/p/cs61b-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE/</guid>
+        <description>&lt;h1 id=&#34;前言&#34;&gt;前言
+&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;UCB出品，必属精品&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;作为&lt;code&gt;CS&lt;/code&gt;必修课之一，算法与数据结构是计算机先辈们思想的结晶，而国内的课少有完整的文档和自动化测试的，所以，想要学习算法，我推荐两门课。&lt;/p&gt;
+&lt;p&gt;一门是&lt;code&gt;UCB&lt;/code&gt;的&lt;code&gt;CS61B&lt;/code&gt;，另一门是普林斯顿大学的&lt;code&gt;Algo4&lt;/code&gt;，江湖人称红皮书。这两门课都有完整的本地测试和实验指导，但是我还是觉得&lt;code&gt;CS61B&lt;/code&gt;更适合新手入门，尤其是你不是对&lt;code&gt;shell&lt;/code&gt;、编译器和代码管理不太了解。&lt;/p&gt;
+&lt;p&gt;总之，如果你现在有空余时间，并且想要学习算法与数据结构，那么就赶紧开始吧！&lt;/p&gt;
+&lt;h1 id=&#34;环境配置&#34;&gt;环境配置
+&lt;/h1&gt;&lt;p&gt;在开始之前，环境配置是必不可少的，所幸的是，&lt;code&gt;CS61B&lt;/code&gt;仅仅设计几个简单的环境配置，包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;java&lt;/code&gt;的环境配置&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git&lt;/code&gt;与&lt;code&gt;github&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;IDEA&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;上面这三个开发工具对应的博客有很多，这里就不再重复写了，我只来简单的说说，作为一个校外人员，怎么配置远程仓库和&lt;code&gt;GradeScope&lt;/code&gt;测试。&lt;/p&gt;
+&lt;h2 id=&#34;配置远程仓库&#34;&gt;配置远程仓库
+&lt;/h2&gt;&lt;p&gt;可以跟着官方&lt;code&gt;spring-21&lt;/code&gt;的教程来看&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://sp21.datastructur.es/materials/lab/lab1/lab1#a-getting-the-starter-files&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;官方文档&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;你不应该把仓库设置为&lt;code&gt;public&lt;/code&gt;，分享自己的代码不是一件“学术诚信”的事！&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;首先，我们要在&lt;code&gt;github&lt;/code&gt;创建一个仓库，然后&lt;code&gt;clone&lt;/code&gt;到本地&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git clone url
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后，&lt;code&gt;cd &lt;/code&gt;进去这个仓库，添加远程分支&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; git remote add skeleton https://github.com/Berkeley-CS61B/skeleton-sp21.git
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;你可以使用&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git remote -v
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;来查看当前所有的远程分支&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727205307463.png&#34; alt=&#34;image-20250727205307463&#34; style=&#34;zoom: 67%;&#34; /&gt;
+&lt;p&gt;然后&lt;code&gt;pull&lt;/code&gt;远端代码&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; git pull skeleton master
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后你就会看到很多&lt;code&gt;lab&lt;/code&gt;目录和&lt;code&gt;proj&lt;/code&gt;目录，做那个&lt;code&gt;lab&lt;/code&gt;就用&lt;code&gt;IDEA&lt;/code&gt;打开即可。&lt;/p&gt;
+&lt;h2 id=&#34;自动评分&#34;&gt;自动评分
+&lt;/h2&gt;&lt;p&gt;自动评分使用的是&lt;code&gt;GradeScope&lt;/code&gt;这个网站，首先我们需要填写对应得课程码，&lt;code&gt;spring-21&lt;/code&gt;的课程码似乎与&lt;code&gt;fall-20&lt;/code&gt;的是一个课程码&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-txt&#34; data-lang=&#34;txt&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;MB7ZPY
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;而且，在选择学校的时候要选择&lt;code&gt;UC Berkeley&lt;/code&gt;而不是&lt;code&gt;2U&lt;/code&gt;伯克利。进去后，需要将&lt;code&gt;Github&lt;/code&gt;账号关联，这样就可以选择对应仓库和分支进行提交，这里我举个例子。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727210233272.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20250727210233272&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;点击你要提交的&lt;code&gt;lab&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727210356800.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20250727210356800&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;然后选择中间这个&lt;code&gt;GitHub&lt;/code&gt;&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727210444692.png&#34; alt=&#34;image-20250727210444692&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;p&gt;选择对应的仓库和分支，然后&lt;code&gt;Upload&lt;/code&gt;&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727210533881.png&#34; alt=&#34;image-20250727210533881&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;p&gt;这样就可以进行自动评分了！&lt;/p&gt;
+&lt;h1 id=&#34;总结&#34;&gt;总结
+&lt;/h1&gt;&lt;p&gt;以上就是整个的环境配置！有不懂的地方欢迎留言！&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

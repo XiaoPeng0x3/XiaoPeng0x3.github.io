@@ -7,7 +7,15 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>Xiao Peng</copyright>
-        <lastBuildDate>Tue, 22 Jul 2025 16:36:55 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 27 Jul 2025 20:31:54 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Cs61b</title>
+        <link>https://XiaoPeng0x3.github.io/categories/cs61b/</link>
+        <pubDate>Sun, 27 Jul 2025 20:31:54 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/categories/cs61b/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>Linux命令</title>
         <link>https://XiaoPeng0x3.github.io/categories/linux%E5%91%BD%E4%BB%A4/</link>
         <pubDate>Tue, 22 Jul 2025 16:36:55 +0800</pubDate>
