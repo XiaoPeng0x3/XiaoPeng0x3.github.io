@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 UCB出品，必属精品\n作为CS必修课之一，算法与数据结构是计算机先辈们思想的结晶，而国内的课少有完整的文档和自动化测试的，所以，想要学习算法，我推荐两门课。\n">
-<title>CS61B: 环境配置与实验设置</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 虽说大家应该都会用git来进行版本控制以及云端备份，但是如果是合作开发次数较少的情况下，我们可能会对分支冲突等这些情况不知道怎么去处理，下面我们来一步步梳理一下。\n">
+<title>CS61B: Git的工作流与使用</title>
 
-<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/cs61b-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE/'>
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/cs61b-git%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E4%B8%8E%E4%BD%BF%E7%94%A8/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="CS61B: 环境配置与实验设置">
-<meta property='og:description' content="前言 UCB出品，必属精品\n作为CS必修课之一，算法与数据结构是计算机先辈们思想的结晶，而国内的课少有完整的文档和自动化测试的，所以，想要学习算法，我推荐两门课。\n">
-<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/cs61b-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE/'>
+<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="CS61B: Git的工作流与使用">
+<meta property='og:description' content="前言 虽说大家应该都会用git来进行版本控制以及云端备份，但是如果是合作开发次数较少的情况下，我们可能会对分支冲突等这些情况不知道怎么去处理，下面我们来一步步梳理一下。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/cs61b-git%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E4%B8%8E%E4%BD%BF%E7%94%A8/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='cs61b' /><meta property='article:published_time' content='2025-07-24T20:31:54&#43;08:00'/><meta property='article:modified_time' content='2025-07-24T20:31:54&#43;08:00'/>
-<meta name="twitter:title" content="CS61B: 环境配置与实验设置">
-<meta name="twitter:description" content="前言 UCB出品，必属精品\n作为CS必修课之一，算法与数据结构是计算机先辈们思想的结晶，而国内的课少有完整的文档和自动化测试的，所以，想要学习算法，我推荐两门课。\n">
+<meta name="twitter:title" content="CS61B: Git的工作流与使用">
+<meta name="twitter:description" content="前言 虽说大家应该都会用git来进行版本控制以及云端备份，但是如果是合作开发次数较少的情况下，我们可能会对分支冲突等这些情况不知道怎么去处理，下面我们来一步步梳理一下。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
@@ -289,10 +289,14 @@ var _hmt = _hmt || [];
             <nav id="TableOfContents">
   <ol>
     <li><a href="#前言">前言</a></li>
-    <li><a href="#环境配置">环境配置</a>
+    <li><a href="#git中的抽象概念">Git中的抽象概念</a>
       <ol>
-        <li><a href="#配置远程仓库">配置远程仓库</a></li>
-        <li><a href="#自动评分">自动评分</a></li>
+        <li><a href="#git-init">git init</a></li>
+        <li><a href="#git-status">git status</a></li>
+        <li><a href="#git-add">git add</a></li>
+        <li><a href="#git-commit">git commit</a></li>
+        <li><a href="#git-checkout">git checkout</a></li>
+        <li><a href="#合并冲突">合并冲突</a></li>
       </ol>
     </li>
     <li><a href="#总结">总结</a></li>
@@ -323,7 +327,7 @@ var _hmt = _hmt || [];
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/cs61b-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE/">CS61B: 环境配置与实验设置</a>
+            <a href="/p/cs61b-git%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E4%B8%8E%E4%BD%BF%E7%94%A8/">CS61B: Git的工作流与使用</a>
         </h2>
     
         
@@ -360,7 +364,7 @@ var _hmt = _hmt || [];
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 4 分钟
                 </time>
             </div>
         
@@ -376,103 +380,239 @@ var _hmt = _hmt || [];
     
     
     <h1 id="前言">前言
-</h1><blockquote>
-<p>UCB出品，必属精品</p></blockquote>
-<p>作为<code>CS</code>必修课之一，算法与数据结构是计算机先辈们思想的结晶，而国内的课少有完整的文档和自动化测试的，所以，想要学习算法，我推荐两门课。</p>
-<p>一门是<code>UCB</code>的<code>CS61B</code>，另一门是普林斯顿大学的<code>Algo4</code>，江湖人称红皮书。这两门课都有完整的本地测试和实验指导，但是我还是觉得<code>CS61B</code>更适合新手入门，尤其是你不是对<code>shell</code>、编译器和代码管理不太了解。</p>
-<p>总之，如果你现在有空余时间，并且想要学习算法与数据结构，那么就赶紧开始吧！</p>
-<h1 id="环境配置">环境配置
-</h1><p>在开始之前，环境配置是必不可少的，所幸的是，<code>CS61B</code>仅仅设计几个简单的环境配置，包括：</p>
-<ul>
-<li><code>java</code>的环境配置</li>
-<li><code>git</code>与<code>github</code></li>
-<li><code>IDEA</code></li>
-</ul>
-<p>上面这三个开发工具对应的博客有很多，这里就不再重复写了，我只来简单的说说，作为一个校外人员，怎么配置远程仓库和<code>GradeScope</code>测试。</p>
-<h2 id="配置远程仓库">配置远程仓库
-</h2><p>可以跟着官方<code>spring-21</code>的教程来看</p>
-<p><a class="link" href="https://sp21.datastructur.es/materials/lab/lab1/lab1#a-getting-the-starter-files"  target="_blank" rel="noopener"
-    >官方文档</a></p>
-<blockquote>
-<p>你不应该把仓库设置为<code>public</code>，分享自己的代码不是一件“学术诚信”的事！</p></blockquote>
-<p>首先，我们要在<code>github</code>创建一个仓库，然后<code>clone</code>到本地</p>
+</h1><p>虽说大家应该都会用<code>git</code>来进行版本控制以及云端备份，但是如果是合作开发次数较少的情况下，我们可能会对分支冲突等这些情况不知道怎么去处理，下面我们来一步步梳理一下。</p>
+<h1 id="git中的抽象概念">Git中的抽象概念
+</h1><p>首先<code>git</code>把本地仓库称为暂存区，也就是提交文件的快照至暂存区，必要时可以返回某个快照，也就起到了版本控制的作用。</p>
+<h2 id="git-init">git init
+</h2><p>首先是初始化一个本地仓库</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone url
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git init
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>然后，<code>cd </code>进去这个仓库，添加远程分支</p>
+</div><p>这个<code>init</code>命令会在本地创建一个隐藏的<code>.git</code>文件，其中就包含了一些重要的数据来维护本地仓库，我们<strong>不应该</strong>修改这个文件里面的内容，以免造成文件损坏。</p>
+<h2 id="git-status">git status
+</h2><p>在创建好本地仓库后，我们来新建一个文件试试</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> git remote add skeleton https://github.com/Berkeley-CS61B/skeleton-sp21.git
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">touch mass.txt
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>你可以使用</p>
+</div><p>然后随便往这个里面写一些东西</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git remote -v
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;hello&#34;</span> &gt;&gt; mass.txt
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>来查看当前所有的远程分支</p>
-<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727205307463.png" alt="image-20250727205307463" style="zoom: 67%;" />
-<p>然后<code>pull</code>远端代码</p>
+</div><p>此时，如果我们想要对<code>mass.txt</code>进行版本控制，就需要把这个文件添加到追踪记录里面。我们先来看看当前是否有未进行提交的文件呢</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> git pull skeleton master
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git status
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>然后你就会看到很多<code>lab</code>目录和<code>proj</code>目录，做那个<code>lab</code>就用<code>IDEA</code>打开即可。</p>
-<h2 id="自动评分">自动评分
-</h2><p>自动评分使用的是<code>GradeScope</code>这个网站，首先我们需要填写对应得课程码，<code>spring-21</code>的课程码似乎与<code>fall-20</code>的是一个课程码</p>
+</div><p>然后<code>git</code>给了我们这些提示信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ git status
+</span></span><span class="line"><span class="cl">On branch main
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">No commits yet
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Untracked files:
+</span></span><span class="line"><span class="cl">  <span class="o">(</span>use <span class="s2">&#34;git add &lt;file&gt;...&#34;</span> to include in what will be committed<span class="o">)</span>
+</span></span><span class="line"><span class="cl">        mass.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">nothing added to commit but untracked files present <span class="o">(</span>use <span class="s2">&#34;git add&#34;</span> to track<span class="o">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>它提示我们有一个未追踪的文件，也就是说，你必须告诉<code>git</code>，让它追踪这个文件，否则将无法对<code>mass.txt</code>进行版本控制。</p>
+<h2 id="git-add">git add
+</h2><p>我们可以将先要追踪的文件或文件夹列在这个命令后</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">MB7ZPY
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git add &lt;file/folder&gt;
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>而且，在选择学校的时候要选择<code>UC Berkeley</code>而不是<code>2U</code>伯克利。进去后，需要将<code>Github</code>账号关联，这样就可以选择对应仓库和分支进行提交，这里我举个例子。</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727210233272.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20250727210233272"
-	
-	
-></p>
-<p>点击你要提交的<code>lab</code></p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727210356800.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20250727210356800"
-	
-	
-></p>
-<p>然后选择中间这个<code>GitHub</code></p>
-<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727210444692.png" alt="image-20250727210444692" style="zoom:67%;" />
-<p>选择对应的仓库和分支，然后<code>Upload</code></p>
-<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727210533881.png" alt="image-20250727210533881" style="zoom:67%;" />
-<p>这样就可以进行自动评分了！</p>
+</div><p>添加<code>mass.txt</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git add mass.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后这是<code>git</code>的提示信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ git status
+</span></span><span class="line"><span class="cl">On branch main
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">No commits yet
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Changes to be committed:
+</span></span><span class="line"><span class="cl">  <span class="o">(</span>use <span class="s2">&#34;git rm --cached &lt;file&gt;...&#34;</span> to unstage<span class="o">)</span>
+</span></span><span class="line"><span class="cl">        new file:   mass.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>它告诉我们，我们已经要追踪<code>mass.txt</code>了，它还提示我们，如果不想追踪这个文件，可以使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git rm --cached &lt;file&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个命令是很有用的，因为有的时候你不小心追踪了一个配置信息文件，而这个配置文件实际上没有必要存储在云端，所以你可以使用这个命令去除你追踪过的某个文件。</p>
+<p>当然，你还可以把所有不需要追踪的文件全部写入一个<code>.gitignore</code>中，这是一个文本形式的文件，这样在<code>git status</code>的时候，<code>git</code>就会忽略他们。</p>
+<h2 id="git-commit">git commit
+</h2><p>当你觉得我目前所有的工作做完后，功能也实现的差不多了，你就可以使用<code>git commit</code>来把这些文件加入暂存区。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git commit -m <span class="s2">&#34;实现了xxx&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>-m</code>是指<code>message</code>的信息，这也是你对当前工作的一个快速总结，当你不小心搞砸后，你就可以回到你的这次<code>commit</code>。</p>
+<p>当然，也可以不指定任何参数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git commit
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样会弹出一个<code>vim</code>的标签，如果需要更多的提交信息，那么就可以使用这个页面。</p>
+<h2 id="git-checkout">git checkout
+</h2><p>每次我们使用<code>git commit</code>进行提交后，就会对应生成多个哈希信息，如果我们希望回到某个版本，就可以使用<code>git checkout</code>回到对应的版本，我们可以使用<code>git log</code>来查看本地仓库的所有提交记录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ git log
+</span></span><span class="line"><span class="cl">commit fa373de6f7f4b8f1a58d368037fcd4f100871dd1 <span class="o">(</span>HEAD -&gt; main<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Author: XiaoPeng &lt;xxx@gmail.com&gt;
+</span></span><span class="line"><span class="cl">Date:   Thu Jul <span class="m">31</span> 14:53:30 <span class="m">2020</span> +0800
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    test:mass.txt has <span class="s2">&#34;123&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">commit 9d0b3365996a3486054c64453f1c8c499746c8e7
+</span></span><span class="line"><span class="cl">Author: XiaoPeng &lt;xxx@gmail.com&gt;
+</span></span><span class="line"><span class="cl">Date:   Thu Jul <span class="m">31</span> 14:52:35 <span class="m">2020</span> +0800
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    test:clean mass/txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在<code>commit</code>之后还有一个哈希值，我们在<code>checkout</code>后指定对应的哈希值就可以切换到对应的版本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git ckeckout 9d0b3365996a3486054c64453f1c8c499746c8e7
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后会得到下面的提示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">You are in &#39;detached HEAD&#39; state. You can look around, make experimental
+</span></span><span class="line"><span class="cl">changes and commit them, and you can discard any commits you make in this
+</span></span><span class="line"><span class="cl">state without impacting any branches by switching back to a branch.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>意思就是说<code>HEAD</code>指针不在最新的提交上，也就是分离头指针。我们现在来看看<code>mass</code>文件里面有什么</p>
+<p>结果符合我们的预期，什么都没有。</p>
+<h2 id="合并冲突">合并冲突
+</h2><p>冲突一般出现在多人合作中，尤其是对同一个功能的实现，在合作的时候，当我们把一项任务完成后，需要向远端同步</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git push origin main
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>假设我们同步到远程的<code>main</code>分支，此时，如果提交，可能会触发拒绝提交的提示。这是因为你的本地分支可能落后远程分支，也就是说，在你之前，已经有人更新过远程分支了，为了防止文件内容的丢失，于是<code>git</code>就拒绝了你的提交，此时你需要先于远程分支进行同步</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git pull origin main
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其实<code>pull</code>是<code>git fetch</code>和<code>git merge</code>的合并命令，说的有些抽象，我们来画个图展示一下。</p>
+<p>这是我们的远程仓库</p>
+<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250801142707832.png" alt="image-20250801142707832" style="zoom:50%;" />
+<p>本地获取远程仓库后，又做了几次<code>commit</code></p>
+<img src="C:\Users\zxp\AppData\Roaming\Typora\typora-user-images\image-20250801140949554.png" alt="image-20250801140949554" style="zoom:50%;" />
+<p>注意，此时我们本地仓库的分支最新是<code>commit5</code>，而远程的最新分支是在<code>commit3</code>上。</p>
+<p>此时，如果有人在你之前就修改了远程分支，假设变成了这样</p>
+<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250801142749539.png" alt="image-20250801142749539" style="zoom:50%;" />
+<p>也就是说，远程仓库的<code>commit4</code>和<code>commit5</code>都是你所没有的，即你本地仓库的远程分支和远程仓库的分支是落后的。</p>
+<p>而<code>git pull</code>做的就是先从远程分支进行拉去，然后尝试合并，也就是完成了<code>git fetch</code>和<code>git merge</code>这两个命令</p>
+<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250801143150036.png" alt="image-20250801143150036" style="zoom:50%;" />
+<p>此时，分支冲突就可能会产生，这个时候就需要我们去手动处理可能出现分支冲突的内容。</p>
 <h1 id="总结">总结
-</h1><p>以上就是整个的环境配置！有不懂的地方欢迎留言！</p>
+</h1><p>学会这些命令后，基本上就可以达到实验中对我们的要求了，更多命令和技巧，可以在以后慢慢学哦！</p>
 
 </section>
 
@@ -565,12 +705,12 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/cs61b-git%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E4%B8%8E%E4%BD%BF%E7%94%A8/">
+    <a href="/p/cs61b-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">CS61B: Git的工作流与使用</h2>
+            <h2 class="article-title">CS61B: 环境配置与实验设置</h2>
         </div>
     </a>
 </article>
