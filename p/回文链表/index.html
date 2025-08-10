@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 本系列是hot100补全计划的二叉树篇，主要包含了力扣(leetcode)的二叉树章节部分的习题，除此之外还会有一些比较著名的但不包含在hot100的二叉树题目。\n">
-<title>从前序遍历和中续遍历中构造二叉树</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="回文链表 这是一道蛮有意思的题目，比较基础的方法就不再说了，我们来说一个比较高级的方法来进行判断。\n快慢指针 高级方法就是从链表的中间结点开始，分别向两头进行遍历，于是乎，怎么找到一个链表的中间结点才是一个比较难的地方，这里就使用了快慢指针算法，也就是一个指针每次走两步，一个指针每次只走一步，当快指针停止的时候，慢指针就到达了中间结点的位置。\n">
+<title>回文链表</title>
 
-<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E4%BB%8E%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%E5%92%8C%E4%B8%AD%E7%BB%AD%E9%81%8D%E5%8E%86%E4%B8%AD%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91/'>
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="从前序遍历和中续遍历中构造二叉树">
-<meta property='og:description' content="前言 本系列是hot100补全计划的二叉树篇，主要包含了力扣(leetcode)的二叉树章节部分的习题，除此之外还会有一些比较著名的但不包含在hot100的二叉树题目。\n">
-<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E4%BB%8E%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%E5%92%8C%E4%B8%AD%E7%BB%AD%E9%81%8D%E5%8E%86%E4%B8%AD%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91/'>
+<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="回文链表">
+<meta property='og:description' content="回文链表 这是一道蛮有意思的题目，比较基础的方法就不再说了，我们来说一个比较高级的方法来进行判断。\n快慢指针 高级方法就是从链表的中间结点开始，分别向两头进行遍历，于是乎，怎么找到一个链表的中间结点才是一个比较难的地方，这里就使用了快慢指针算法，也就是一个指针每次走两步，一个指针每次只走一步，当快指针停止的时候，慢指针就到达了中间结点的位置。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='二叉树' /><meta property='article:published_time' content='2025-07-14T11:26:42&#43;08:00'/><meta property='article:modified_time' content='2025-07-14T11:26:42&#43;08:00'/>
-<meta name="twitter:title" content="从前序遍历和中续遍历中构造二叉树">
-<meta name="twitter:description" content="前言 本系列是hot100补全计划的二叉树篇，主要包含了力扣(leetcode)的二叉树章节部分的习题，除此之外还会有一些比较著名的但不包含在hot100的二叉树题目。\n">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='链表' /><meta property='article:published_time' content='2025-08-10T21:40:36&#43;08:00'/><meta property='article:modified_time' content='2025-08-10T21:40:36&#43;08:00'/>
+<meta name="twitter:title" content="回文链表">
+<meta name="twitter:description" content="回文链表 这是一道蛮有意思的题目，比较基础的方法就不再说了，我们来说一个比较高级的方法来进行判断。\n快慢指针 高级方法就是从链表的中间结点开始，分别向两头进行遍历，于是乎，怎么找到一个链表的中间结点才是一个比较难的地方，这里就使用了快慢指针算法，也就是一个指针每次走两步，一个指针每次只走一步，当快指针停止的时候，慢指针就到达了中间结点的位置。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
@@ -288,15 +288,14 @@ var _hmt = _hmt || [];
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#前言">前言</a></li>
-    <li><a href="#题目">题目</a></li>
-    <li><a href="#思路">思路</a>
+    <li><a href="#回文链表">回文链表</a></li>
+    <li><a href="#快慢指针">快慢指针</a>
       <ol>
-        <li><a href="#举个例子">举个例子</a></li>
+        <li><a href="#反转链表">反转链表</a></li>
+        <li><a href="#快慢指针搜索">快慢指针搜索</a></li>
       </ol>
     </li>
-    <li><a href="#实现">实现</a></li>
-    <li><a href="#代码">代码</a></li>
+    <li><a href="#算法实现">算法实现</a></li>
   </ol>
 </nav>
         </div>
@@ -324,7 +323,7 @@ var _hmt = _hmt || [];
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E4%BB%8E%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%E5%92%8C%E4%B8%AD%E7%BB%AD%E9%81%8D%E5%8E%86%E4%B8%AD%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91/">从前序遍历和中续遍历中构造二叉树</a>
+            <a href="/p/%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/">回文链表</a>
         </h2>
     
         
@@ -346,7 +345,7 @@ var _hmt = _hmt || [];
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">2025-07-14</time>
+                <time class="article-time--published">2025-08-10</time>
             </div>
         
 
@@ -361,7 +360,7 @@ var _hmt = _hmt || [];
 
 
                 <time class="article-time--reading">
-                    阅读时长: 3 分钟
+                    阅读时长: 2 分钟
                 </time>
             </div>
         
@@ -376,30 +375,43 @@ var _hmt = _hmt || [];
     <section class="article-content">
     
     
-    <h1 id="前言">前言
-</h1><p>本系列是<code>hot100补全计划的</code>二叉树篇，主要包含了力扣(<code>leetcode</code>)的二叉树章节部分的习题，除此之外还会有一些比较著名的但不包含在<code>hot100</code>的二叉树题目。</p>
-<h1 id="题目">题目
-</h1><p>这道题目是<code>leetcode</code>的第105题，链接在这里(<a class="link" href="https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/description/?envType=study-plan-v2&amp;envId=top-100-liked"  target="_blank" rel="noopener"
-    >点我</a>)。</p>
-<p>意思就是说</p>
-<ul>
-<li>给二叉树的先序遍历(根左右的遍历循序)</li>
-<li>给定二叉树的中序遍历(左根右的遍历循序)</li>
-<li>要求还原出二叉树的原始样子</li>
-</ul>
-<h1 id="思路">思路
-</h1><blockquote>
-<p>tips:  对于二叉树和链表来说，使用递归是一类通用的解题技巧</p></blockquote>
-<p>根据先序遍历，显然，第一个结点就是根节点; 根据中序遍历，根节点的左边结点都是左子树，右边节点都是右子树。</p>
-<p>也就是说，我们可以根据这个规则来发现一些东西。首先，先序遍历数组<code>preorder</code>的第一个元素一定是根节点，也就是说，每次我们构建根节点，就可以从<code>preorder</code>出发，每次都确定好对应的<code>root</code>坐标；然后，我们就需要正确的划分，<strong>哪些值是属于左子树的，哪些值是属于右子树的</strong>。</p>
-<p>也就是说，给定一个<code>root</code>下表，我们需要找到这个<code>root</code>的左子树和右子树，这该怎么寻找呢？实际上，中序遍历就可以很好的解决这个问题。因为我们已经知道，中序遍历可以很好的划分左右子树，那么，对于<code>preorder[root]</code>元素来说，在中序遍历中，其左边的值就是全部属于左子树，其右边的值全部属于右子树，这样我们就可以很好的确定左右子树的范围。</p>
-<h2 id="举个例子">举个例子
-</h2><p>在题目中举例了两个数组，其内容如下</p>
-<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250714155408246.png" alt="image-20250714155408246" style="zoom: 67%;" />
-<p>从这两个数组中，我们可以清楚的看到，<code>preorder[0]</code>即为二叉树的根节点，那么从<code>inorder</code>中，可以得出<code>[9]</code>是其左子树，<code>[15, 20, 7]</code>是其右子树的值。但是，得到了右子树，怎么确定右子树的根节点呢？其实，得到左子树的长度后，即长度为<code>1</code>，那么在<code>preorder[0+1+1]</code>即<code>preorder[2]</code>为其右子树的根节点。</p>
-<p>所以，我们就得到了一般思路，即<strong>根节点要从<code>preorder</code>中进行寻找</strong>，左右子树的长度要从<code>inorder</code>中进行寻找。</p>
-<h1 id="实现">实现
-</h1><p>在寻找某个根节点对应的左右子树的范围一般是这样的，当我们找到一个<code>preorder[root]</code>后，需要在<code>inorder</code>中找到其所在的位置，然后才可以区分左右子树，其过程如下</p>
+    <h1 id="回文链表">回文链表
+</h1><p>这是一道蛮有意思的题目，比较基础的方法就不再说了，我们来说一个比较高级的方法来进行判断。</p>
+<h1 id="快慢指针">快慢指针
+</h1><p>高级方法就是<strong>从链表的中间结点开始，分别向两头进行遍历</strong>，于是乎，怎么找到一个链表的中间结点才是一个比较难的地方，这里就使用了快慢指针算法，也就是一个指针每次走两步，一个指针每次只走一步，当快指针停止的时候，慢指针就到达了中间结点的位置。</p>
+<p>此时，我们就可以反转后半部分链表，然后分别开始迭代。</p>
+<h2 id="反转链表">反转链表
+</h2><p>可以使用递归，也可以使用迭代，不过递归会使用额外的栈空间，所以我们最好使用迭代的方式，迭代的方式也就是我们的三指针算法，即<code>prev,pCur,pNext</code>这三个辅助指针</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="n">ListNode</span><span class="w"> </span><span class="nf">reverseList</span><span class="p">(</span><span class="n">ListNode</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ListNode</span><span class="w"> </span><span class="n">prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ListNode</span><span class="w"> </span><span class="n">pCur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">pCur</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">pNext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pCur</span><span class="p">.</span><span class="na">next</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">pCur</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pCur</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">pCur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pNext</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="快慢指针搜索">快慢指针搜索
+</h2><p>记住核心的算法步骤即可，快指针每次走两步，慢指针每次只走一步。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -409,19 +421,22 @@ var _hmt = _hmt || [];
 </span><span class="lnt">5
 </span><span class="lnt">6
 </span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kt">int</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">inorder</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">inorder</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">preorder</span><span class="o">[</span><span class="n">root</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="n">ListNode</span><span class="w"> </span><span class="nf">getFirstOfEnd</span><span class="p">(</span><span class="n">ListNode</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ListNode</span><span class="w"> </span><span class="n">fast</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ListNode</span><span class="w"> </span><span class="n">slow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">fast</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">fast</span><span class="p">.</span><span class="na">next</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">fast</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fast</span><span class="p">.</span><span class="na">next</span><span class="p">.</span><span class="na">next</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">slow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slow</span><span class="p">.</span><span class="na">next</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">slow</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>这样，每次都得进行一次<code>O(N)</code>的寻找，十分耗时，我们可以把<code>inorder</code>存储在一个<code>HashMap</code>中，这样在每次进行寻找时可以以<code>O(1)</code>的时间找到。</p>
-<h1 id="代码">代码
+</div><h1 id="算法实现">算法实现
 </h1><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -478,62 +493,60 @@ var _hmt = _hmt || [];
 </span><span class="lnt">52
 </span><span class="lnt">53
 </span><span class="lnt">54
-</span><span class="lnt">55
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm"> * Definition for a binary tree node.
-</span></span></span><span class="line"><span class="cl"><span class="cm"> * public class TreeNode {
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * Definition for singly-linked list.
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * public class ListNode {
 </span></span></span><span class="line"><span class="cl"><span class="cm"> *     int val;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode left;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode right;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode() {}
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode(int val) { this.val = val; }
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode(int val, TreeNode left, TreeNode right) {
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *         this.val = val;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *         this.left = left;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *         this.right = right;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     }
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *     ListNode next;
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *     ListNode() {}
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *     ListNode(int val) { this.val = val; }
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
 </span></span></span><span class="line"><span class="cl"><span class="cm"> * }
 </span></span></span><span class="line"><span class="cl"><span class="cm"> */</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">Solution</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 定义一个HashMap来方便快速找到根节点对应的位置</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">indexOfNode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">preorder</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">TreeNode</span><span class="w"> </span><span class="nf">buildTree</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">preorder</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">inorder</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">preorder</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">inorder</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isPalindrome</span><span class="p">(</span><span class="n">ListNode</span><span class="w"> </span><span class="n">head</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 得到第一段的结尾</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">pCur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">head</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">endOfFirst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getFirstEnd</span><span class="p">(</span><span class="n">pCur</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// System.out.println(endOfFirst.val);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 逆转后面的一段</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">secondOfHead</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reverseList</span><span class="p">(</span><span class="n">endOfFirst</span><span class="p">.</span><span class="na">next</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">secondOfHead</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">boolean</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pCur</span><span class="p">.</span><span class="na">val</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">p2</span><span class="p">.</span><span class="na">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">pCur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pCur</span><span class="p">.</span><span class="na">next</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p2</span><span class="p">.</span><span class="na">next</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">preorder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">preorder</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 构建HashMap</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">inorder</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">indexOfNode</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">inorder</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 开始遍历</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">inorder</span><span class="p">.</span><span class="na">length</span><span class="o">-</span><span class="n">1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 反转回来</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">endOfFirst</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reverseList</span><span class="p">(</span><span class="n">secondOfHead</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">TreeNode</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">right</span><span class="p">){</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">left</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">ListNode</span><span class="w"> </span><span class="nf">getFirstEnd</span><span class="p">(</span><span class="n">ListNode</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">fast</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">slow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">fast</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">fast</span><span class="p">.</span><span class="na">next</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">fast</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fast</span><span class="p">.</span><span class="na">next</span><span class="p">.</span><span class="na">next</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">slow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slow</span><span class="p">.</span><span class="na">next</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">slow</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 在中序遍历中，找到对应根节点的位置</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">indexOfNode</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">preorder</span><span class="o">[</span><span class="n">root</span><span class="o">]</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 也就是说，对于根节点来说，(left, i-1)是其左子树</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 那么，其右子树范围就是 (i+1, right)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 那么，其左子树对应的根节点就是root+1</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 其右子树对应的根节点就是 root+i-left+1</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 递归的构建左右子树</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">TreeNode</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TreeNode</span><span class="p">(</span><span class="n">preorder</span><span class="o">[</span><span class="n">root</span><span class="o">]</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 左子树</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">node</span><span class="p">.</span><span class="na">left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">root</span><span class="o">+</span><span class="n">1</span><span class="p">,</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">-</span><span class="n">1</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 右子树</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">node</span><span class="p">.</span><span class="na">right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">root</span><span class="o">+</span><span class="n">i</span><span class="o">-</span><span class="n">left</span><span class="o">+</span><span class="n">1</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="n">1</span><span class="p">,</span><span class="w"> </span><span class="n">right</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">node</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">ListNode</span><span class="w"> </span><span class="nf">reverseList</span><span class="p">(</span><span class="n">ListNode</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">cur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">cur</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">ListNode</span><span class="w"> </span><span class="n">pNext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cur</span><span class="p">.</span><span class="na">next</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">cur</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cur</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">cur</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pNext</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
@@ -546,7 +559,7 @@ var _hmt = _hmt || [];
     
     <section class="article-tags">
         
-            <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+            <a href="/tags/%E9%93%BE%E8%A1%A8/">链表</a>
         
     </section>
 
@@ -617,12 +630,12 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/">
+    <a href="/p/%E4%BB%8E%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%E5%92%8C%E4%B8%AD%E7%BB%AD%E9%81%8D%E5%8E%86%E4%B8%AD%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">回文链表</h2>
+            <h2 class="article-title">从前序遍历和中续遍历中构造二叉树</h2>
         </div>
     </a>
 </article>
