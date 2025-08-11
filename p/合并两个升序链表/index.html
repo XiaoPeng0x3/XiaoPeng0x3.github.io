@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 本系列是hot100补全计划的二叉树篇，主要包含了力扣(leetcode)的二叉树章节部分的习题，除此之外还会有一些比较著名的但不包含在hot100的二叉树题目。\n">
-<title>二叉树的中序遍历</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="合并两个升序链表 在之前我们说过，链表和二叉树这种数据结构类型的东西，基本上都可以使用递归来进行编写。\n解题 题意已经很清晰了，我们来看看怎么使用递归进行解题。\n1 2 3 4 5 class Solution { public ListNode mergeTwoLists(ListNode list1, ListNode list2) { } } 首先，对于链表中的元素来说，合并完应该还是有序的，所以在合并的过程中就要求我们先放小的元素，再放大的元素，并且合并过之后的就是按照升序排列好的。\n">
+<title>合并两个升序链表</title>
 
-<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86/'>
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="二叉树的中序遍历">
-<meta property='og:description' content="前言 本系列是hot100补全计划的二叉树篇，主要包含了力扣(leetcode)的二叉树章节部分的习题，除此之外还会有一些比较著名的但不包含在hot100的二叉树题目。\n">
-<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86/'>
+<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="合并两个升序链表">
+<meta property='og:description' content="合并两个升序链表 在之前我们说过，链表和二叉树这种数据结构类型的东西，基本上都可以使用递归来进行编写。\n解题 题意已经很清晰了，我们来看看怎么使用递归进行解题。\n1 2 3 4 5 class Solution { public ListNode mergeTwoLists(ListNode list1, ListNode list2) { } } 首先，对于链表中的元素来说，合并完应该还是有序的，所以在合并的过程中就要求我们先放小的元素，再放大的元素，并且合并过之后的就是按照升序排列好的。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='二叉树' /><meta property='article:published_time' content='2025-07-15T11:26:42&#43;08:00'/><meta property='article:modified_time' content='2025-07-15T11:26:42&#43;08:00'/>
-<meta name="twitter:title" content="二叉树的中序遍历">
-<meta name="twitter:description" content="前言 本系列是hot100补全计划的二叉树篇，主要包含了力扣(leetcode)的二叉树章节部分的习题，除此之外还会有一些比较著名的但不包含在hot100的二叉树题目。\n">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='链表' /><meta property='article:published_time' content='2025-08-11T18:01:02&#43;08:00'/><meta property='article:modified_time' content='2025-08-11T18:01:02&#43;08:00'/>
+<meta name="twitter:title" content="合并两个升序链表">
+<meta name="twitter:description" content="合并两个升序链表 在之前我们说过，链表和二叉树这种数据结构类型的东西，基本上都可以使用递归来进行编写。\n解题 题意已经很清晰了，我们来看看怎么使用递归进行解题。\n1 2 3 4 5 class Solution { public ListNode mergeTwoLists(ListNode list1, ListNode list2) { } } 首先，对于链表中的元素来说，合并完应该还是有序的，所以在合并的过程中就要求我们先放小的元素，再放大的元素，并且合并过之后的就是按照升序排列好的。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
@@ -288,15 +288,8 @@ var _hmt = _hmt || [];
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#前言">前言</a></li>
-    <li><a href="#题目">题目</a></li>
-    <li><a href="#思路">思路</a>
-      <ol>
-        <li><a href="#递归">递归</a></li>
-        <li><a href="#迭代">迭代</a></li>
-      </ol>
-    </li>
-    <li></li>
+    <li><a href="#合并两个升序链表">合并两个升序链表</a></li>
+    <li><a href="#解题">解题</a></li>
   </ol>
 </nav>
         </div>
@@ -324,7 +317,7 @@ var _hmt = _hmt || [];
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86/">二叉树的中序遍历</a>
+            <a href="/p/%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/">合并两个升序链表</a>
         </h2>
     
         
@@ -346,7 +339,7 @@ var _hmt = _hmt || [];
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">2025-07-15</time>
+                <time class="article-time--published">2025-08-11</time>
             </div>
         
 
@@ -361,7 +354,7 @@ var _hmt = _hmt || [];
 
 
                 <time class="article-time--reading">
-                    阅读时长: 2 分钟
+                    阅读时长: 1 分钟
                 </time>
             </div>
         
@@ -376,17 +369,27 @@ var _hmt = _hmt || [];
     <section class="article-content">
     
     
-    <h1 id="前言">前言
-</h1><p>本系列是<code>hot100补全计划的</code>二叉树篇，主要包含了力扣(<code>leetcode</code>)的二叉树章节部分的习题，除此之外还会有一些比较著名的但不包含在<code>hot100</code>的二叉树题目。</p>
-<h1 id="题目">题目
-</h1><p>这道题目是<code>leetcode</code>的第94题，链接在这里(<a class="link" href="https://leetcode.cn/problems/binary-tree-inorder-traversal/description/?envType=study-plan-v2&amp;envId=top-100-liked"  target="_blank" rel="noopener"
-    >点我</a>)。</p>
-<p>意思就是以左根右的方式去完成遍历。</p>
-<h1 id="思路">思路
-</h1><blockquote>
-<p>tips:  对于二叉树和链表来说，使用递归是一类通用的解题技巧</p></blockquote>
-<h2 id="递归">递归
-</h2><p>使用递归法十分简单，这里仅仅贴出代码，不作解释</p>
+    <h1 id="合并两个升序链表">合并两个升序链表
+</h1><p>在之前我们说过，链表和二叉树这种数据结构类型的东西，基本上都可以使用递归来进行编写。</p>
+<h1 id="解题">解题
+</h1><p>题意已经很清晰了，我们来看看怎么使用递归进行解题。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">Solution</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ListNode</span><span class="w"> </span><span class="nf">mergeTwoLists</span><span class="p">(</span><span class="n">ListNode</span><span class="w"> </span><span class="n">list1</span><span class="p">,</span><span class="w"> </span><span class="n">ListNode</span><span class="w"> </span><span class="n">list2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>首先，对于链表中的元素来说，合并完应该还是有序的，所以在合并的过程中就要求我们先放小的元素，再放大的元素，并且合并过之后的就是按照升序排列好的。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -404,152 +407,26 @@ var _hmt = _hmt || [];
 </span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm"> * Definition for a binary tree node.
-</span></span></span><span class="line"><span class="cl"><span class="cm"> * public class TreeNode {
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     int val;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode left;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode right;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode() {}
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode(int val) { this.val = val; }
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode(int val, TreeNode left, TreeNode right) {
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *         this.val = val;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *         this.left = left;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *         this.right = right;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     }
-</span></span></span><span class="line"><span class="cl"><span class="cm"> * }
-</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">Solution</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">inorderTraversal</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">root</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">Solution</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ListNode</span><span class="w"> </span><span class="nf">mergeTwoLists</span><span class="p">(</span><span class="n">ListNode</span><span class="w"> </span><span class="n">list1</span><span class="p">,</span><span class="w"> </span><span class="n">ListNode</span><span class="w"> </span><span class="n">list2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">list1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">list2</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">list2</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">list1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">list1</span><span class="p">.</span><span class="na">val</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">list2</span><span class="p">.</span><span class="na">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// 先放list1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">list1</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mergeTwoLists</span><span class="p">(</span><span class="n">list1</span><span class="p">.</span><span class="na">next</span><span class="p">,</span><span class="w"> </span><span class="n">list2</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">list1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// 放list2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">list2</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mergeTwoLists</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span><span class="w"> </span><span class="n">list2</span><span class="p">.</span><span class="na">next</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">list2</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 先遍历左子树</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="na">left</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 把根节点值添加进来</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="na">val</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 接着遍历右子树</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="na">right</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>比递归方法更难的是迭代法遍历。</p>
-<h2 id="迭代">迭代
-</h2><p>我们知道，递归时默认使用的结构就是栈，也就是<code>Last In First Out</code>，所以，以迭代的方式，我们就可以去手动模拟一个栈出来。</p>
-<blockquote>
-<p>tips：<code>Java</code>中没有直接可以使用的Stack，一般的，我们可以使用LinkedList作为替代</p></blockquote>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm"> * Definition for a binary tree node.
-</span></span></span><span class="line"><span class="cl"><span class="cm"> * public class TreeNode {
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     int val;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode left;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode right;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode() {}
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode(int val) { this.val = val; }
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     TreeNode(int val, TreeNode left, TreeNode right) {
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *         this.val = val;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *         this.left = left;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *         this.right = right;
-</span></span></span><span class="line"><span class="cl"><span class="cm"> *     }
-</span></span></span><span class="line"><span class="cl"><span class="cm"> * }
-</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">Solution</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">inorderTraversal</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">root</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 使用栈来进行模拟</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Deque</span><span class="o">&lt;</span><span class="n">TreeNode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedList</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">root</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">st</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">root</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="c1">// 优先遍历所有左子树</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">st</span><span class="p">.</span><span class="na">push</span><span class="p">(</span><span class="n">root</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">.</span><span class="na">left</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// 栈顶元素就是左子树结点</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="na">pop</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// 根节点</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="na">val</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// 右子树</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">.</span><span class="na">right</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
 </div>
-</div><h1 id="">
-</h1>
 </section>
 
 
@@ -557,7 +434,7 @@ var _hmt = _hmt || [];
     
     <section class="article-tags">
         
-            <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/">二叉树</a>
+            <a href="/tags/%E9%93%BE%E8%A1%A8/">链表</a>
         
     </section>
 
@@ -615,19 +492,6 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/%E4%BB%8E%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%E5%92%8C%E4%B8%AD%E7%BB%AD%E9%81%8D%E5%8E%86%E4%B8%AD%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">从前序遍历和中续遍历中构造二叉树</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
     <a href="/p/%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0/">
         
         
@@ -654,12 +518,12 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E5%8D%87%E5%BA%8F%E9%93%BE%E8%A1%A8/">
+    <a href="/p/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A82/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">合并两个升序链表</h2>
+            <h2 class="article-title">环形链表2</h2>
         </div>
     </a>
 </article>
@@ -667,12 +531,25 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A82/">
+    <a href="/p/%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">环形链表2</h2>
+            <h2 class="article-title">回文链表</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">二叉树的中序遍历</h2>
         </div>
     </a>
 </article>
