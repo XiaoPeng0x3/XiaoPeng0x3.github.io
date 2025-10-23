@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E5%8C%BA%E9%97%B4%E5%92%8C%E6%9C%80%E5%A4%A7%E4%B8%94%E5%85%83%E7%B4%A0%E4%B8%8D%E9%87%8D%E5%A4%8D/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="区间和最大且元素不重复">
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="区间和最大且元素不重复">
 <meta property='og:description' content="前言 这个问题似乎是之前没有接触到过的问题，题目的大概意思就是，给定一个数组，数组中可能会有重复的元素，现在我们的任务是\n调整元素，使得区间内没有重复的元素 调整后的区间和最大 贪心算法 例如， 一个数组是\n">
 <meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E5%8C%BA%E9%97%B4%E5%92%8C%E6%9C%80%E5%A4%A7%E4%B8%94%E5%85%83%E7%B4%A0%E4%B8%8D%E9%87%8D%E5%A4%8D/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
@@ -384,7 +384,8 @@ var _hmt = _hmt || [];
 <h1 id="贪心算法">贪心算法
 </h1><p>例如， 一个数组是</p>
 <blockquote>
-<p>arr = [1,2,3,4,5,5,6]</p></blockquote>
+<p>arr = [1,2,3,4,5,5,6]</p>
+</blockquote>
 <p>怎样调整使得数组和最大且元素不重复呢？</p>
 <h2 id="贪心的思路">贪心的思路
 </h2><p>从贪心思路出发， 只要每个元素都是最大的， 那么整体和就是最大的，所以，我们不去调整最大值，而是保留下来数组里面的最大值</p>
@@ -432,15 +433,18 @@ var _hmt = _hmt || [];
 <p><a class="link" href="https://leetcode.cn/problems/minimum-increment-to-make-array-unique/description/"  target="_blank" rel="noopener"
     >LeetcCode945.使数组唯一的最小增量</a></p>
 <p>给你一个整数数组 <code>nums</code> 。每次 move 操作将会选择任意一个满足 <code>0 &lt;= i &lt; nums.length</code> 的下标 <code>i</code>，并将 <code>nums[i]</code> 递增 <code>1</code>。</p>
-<p>返回使 <code>nums</code> 中的每个值都变成唯一的所需要的最少操作次数。</p></blockquote>
+<p>返回使 <code>nums</code> 中的每个值都变成唯一的所需要的最少操作次数。</p>
+</blockquote>
 <blockquote>
 <p><a class="link" href="https://leetcode.cn/problems/minimum-deletions-to-make-character-frequencies-unique/description/"  target="_blank" rel="noopener"
     >Leetcode  </a><a class="link" href="https://leetcode.cn/problems/minimum-deletions-to-make-character-frequencies-unique/"  target="_blank" rel="noopener"
-    >1647. 字符频次唯一的最小删除次数</a></p></blockquote>
+    >1647. 字符频次唯一的最小删除次数</a></p>
+</blockquote>
 <blockquote>
 <p>如果字符串 <code>s</code> 中 <strong>不存在</strong> 两个不同字符 <strong>频次</strong> 相同的情况，就称 <code>s</code> 是 <strong>优质字符串</strong> 。</p>
 <p>给你一个字符串 <code>s</code>，返回使 <code>s</code> 成为 <strong>优质字符串</strong> 需要删除的 <strong>最小</strong> 字符数。</p>
-<p>字符串中字符的 <strong>频次</strong> 是该字符在字符串中的出现次数。例如，在字符串 <code>&quot;aab&quot;</code> 中，<code>'a'</code> 的频次是 <code>2</code>，而 <code>'b'</code> 的频次是 <code>1</code> 。</p></blockquote>
+<p>字符串中字符的 <strong>频次</strong> 是该字符在字符串中的出现次数。例如，在字符串 <code>&quot;aab&quot;</code> 中，<code>'a'</code> 的频次是 <code>2</code>，而 <code>'b'</code> 的频次是 <code>1</code> 。</p>
+</blockquote>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1

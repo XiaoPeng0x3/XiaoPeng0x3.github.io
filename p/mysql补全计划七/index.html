@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%B8%83/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Mysql补全计划(七)">
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="Mysql补全计划(七)">
 <meta property='og:description' content="前言 今天来看一看mysql的日志部分，也就是对应的管理篇。并且，我们来配置一下怎么在一台机器上使用docker来实现主从复制。\n日志 错误日志 错误日志记录了mysql启动和停止的时候，以及服务器再运行过程中发生任何严重错误的相关信息，当数据库出现任何故障导致无法启动时，可以先看看错误日志里面的内容。\n">
 <meta property='og:url' content='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%B8%83/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
@@ -808,7 +808,8 @@ var _hmt = _hmt || [];
 </div>
 </div><p>如果可以<code>ping</code>通，说明到目前为止，网络正常！然后退出！</p>
 <blockquote>
-<p>注意，主从复制依赖于顺畅的网络环境！</p></blockquote>
+<p>注意，主从复制依赖于顺畅的网络环境！</p>
+</blockquote>
 <p>对应的，我们也需要给<code>slave</code>创建对应的<code>config</code></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">

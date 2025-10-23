@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="神经网络——多层感知机">
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="神经网络——多层感知机">
 <meta property='og:description' content="前言 前面讲解了一些优化算法，尤其是各种梯度下降算法，这次来看一看神经网络\n神经网络 神经网络的特点 前面我们在学习线性分类器的时候了解到，线性分类器对于异或、圆形、半圆形数据不能很好的划分出一条边界，这也导致了线性分类器不是那么的有效，而神经网络可以解决这个问题。\n">
 <meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
@@ -852,7 +852,8 @@ $$</p>
 Scores = h_1^T * W_2 + b_2
 $$</p>
 <blockquote>
-<p>怎么求第一项的梯度呢？</p></blockquote>
+<p>怎么求第一项的梯度呢？</p>
+</blockquote>
 <p>$ \frac{dL}{dP} $的计算公式其实就是对数函数求导，而$\frac{dP}{dS}$的结果就要从<code>softmax</code>公式出发</p>
 <p>$$
 softmax(i) = \frac{e^{scores_i}}{e^{scores}}

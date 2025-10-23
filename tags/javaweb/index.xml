@@ -1498,7 +1498,8 @@
 &lt;li&gt;
 &lt;p&gt;REQUIRES_NEW ：当我们不希望事务之间相互影响时，可以使用该传播行为。比如：下订单前需要记录日志，不论订单保存成功与否，都需要保证日志记录能够记录成功。&lt;/p&gt;
 &lt;/li&gt;
-&lt;/ul&gt;&lt;/blockquote&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
 &lt;h1 id=&#34;总结&#34;&gt;总结
 &lt;/h1&gt;&lt;ul&gt;
 &lt;li&gt;使用@Transactional开启注解&lt;/li&gt;

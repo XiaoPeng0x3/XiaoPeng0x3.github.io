@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://XiaoPeng0x3.github.io/p/cs61bproj0-2048%E8%AE%B0%E5%BD%95/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="CS61B：proj0 2048记录">
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="CS61B：proj0 2048记录">
 <meta property='og:description' content="前言 这是第一个proj，我记得在我第一次学习这门课时感觉无从下手，随着不断的学习，大概是一年之后再看这个proj似乎也没有当时的那种恐惧，大概花了四个小时全部做完，下面我仅分享一下我的思路，本文不涉及重要的代码。\n">
 <meta property='og:url' content='https://XiaoPeng0x3.github.io/p/cs61bproj0-2048%E8%AE%B0%E5%BD%95/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
@@ -387,13 +387,15 @@ var _hmt = _hmt || [];
 <img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20250727211831699.png" alt="image-20250727211831699" style="zoom: 33%;" />
 <p>如果说当前方格内没有空格子时，你基本就要完蛋了，这个时候还需要检查是否可以有上下左右可以合成的相邻格子，如果没有，那么真就<code>Game Over</code>了！</p>
 <blockquote>
-<p>思考：我们已经得到了结束游戏的条件，即当前格子最大值为<code>2048</code>或者当前无法合成新的数字。</p></blockquote>
+<p>思考：我们已经得到了结束游戏的条件，即当前格子最大值为<code>2048</code>或者当前无法合成新的数字。</p>
+</blockquote>
 <p>我们先跟着文档指导来完成一下一些前置函数。</p>
 <p>首先是检查当前是否 有空格子的函数</p>
 <h2 id="emptyspaceexistsboard-b">emptySpaceExists(Board b)
 </h2><p>这个函数不难，不过对于刚上手的人来说，我觉得可能不知道怎么获取一个格子才是比较难的地方。不过跟着官方文档来，也还是很简单的。</p>
 <blockquote>
-<p>For this method, you’ll want to use the <code>tile(int col, int row)</code> and <code>size()</code> methods of the <code>Board</code> class.</p></blockquote>
+<p>For this method, you’ll want to use the <code>tile(int col, int row)</code> and <code>size()</code> methods of the <code>Board</code> class.</p>
+</blockquote>
 <p>官方文档提示我们可以使用<code>tile</code>这个函数，这个函数长这样</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -640,7 +642,8 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>这样，你应该可以移动了，不用担心，自动评分只会使用<code>Model</code>这个程序。</p></blockquote>
+</div><p>这样，你应该可以移动了，不用担心，自动评分只会使用<code>Model</code>这个程序。</p>
+</blockquote>
 <p>官方文档提示我们可以先完成一个向上合并的操作，然后通过测试。其实通过测试你就可以明白<code>2048</code>的每个格子之间是怎么进行合并的。我们需要注意一些特例，即每个格子在这一列上最多会被合并一次。</p>
 <p>来举个例子，请考虑下面这个格子</p>
 <div class="highlight"><div class="chroma">

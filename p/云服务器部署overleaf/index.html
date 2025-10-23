@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 overleaf是一款非常流行的latex编写工具，其内部帮我们集成了许多宏包，从而避免了环境配置的时间。但是现在也有一些缺点。例如，编译时间不能超过20s、限制多人合作等，其中，编译时间不能超过20s是最大的缺点。下面来记录一下我的部署流程和踩到的一些坑。\n">
+<title>云服务器部署overleaf</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2overleaf/'>
+
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="云服务器部署overleaf">
+<meta property='og:description' content="前言 overleaf是一款非常流行的latex编写工具，其内部帮我们集成了许多宏包，从而避免了环境配置的时间。但是现在也有一些缺点。例如，编译时间不能超过20s、限制多人合作等，其中，编译时间不能超过20s是最大的缺点。下面来记录一下我的部署流程和踩到的一些坑。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2overleaf/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='overleaf' /><meta property='article:published_time' content='2025-10-08T17:54:16&#43;08:00'/><meta property='article:modified_time' content='2025-10-08T17:54:16&#43;08:00'/>
+<meta name="twitter:title" content="云服务器部署overleaf">
+<meta name="twitter:description" content="前言 overleaf是一款非常流行的latex编写工具，其内部帮我们集成了许多宏包，从而避免了环境配置的时间。但是现在也有一些缺点。例如，编译时间不能超过20s、限制多人合作等，其中，编译时间不能超过20s是最大的缺点。下面来记录一下我的部署流程和踩到的一些坑。\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8121279679071600"
+     crossorigin="anonymous"></script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😸</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#环境配置">环境配置</a>
+      <ol>
+        <li><a href="#服务器配置">服务器配置</a></li>
+        <li><a href="#所需要的工具">所需要的工具</a></li>
+      </ol>
+    </li>
+    <li><a href="#搭建流程">搭建流程</a>
+      <ol>
+        <li><a href="#多一些内存服务器内存大于2g的可以跳过">多一些内存！(服务器内存大于2G的可以跳过)</a></li>
+        <li><a href="#交换区文件">交换区文件</a>
+          <ol>
+            <li><a href="#创建交换区文件">创建交换区文件</a></li>
+            <li><a href="#修改权限">修改权限</a></li>
+            <li><a href="#格式化为swap区">格式化为swap区</a></li>
+            <li><a href="#启用swap">启用swap</a></li>
+            <li><a href="#永久生效">永久生效</a></li>
+            <li><a href="#优先使用内存">优先使用内存</a></li>
+            <li><a href="#删除交换区文件">删除交换区文件</a></li>
+          </ol>
+        </li>
+        <li><a href="#安装docker">安装docker</a></li>
+      </ol>
+    </li>
+    <li><a href="#官方文档安装">官方文档安装</a>
+      <ol>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#初始化配置">初始化配置</a></li>
+        <li><a href="#配置端口">配置端口</a></li>
+        <li><a href="#拉取镜像">拉取镜像</a></li>
+        <li><a href="#升级sharelatex">升级sharelatex</a></li>
+        <li><a href="#选择镜像源">选择镜像源</a></li>
+        <li><a href="#保存配置">保存配置</a></li>
+      </ol>
+    </li>
+    <li><a href="#可选-nginx反向代理">(可选) Nginx反向代理</a>
+      <ol>
+        <li><a href="#安装nginx">安装<code>nginx</code></a></li>
+        <li><a href="#管理nginx">管理nginx</a></li>
+      </ol>
+    </li>
+    <li><a href="#smtp服务">SMTP服务</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" >
+                碎碎念
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2overleaf/">云服务器部署overleaf</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-10-08</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p><code>overleaf</code>是一款非常流行的<code>latex</code>编写工具，其内部帮我们集成了许多宏包，从而避免了环境配置的时间。但是现在也有一些缺点。例如，编译时间不能超过<code>20s</code>、限制多人合作等，其中，编译时间不能超过<code>20</code>s是最大的缺点。下面来记录一下我的部署流程和踩到的一些坑。</p>
+<h1 id="环境配置">环境配置
+</h1><h2 id="服务器配置">服务器配置
+</h2><ul>
+<li>阿里云2核2G</li>
+<li><code>Ubuntu 22</code></li>
+<li><code>40G</code>硬盘</li>
+</ul>
+<h2 id="所需要的工具">所需要的工具
+</h2><ul>
+<li>
+<p><code>docker</code></p>
+</li>
+<li>
+<p><code>docker-compose v2</code></p>
+</li>
+<li>
+<p><code>nginx</code>(反向代理)</p>
+</li>
+</ul>
+<h1 id="搭建流程">搭建流程
+</h1><h2 id="多一些内存服务器内存大于2g的可以跳过">多一些内存！(服务器内存大于2G的可以跳过)
+</h2><p>服务器内存最好还是<code>4G</code>的比较合适，<code>2G</code>的花我们可以来创建一个<code>swapfile</code>来作为内存的补充。</p>
+<h2 id="交换区文件">交换区文件
+</h2><h3 id="创建交换区文件">创建交换区文件
+</h3><p>首先来看一下自己的机器有没有交换区文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">free -h
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果看到<code>Swap: 0 0 0</code>的话，说明没有交换区，我们可以创建一个<code>2G</code>的交换区文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/swapfile <span class="nv">bs</span><span class="o">=</span>1M <span class="nv">count</span><span class="o">=</span><span class="m">2048</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果云服务器磁盘充足，也可以选择<code>4G</code>的文件。</p>
+<h3 id="修改权限">修改权限
+</h3><p>此时，在根目录下就已经有一个名为<code>swapfile</code>的文件，我们需要修改这个交换区的权限</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo chmod <span class="m">600</span> /swapfile
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是只有<code>root</code>权限的用户可以对该文件进行读写</p>
+<h3 id="格式化为swap区">格式化为swap区
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo mkswap /swapfile
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="启用swap">启用swap
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo swapon /swapfile
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="永久生效">永久生效
+</h3><p>为了让交换区文件永久生效，可以在<code>/etc/fstab</code>文件中添加一行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">/swapfile none swap sw <span class="m">0</span> <span class="m">0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="优先使用内存">优先使用内存
+</h3><p>内存的速度是远远高于磁盘的，所以我们得优先使用内存，这里可以调整一下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;vm.swappiness=10&#39;</span> <span class="p">|</span> sudo tee -a /etc/sysctl.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>swappiness</code>的值越高，就说明使用交换区的意愿也就越大。</p>
+<p>此时可以再通过<code>free -h</code>参数去进行查询。</p>
+<h3 id="删除交换区文件">删除交换区文件
+</h3><p>同理，也可以删除交换区文件</p>
+<ul>
+<li>
+<p>关闭交换区</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo swapoff /swapfile
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>删除交换区文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo rm /swapfile
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo sed -i <span class="s1">&#39;/\/swapfile/d&#39;</span> /etc/fstab
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="安装docker">安装docker
+</h2><p>首先要安装好<code>docker</code>和<code>docker-compose</code>，而且<code>docker-compose</code>最好是安装<code>v2</code>版本的。</p>
+<p>安装<code>docker</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt install docker.io
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>安装好后，可以安装<code>docker-compose</code>，我安装的是<code>v2</code>版本，不过有些麻烦。</p>
+<ul>
+<li>
+<p>首先确定好自己的服务器架构，一般都是<code>x86_64</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">uname -i
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>找到<code>v2</code>的<a class="link" href="https://github.com/docker/compose/releases/tag/v2.39.4"  target="_blank" rel="noopener"
+    >release页面</a>，这里我选择了<code>v2.39</code>版本</p>
+</li>
+<li>
+<p>上传到服务器，这里有很多办法</p>
+</li>
+<li>
+<p>将这个文件移动到官方推荐的目录中</p>
+<blockquote>
+<p>如果不存在这个文件夹，可以先创建一个</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mkdir -p /usr/local/lib/docker/cli-plugins/
+</span></span></code></pre></td></tr></table>
+</div>
+</div></blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mv docker-compose-linux-x86_64 /usr/local/lib/docker/cli-plugins/docker-compose
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>变为可执行文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>验证是否安装成功</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker compose version
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果安装成功，就会是下面这个输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Docker Compose version v2.39.4
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>此时，基本上就可以跟着<a class="link" href="https://github.com/overleaf/toolkit/tree/master/doc"  target="_blank" rel="noopener"
+    >官方文档</a>来进行安装了。</p>
+<h1 id="官方文档安装">官方文档安装
+</h1><h2 id="安装">安装
+</h2><p>首先<code>clone</code>本项目</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/overleaf/toolkit.git ./overleaf-toolkit
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后转到该目录下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> ./overleaf-toolkit
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="初始化配置">初始化配置
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bin/init
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这将会生成一个<code>config</code>目录，主要包含三个文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ ls config
+</span></span><span class="line"><span class="cl">overleaf.rc     variables.env     version
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>overleaf.rc</code>是顶层配置文件</li>
+<li><code>variables.env </code>是用到的一些环境变量</li>
+<li><code>version</code>是使用的版本</li>
+</ul>
+<h2 id="配置端口">配置端口
+</h2><p>这里我们可以先使用<code>ip:port</code>的方式去访问，所以修改一下端口，也就是修改<code>config/overleaf.rc</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># Sharelatex container</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Uncomment the OVERLEAF_IMAGE_NAME variable to use a user-defined image.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># OVERLEAF_IMAGE_NAME=sharelatex/sharelatex</span>
+</span></span><span class="line"><span class="cl"><span class="nv">OVERLEAF_DATA_PATH</span><span class="o">=</span>data/overleaf
+</span></span><span class="line"><span class="cl"><span class="nv">SERVER_PRO</span><span class="o">=</span><span class="nb">false</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># listen任意IP</span>
+</span></span><span class="line"><span class="cl"><span class="nv">OVERLEAF_LISTEN_IP</span><span class="o">=</span>0.0.0.0
+</span></span><span class="line"><span class="cl"><span class="c1"># 对外端口，服务器要打开这个端口</span>
+</span></span><span class="line"><span class="cl"><span class="nv">OVERLEAF_PORT</span><span class="o">=</span><span class="m">1122</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="拉取镜像">拉取镜像
+</h2><p>这里会拉去三个镜像</p>
+<ul>
+<li><code>mongo</code></li>
+<li><code>redis</code></li>
+<li><code>sharelatex</code></li>
+</ul>
+<p>由于网络的问题，<code>sharelatex</code>拉去速度较慢，所以我们可以考虑换一下<code>docker</code>源，可以参考一下这篇<a class="link" href="https://www.cnblogs.com/test-gang/p/18809935"  target="_blank" rel="noopener"
+    >文章</a></p>
+<p>当配置好<code>docker</code>源后，可以执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bin/up
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>看到一堆的输出日志后，就说明成功启动了容器，此时可以先取消(<code>CTRL+C)</code>来取消任务。然后，再使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bin/start
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>来开启任务。</p>
+<p>如果一切顺利，那么最基础的版本我们就已经安装好了。</p>
+<p>接下来我们来升级我们的<code>texlive</code></p>
+<h2 id="升级sharelatex">升级sharelatex
+</h2><p>由于拉去的<code>sharlatex</code>是最基础的版本，里面缺少了许多宏包，所以我们要升级一下，这里还是参考<a class="link" href="https://github.com/overleaf/toolkit/blob/master/doc/ce-upgrading-texlive.md"  target="_blank" rel="noopener"
+    >官方教程</a>。在执行完上一步的<code>bin/start</code>后，容器开始运行。我们需要进入容器内来拉去新的镜像</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bin/shell
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>进去后，官方使用的工具是<code>tlmgr</code>，先查看所使用的版本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">tlmgr --version
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="选择镜像源">选择镜像源
+</h2><p>选择一个合适的镜像源很重要，这里的选择原则就是根据地理位置来选择，例如，南方的盆友可以选择腾讯云，华中的朋友可以选择阿里云。我们可以从<a class="link" href="https://ctan.org/mirrors/"  target="_blank" rel="noopener"
+    >CTAN</a>中选择离你最近的那个源，本人所处华北地区，就选择了北京外国语大学的镜像源:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">tlmgr option repository https://mirrors.bfsu.edu.cn/CTAN/systems/texlive/tlnet/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后更新一下<code>tlmgr</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">tlmgr update --self --all 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时就可以开始拉去了，本人大概用了20<code>mins</code>，拉取完后直接退出容器。</p>
+<h2 id="保存配置">保存配置
+</h2><p>退出容器后，执行下面的操作来保存配置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ cat config/version
+</span></span><span class="line"><span class="cl">5.0.3
+</span></span><span class="line"><span class="cl"><span class="c1">#^^^^ --------------- matching version ----------- |</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#                                                vvvvv</span>
+</span></span><span class="line"><span class="cl">$ docker commit sharelatex sharelatex/sharelatex:5.0.3-with-texlive-full
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">$ <span class="nb">echo</span> 5.0.3-with-texlive-full &gt; config/version
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后重新运行，</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bin/up
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>看一下使用的哪个镜像</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CONTAINER ID   IMAGE                                           COMMAND                  CREATED       STATUS                 PORTS                  NAMES
+</span></span><span class="line"><span class="cl">5fe1009cdf31   sharelatex/sharelatex:5.5.4-with-texlive-full   <span class="s2">&#34;/sbin/my_init&#34;</span>          <span class="m">2</span> hours ago   Up <span class="m">2</span> hours             0.0.0.0:1122-&gt;80/tcp   sharelatex
+</span></span><span class="line"><span class="cl">09da52762552   redis:6.2                                       <span class="s2">&#34;docker-entrypoint.s…&#34;</span>   <span class="m">5</span> hours ago   Up <span class="m">2</span> hours             6379/tcp               redis
+</span></span><span class="line"><span class="cl">4245bbc95f8f   mongo:6.0                                       <span class="s2">&#34;docker-entrypoint.s…&#34;</span>   <span class="m">5</span> hours ago   Up <span class="m">2</span> hours <span class="o">(</span>healthy<span class="o">)</span>   27017/tcp              mongo
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这下就大功告成了。</p>
+<h1 id="可选-nginx反向代理">(可选) Nginx反向代理
+</h1><p>目前为止，我们已经可以通过<code>ip:port</code>的形式去进行访问了，而使用<code>https</code>更加的安全，我们可以使用<code>nginx</code>来进行反向代理。</p>
+<p>首先安装<code>nginx</code></p>
+<h2 id="安装nginx">安装<code>nginx</code>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt install nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="管理nginx">管理nginx
+</h2><p>可以通过以下方法来管理<code>nginx</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 启动 nginx</span>
+</span></span><span class="line"><span class="cl">sudo systemctl start nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置 nginx 开机自启</span>
+</span></span><span class="line"><span class="cl">sudo systemctl <span class="nb">enable</span> nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看 nginx 状态</span>
+</span></span><span class="line"><span class="cl">sudo systemctl status nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>测试一下</p>
+<p>在浏览器输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">http://你的公网IP
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="smtp服务">SMTP服务
+</h1><p>在安装好后，我们需要去注册一个管理员账号</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">http://ip:port/launchpad
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时，就会转到一个注册页面，我们要注册一个管理员账号，然后登录。登录后就可以发送要请链接。如果人数比较少的话，我建议不用开启<code>SMTP</code>服务，只需要修改对应链接即可</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20251023175220727.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20251023175220727"
+	
+	
+></p>
+<p>这里可以选择注册的邮箱，点击注册后，会发送一个链接</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20251023175305249.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20251023175305249"
+	
+	
+></p>
+<p>底下是一个激活链接</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">https://localhost/user/activate?token=b281e45a36ansjons8f2660a28ba3326afb464cee40e268850cfa14db1c4d711bd20&amp;user_id=68f9c3d4d871be45a24xdaxw
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>只要把<code>localhost</code>改为自己的域名或者<code>ip</code>地址即可。</p>
+<h1 id="总结">总结
+</h1><p>这就是搭建的所有流程了，细节部分还是很多，如果遇到问题了，欢迎留言！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/overleaf/">Overleaf</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2025 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

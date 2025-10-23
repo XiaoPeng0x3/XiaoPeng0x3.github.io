@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E4%BB%8E%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%E5%92%8C%E4%B8%AD%E7%BB%AD%E9%81%8D%E5%8E%86%E4%B8%AD%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="从前序遍历和中续遍历中构造二叉树">
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="从前序遍历和中续遍历中构造二叉树">
 <meta property='og:description' content="前言 本系列是hot100补全计划的二叉树篇，主要包含了力扣(leetcode)的二叉树章节部分的习题，除此之外还会有一些比较著名的但不包含在hot100的二叉树题目。\n">
 <meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E4%BB%8E%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%E5%92%8C%E4%B8%AD%E7%BB%AD%E9%81%8D%E5%8E%86%E4%B8%AD%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
@@ -389,7 +389,8 @@ var _hmt = _hmt || [];
 </ul>
 <h1 id="思路">思路
 </h1><blockquote>
-<p>tips:  对于二叉树和链表来说，使用递归是一类通用的解题技巧</p></blockquote>
+<p>tips:  对于二叉树和链表来说，使用递归是一类通用的解题技巧</p>
+</blockquote>
 <p>根据先序遍历，显然，第一个结点就是根节点; 根据中序遍历，根节点的左边结点都是左子树，右边节点都是右子树。</p>
 <p>也就是说，我们可以根据这个规则来发现一些东西。首先，先序遍历数组<code>preorder</code>的第一个元素一定是根节点，也就是说，每次我们构建根节点，就可以从<code>preorder</code>出发，每次都确定好对应的<code>root</code>坐标；然后，我们就需要正确的划分，<strong>哪些值是属于左子树的，哪些值是属于右子树的</strong>。</p>
 <p>也就是说，给定一个<code>root</code>下表，我们需要找到这个<code>root</code>的左子树和右子树，这该怎么寻找呢？实际上，中序遍历就可以很好的解决这个问题。因为我们已经知道，中序遍历可以很好的划分左右子树，那么，对于<code>preorder[root]</code>元素来说，在中序遍历中，其左边的值就是全部属于左子树，其右边的值全部属于右子树，这样我们就可以很好的确定左右子树的范围。</p>

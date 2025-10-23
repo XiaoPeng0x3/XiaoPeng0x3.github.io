@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E5%9B%9B/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Mysql补全计划(四)">
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="Mysql补全计划(四)">
 <meta property='og:description' content="前言 下面我们来看一看sql优化的一些东西。\nsql优化 插入数据 插入数据的sql就是insert语句，其优化策略一般是将多次插入改为批量插入，这样可以减少IO的次数。\n">
 <meta property='og:url' content='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E5%9B%9B/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
@@ -683,12 +683,14 @@ var _hmt = _hmt || [];
 </div>
 </div><p>这些语句可以并发的写</p>
 <blockquote>
-<p><strong>并发写</strong> 在 MDL(元数据锁) 的语境下，不是指两个线程同时修改<strong>同一行</strong>数据，而是指多个线程可以同时<strong>修改同一张表中的不同数据行</strong>，只要不涉及结构（DDL）更改，就不会互相阻塞。</p></blockquote>
+<p><strong>并发写</strong> 在 MDL(元数据锁) 的语境下，不是指两个线程同时修改<strong>同一行</strong>数据，而是指多个线程可以同时<strong>修改同一张表中的不同数据行</strong>，只要不涉及结构（DDL）更改，就不会互相阻塞。</p>
+</blockquote>
 <h3 id="意向锁">意向锁
 </h3><p>意向锁是<strong>为了避免行级锁和表级锁产生冲突</strong>的一个快速检测方案。</p>
 <blockquote>
 <p>当事务要对某些<strong>行</strong>加锁时（比如 <code>SELECT ... FOR UPDATE</code>），<strong>InnoDB 会自动</strong>在表级别加一个“意向锁”（<code>IS</code> 或 <code>IX</code>）来声明：
-<strong>“我打算锁住这张表的某些行”</strong>。</p></blockquote>
+<strong>“我打算锁住这张表的某些行”</strong>。</p>
+</blockquote>
 <p>对于行级锁来说，其锁住的是某一行数据，此时，如果我们需要添加表锁，那么就得一行一行的去进行遍历，知道找到被加锁的行为止。</p>
 <p>当数据规模较小的时候，这样的方案可以接受，但是当数据规模过大，那么这样的操作就是一个耗时操作。</p>
 <p>所以，<code>mysql</code>的解决方案是，在添加行锁的时候就添加一个意向锁，这样就不需要进行耗时检测。</p>

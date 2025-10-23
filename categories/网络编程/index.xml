@@ -142,7 +142,8 @@
 &lt;/div&gt;&lt;p&gt;通过这个有趣的连接，我们还可以使用&lt;code&gt;eval&lt;/code&gt;函数来实现计算式求值&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;code&gt;eval&lt;/code&gt;函数是危险的！这里只是做演示&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;eval()&lt;/code&gt; 可以执行任意的 Python 代码。如果传入的字符串包含恶意代码，这可能导致严重的安全漏洞。例如，攻击者可以通过构造恶意表达式来执行系统命令、访问敏感数据、修改文件等。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;eval()&lt;/code&gt; 可以执行任意的 Python 代码。如果传入的字符串包含恶意代码，这可能导致严重的安全漏洞。例如，攻击者可以通过构造恶意表达式来执行系统命令、访问敏感数据、修改文件等。&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
@@ -260,7 +261,8 @@
     &gt;thread-local&lt;/a&gt; &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Global_variable&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;global variables&lt;/a&gt; at any given time.&lt;/p&gt;
 &lt;p&gt;The implementation of threads and &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Process_%28computing%29&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;processes&lt;/a&gt; differs between operating systems.&lt;/p&gt;&lt;/blockquote&gt;
+    &gt;processes&lt;/a&gt; differs between operating systems.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;线程是进程的一个子集(你可以这么认为)，一个进程里面会有多个线程，这些线程共享这个进程所有的资源(因为它们有着一样的页表)，所以在线程切换的时候，不需要有很大的开销，只需要维护每个线程内部不共享或者私有的数据即可。&lt;/p&gt;
 &lt;p&gt;这样就可以使用多线程来处理&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -324,7 +326,8 @@
 &lt;h2 id=&#34;参考书籍&#34;&gt;参考书籍
 &lt;/h2&gt;&lt;p&gt;本次参考的书籍是：&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;计算机网络：自顶向下&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;计算机网络：自顶向下&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;在此基础上，可以选择一些视频资料进行辅助，推荐一门好评较高的课程：&lt;a class=&#34;link&#34; href=&#34;https://www.bilibili.com/video/BV1JV411t7ow&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;中科大——计算机网络&lt;/a&gt;，同时，如果觉得学了这些知识而缺少lab来动手的话，可以参考这门&lt;a class=&#34;link&#34; href=&#34;https://www.educoder.net/paths/zecl9i6m&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;lab&lt;/a&gt;,如果觉得过于简单，也可以挑战一下&lt;a class=&#34;link&#34; href=&#34;https://cs144.github.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;

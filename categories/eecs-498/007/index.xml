@@ -1303,7 +1303,8 @@ $$&lt;/p&gt;
 Scores = h_1^T * W_2 + b_2
 $$&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;怎么求第一项的梯度呢？&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;怎么求第一项的梯度呢？&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;$ \frac{dL}{dP} $的计算公式其实就是对数函数求导，而$\frac{dP}{dS}$的结果就要从&lt;code&gt;softmax&lt;/code&gt;公式出发&lt;/p&gt;
 &lt;p&gt;$$
 softmax(i) = \frac{e^{scores_i}}{e^{scores}}
@@ -1755,7 +1756,8 @@ $$&lt;/p&gt;
 &lt;h3 id=&#34;从线性观点&#34;&gt;从线性观点
 &lt;/h3&gt;&lt;p&gt;让我们继续回到上几节课提到的&lt;code&gt;CIFAR10&lt;/code&gt;数据集，这个数据集有&lt;code&gt;10&lt;/code&gt;个不同的类别。而对于图像的表示，我们可以把图像(&lt;code&gt;input&lt;/code&gt;)看作一个数字矩阵，我们想要实现的内容就是，对于一个数字矩阵，能否找到一个权重参数&lt;code&gt;W&lt;/code&gt;,使得数据的结果发生一些变化，从而根据这个输出的结果来进行分类判断。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;code&gt;Wx + b&lt;/code&gt;是一个非常经典的线性模型&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;Wx + b&lt;/code&gt;是一个非常经典的线性模型&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241113195001199.png&#34;
 	
 	
@@ -1926,7 +1928,8 @@ $$&lt;/p&gt;
 &gt;&lt;/p&gt;
 &lt;p&gt;其中，假设&lt;code&gt;X[0]&lt;/code&gt;是&lt;code&gt;cat&lt;/code&gt;，那么我们就可以得到这张图片在&lt;code&gt;10&lt;/code&gt;个类别上的对于分数;假设&lt;code&gt;X[1]&lt;/code&gt;是&lt;code&gt;car&lt;/code&gt;，那么我们同样可以得到&lt;code&gt;car&lt;/code&gt;在&lt;code&gt;10&lt;/code&gt;个类别上的分数，然后就可以得到所有的分数。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;注意一些技巧，我们想要统计的是在&lt;code&gt;C&lt;/code&gt;个类上面的分数，所以输出的张量应该是&lt;code&gt;Cx1&lt;/code&gt;或者&lt;code&gt;1xC&lt;/code&gt;的;&lt;code&gt;torch&lt;/code&gt;的&lt;code&gt;mv&lt;/code&gt;函数很好的帮助我们将一个矩阵与一个向量相乘，在数学上的感受就是一个&lt;code&gt;CxD&lt;/code&gt;的矩阵与一个&lt;code&gt;Dx1&lt;/code&gt;的向量相乘，从而得到一个&lt;code&gt;Cx1&lt;/code&gt;的输出分数&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;注意一些技巧，我们想要统计的是在&lt;code&gt;C&lt;/code&gt;个类上面的分数，所以输出的张量应该是&lt;code&gt;Cx1&lt;/code&gt;或者&lt;code&gt;1xC&lt;/code&gt;的;&lt;code&gt;torch&lt;/code&gt;的&lt;code&gt;mv&lt;/code&gt;函数很好的帮助我们将一个矩阵与一个向量相乘，在数学上的感受就是一个&lt;code&gt;CxD&lt;/code&gt;的矩阵与一个&lt;code&gt;Dx1&lt;/code&gt;的向量相乘，从而得到一个&lt;code&gt;Cx1&lt;/code&gt;的输出分数&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h3 id=&#34;再看svm-loss&#34;&gt;再看SVM Loss
 &lt;/h3&gt;&lt;p&gt;再看&lt;code&gt;Loss&lt;/code&gt;函数，实际上做的就是一个衡量差值之间间隔的函数，方便起见，我们还是使用只有三个类和三个得分的输出&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241114112919434.png&#34;
@@ -2343,10 +2346,12 @@ $$
 &lt;/h2&gt;&lt;p&gt;首先是计算两个向量之间的距离&lt;/p&gt;
 &lt;h3 id=&#34;双重循环&#34;&gt;双重循环
 &lt;/h3&gt;&lt;blockquote&gt;
-&lt;p&gt;This implementation uses a naive set of nested loops over the training and    test data.     The input data may have any number of dimensions &amp;ndash; for example this    function should be able to compute nearest neighbor between vectors, in    which case the inputs will have shape (num_{train, test}, D); it should    also be able to compute nearest neighbors between images, where the inputs    will have shape (num_{train, test}, C, H, W). More generally, the inputs    will have shape (num_{train, test}, D1, D2, &amp;hellip;, Dn); you should flatten    each element of shape (D1, D2, &amp;hellip;, Dn) into a vector of shape    (D1 * D2 * &amp;hellip; * Dn) before computing distances.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;This implementation uses a naive set of nested loops over the training and    test data.     The input data may have any number of dimensions &amp;ndash; for example this    function should be able to compute nearest neighbor between vectors, in    which case the inputs will have shape (num_{train, test}, D); it should    also be able to compute nearest neighbors between images, where the inputs    will have shape (num_{train, test}, C, H, W). More generally, the inputs    will have shape (num_{train, test}, D1, D2, &amp;hellip;, Dn); you should flatten    each element of shape (D1, D2, &amp;hellip;, Dn) into a vector of shape    (D1 * D2 * &amp;hellip; * Dn) before computing distances.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;这里是老师给的一些代码的预处理的关键提示&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;More generally, the inputs    will have shape (num_{train, test}, D1, D2, &amp;hellip;, Dn); you should flatten    each element of shape (D1, D2, &amp;hellip;, Dn) into a vector of shape    (D1 * D2 * &amp;hellip; * Dn) before computing distances.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;More generally, the inputs    will have shape (num_{train, test}, D1, D2, &amp;hellip;, Dn); you should flatten    each element of shape (D1, D2, &amp;hellip;, Dn) into a vector of shape    (D1 * D2 * &amp;hellip; * Dn) before computing distances.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;对于所有的输入向量，不管是什么维度的样本，我们都可以转换为一个二维张量，这样做可以简化一些计算，同时使得结果更加清晰。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;

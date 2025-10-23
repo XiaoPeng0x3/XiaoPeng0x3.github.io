@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://XiaoPeng0x3.github.io/p/image-classifier%E7%AC%94%E8%AE%B0/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Image Classifier笔记">
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="Image Classifier笔记">
 <meta property='og:description' content="前言 Pytorch实现KNN近邻算法的一些思路\n图像分类 图像分类是计算机视觉的核心任务，当给定我们的模型一张图片，我们的模型应该可以正确的给出图片上的物体的类别\n">
 <meta property='og:url' content='https://XiaoPeng0x3.github.io/p/image-classifier%E7%AC%94%E8%AE%B0/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
@@ -592,10 +592,12 @@ var _hmt = _hmt || [];
 </h2><p>首先是计算两个向量之间的距离</p>
 <h3 id="双重循环">双重循环
 </h3><blockquote>
-<p>This implementation uses a naive set of nested loops over the training and    test data.     The input data may have any number of dimensions &ndash; for example this    function should be able to compute nearest neighbor between vectors, in    which case the inputs will have shape (num_{train, test}, D); it should    also be able to compute nearest neighbors between images, where the inputs    will have shape (num_{train, test}, C, H, W). More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p></blockquote>
+<p>This implementation uses a naive set of nested loops over the training and    test data.     The input data may have any number of dimensions &ndash; for example this    function should be able to compute nearest neighbor between vectors, in    which case the inputs will have shape (num_{train, test}, D); it should    also be able to compute nearest neighbors between images, where the inputs    will have shape (num_{train, test}, C, H, W). More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p>
+</blockquote>
 <p>这里是老师给的一些代码的预处理的关键提示</p>
 <blockquote>
-<p>More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p></blockquote>
+<p>More generally, the inputs    will have shape (num_{train, test}, D1, D2, &hellip;, Dn); you should flatten    each element of shape (D1, D2, &hellip;, Dn) into a vector of shape    (D1 * D2 * &hellip; * Dn) before computing distances.</p>
+</blockquote>
 <p>对于所有的输入向量，不管是什么维度的样本，我们都可以转换为一个二维张量，这样做可以简化一些计算，同时使得结果更加清晰。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">

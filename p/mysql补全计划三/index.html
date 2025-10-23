@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%B8%89/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Mysql补全计划(三)">
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="Mysql补全计划(三)">
 <meta property='og:description' content="前言 今天开始进阶篇的内容。\n存储引擎 上图是mysql数据库的全部架构，按照分层的思路，可以分为\n连接层 服务层 引擎层 存储层 存储引擎介绍 在创建表时，可以指定使用的存储引擎，在默认情况下，mysql使用的是InnoDB存储引擎。\n">
 <meta property='og:url' content='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%B8%89/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
@@ -556,7 +556,8 @@ var _hmt = _hmt || [];
 </div>
 </div><p>其中一项描述很关键</p>
 <blockquote>
-<p>Supports transactions, row-level locking, and foreign keys</p></blockquote>
+<p>Supports transactions, row-level locking, and foreign keys</p>
+</blockquote>
 <p>支持事务、行级锁和外键。</p>
 <p><code>innodb</code>引擎的每张表都会对应一个表空间文件。存储该表的表结构、数据和索引。但是这种文件并不是一定会生成的。</p>
 <p>我们可以查询一下当前是否开启了。</p>

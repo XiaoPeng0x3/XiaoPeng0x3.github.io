@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/'>
 
-<link rel="stylesheet" href="/scss/style.min.33c5548fba0002b45b8865a333fc0f414790c00d1ffade80890a1ad19a8b18d0.css"><meta property='og:title' content="Mysql补全计划(五)">
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="Mysql补全计划(五)">
 <meta property='og:description' content="前言 今天继续来完成补全计划！\nInnoDB存储引擎 逻辑存储结构 表空间\n表空间是InnoDB存储引擎逻辑的最高层，当用户启用了参数innodb_file——per_table，则每张表就会有一个表空间，一个mysql实例可以对应多个表空间，用于存储记录、索引。\n">
 <meta property='og:url' content='https://XiaoPeng0x3.github.io/p/mysql%E8%A1%A5%E5%85%A8%E8%AE%A1%E5%88%92%E4%BA%94/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
@@ -466,7 +466,8 @@ var _hmt = _hmt || [];
 <h3 id="log-buffer">Log Buffer
 </h3><p>日志缓冲区，用来保存需要写入到磁盘中的日志数据。像<code>redo log</code>等。在进行进行修改或删除语句时，<code>mysql</code>会开启自动事务提交。在提交时，为了保证事务的一致性和完整性，我们通常会使用<code>redo log</code>，即将事务写道<code>log buffer</code>中，等待一定时机把这个事务刷新到磁盘里面，这样，就算<code>mysql</code>崩溃了，也会去重新加载磁盘上的<code>redo log</code>，然后更新事务。</p>
 <blockquote>
-<p>🙅‍自动事务提交不支持事务回滚(RollBack)</p></blockquote>
+<p>🙅‍自动事务提交不支持事务回滚(RollBack)</p>
+</blockquote>
 <p>事务什么时候提交到磁盘有三种选择：</p>
 <ul>
 <li>每次事务提交的时候写入缓存并立即刷新到磁盘中，是默认选项</li>
@@ -547,12 +548,14 @@ var _hmt = _hmt || [];
 <p>内存中主要是重做缓存的部分，也就是<code>log buffer</code>缓存，当事务提交时，就会把所有修改信息全部保存在缓存中，然后根据一定的刷新时机，把所有信息全部存储在该日志文件中。</p>
 <p>可以重载恢复的一部分是存在于磁盘上，从而做到了持久化恢复，当发生错误时，就可以进行数据恢复。</p>
 <blockquote>
-<p>记住，<code>redo log</code>是帮助<code>Mysql</code>服务器崩溃重启而建立的，当数据库崩溃时，再次重启就可以从磁盘中的<code>redo log</code>日志中加载未提交恢复的事务。</p></blockquote>
+<p>记住，<code>redo log</code>是帮助<code>Mysql</code>服务器崩溃重启而建立的，当数据库崩溃时，再次重启就可以从磁盘中的<code>redo log</code>日志中加载未提交恢复的事务。</p>
+</blockquote>
 <p>在业务操作中，我们操作数据一般是随机读写磁盘的，而不是顺序读写磁盘的。而<code>redo log</code>在往磁盘中写入文件，由于是日志文件，都是顺序写的。顺序写的效率要远大于随机写。这种先写日志的方式，叫做<code>WAL</code>。</p>
 <p>其实上面这段话有些绕，这种方式也算是一种独特的持久化策略。因为每次修改一个数据、删除数据基本上都是随机的，此时，每次都写一个数据实际上就会造成一次随机读取。而对于<code>redo log</code>日志来说，先写入内存中，然后再刷新到磁盘中，对于磁盘中的日志文件来说，就是**(顺序读写的(连续追加**)</p>
 <h3 id="undo-log">Undo log
 </h3><blockquote>
-<p>事务的一个关键特点就是支持回滚</p></blockquote>
+<p>事务的一个关键特点就是支持回滚</p>
+</blockquote>
 <p>当事务进行回滚时，之前对数据的修改“都不算话”！</p>
 <p>其实现思路是<strong>反着来</strong>，例如，当执行一条<code>insert</code>语句时，就在<code>undo log</code>中保存一条相反语句即可，属于是<strong>逻辑日志</strong>。</p>
 <h1 id="多版本并发控制mvcc">多版本并发控制MVCC
@@ -592,7 +595,8 @@ var _hmt = _hmt || [];
 <p>还记得我们的几种事务隔离级别吗？他们解决什么问题来着？</p>
 <p>RC，读提交，解决的是“一个线程可以读到另一个线程未提交的事务”的问题，对应问题是脏读</p>
 <p>RR，可重复读，解决的是“一个线程前后读到的数据不一致的情况”，对应问题是不可重复读</p>
-<p>序列化，解决的是“一个线程之前可以读到数据，之后发现读不了这个数据”的问题，对应的问题是幻读</p></blockquote>
+<p>序列化，解决的是“一个线程之前可以读到数据，之后发现读不了这个数据”的问题，对应的问题是幻读</p>
+</blockquote>
 <p>对于<code>Rc</code>隔离级别，一个线程<strong>只可以</strong>读到另一个线程已经<strong>提交</strong>过的事务，所以，当另一个线程的事务未提交时，每次<code>select</code>的时候都生成一个快照读。</p>
 <p>对于<code>RR</code>的隔离级别，实际上，为了解决可重复读，一个很容易想到的思路是，在<strong>第一次对某个数据进行查询操作</strong>的时候，就生成这个数据的快照，这样，每次都去读这个数据的快照，也就解决了“不可重复读”的问题。</p>
 <p>对于”序列化“的隔离级别来说，快照读会变为当前读，总是保证事务提交后再去读，也就是说，序列化读到的数据<strong>永远都是最正确</strong>的，也就解决了幻读。</p>
