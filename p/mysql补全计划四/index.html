@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 下面我们来看一看sql优化的一些东西。\nsql优化 插入数据 插入数据的sql就是insert语句，其优化策略一般是将多次插入改为批量插入，这样可以减少IO的次数。\n">
 <title>Mysql补全计划(四)</title>
@@ -18,7 +18,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -424,8 +424,8 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp1&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">18</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp2&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">19</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp3&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp2&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">19</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp3&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这种方式每次都要进行磁盘<code>IO</code>的连接和读写，可以使用批量插入来减少磁盘<code>IO</code>的读写</p>
@@ -450,11 +450,11 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">start</span><span class="w"> </span><span class="n">transaction</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp1&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">18</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp2&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">19</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp3&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">commit</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 多条插入语句仅仅是举例子使用
+</span></span></span><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp1&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">18</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp2&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">19</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;zxp3&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">commit</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- 多条插入语句仅仅是举例子使用
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="主键顺序插入">主键顺序插入
@@ -486,14 +486,14 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1">-- 连接数据库，表示要从本地文件中导入
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">mysql</span><span class="w"> </span><span class="err">–</span><span class="o">-</span><span class="n">local</span><span class="o">-</span><span class="k">infile</span><span class="w">  </span><span class="o">-</span><span class="n">u</span><span class="w">  </span><span class="n">root</span><span class="w">  </span><span class="o">-</span><span class="n">p</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">mysql</span><span class="w"> </span><span class="err">–</span><span class="o">-</span><span class="n">local</span><span class="o">-</span><span class="k">infile</span><span class="w">  </span><span class="o">-</span><span class="n">u</span><span class="w">  </span><span class="n">root</span><span class="w">  </span><span class="o">-</span><span class="n">p</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 设置全局参数local_infile为1，开启从本地加载文件导入数据的开关
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">set</span><span class="w">  </span><span class="n">global</span><span class="w">  </span><span class="n">local_infile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- 设置全局参数local_infile为1，开启从本地加载文件导入数据的开关
+</span></span></span><span class="line"><span class="cl"><span class="kt">set</span><span class="w">  </span><span class="n">global</span><span class="w">  </span><span class="n">local_infile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 执行load指令将准备好的数据，加载到表结构中
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">load</span><span class="w">  </span><span class="n">data</span><span class="w">  </span><span class="n">local</span><span class="w">  </span><span class="k">infile</span><span class="w">  </span><span class="s1">&#39;/root/sql1.log&#39;</span><span class="w">  </span><span class="k">into</span><span class="w">  </span><span class="k">table</span><span class="w">  </span><span class="n">tb_user</span><span class="w">  </span><span class="n">fields</span><span class="w">  
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">terminated</span><span class="w">  </span><span class="k">by</span><span class="w">  </span><span class="s1">&#39;,&#39;</span><span class="w">  </span><span class="k">lines</span><span class="w">  </span><span class="k">terminated</span><span class="w">  </span><span class="k">by</span><span class="w">  </span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- 执行load指令将准备好的数据，加载到表结构中
+</span></span></span><span class="line"><span class="cl"><span class="k">load</span><span class="w">  </span><span class="n">data</span><span class="w">  </span><span class="n">local</span><span class="w">  </span><span class="k">infile</span><span class="w">  </span><span class="s1">&#39;/root/sql1.log&#39;</span><span class="w">  </span><span class="k">into</span><span class="w">  </span><span class="k">table</span><span class="w">  </span><span class="n">tb_user</span><span class="w">  </span><span class="n">fields</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="k">terminated</span><span class="w">  </span><span class="k">by</span><span class="w">  </span><span class="s1">&#39;,&#39;</span><span class="w">  </span><span class="k">lines</span><span class="w">  </span><span class="k">terminated</span><span class="w">  </span><span class="k">by</span><span class="w">  </span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>数据之间使用<code>,</code>进行分隔，每一行之间使用换行作为结尾。</p>
@@ -539,10 +539,10 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">user</span><span class="w"> 
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">100000</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="count优化">count优化
@@ -623,10 +623,10 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1">-- 给名字为table_name的表加上读锁
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">lock</span><span class="w"> </span><span class="kp">tables</span><span class="w"> </span><span class="n">table_name</span><span class="w"> </span><span class="k">read</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">lock</span><span class="w"> </span><span class="kp">tables</span><span class="w"> </span><span class="n">table_name</span><span class="w"> </span><span class="k">read</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 给名字为table_name的表加上写锁
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">lock</span><span class="w"> </span><span class="kp">tables</span><span class="w"> </span><span class="n">table_name</span><span class="w"> </span><span class="k">write</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">-- 给名字为table_name的表加上写锁
+</span></span></span><span class="line"><span class="cl"><span class="k">lock</span><span class="w"> </span><span class="kp">tables</span><span class="w"> </span><span class="n">table_name</span><span class="w"> </span><span class="k">write</span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="释放表锁">释放表锁
@@ -677,8 +677,8 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">insert</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">delete</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">update</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">delete</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">update</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这些语句可以并发的写</p>
@@ -937,7 +937,7 @@ var _hmt = _hmt || [];
         
             2024 - 
         
-        2025 Xiao Peng
+        2026 Xiao Peng
     </section>
     
     <section class="powerby">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="在上一篇中，我们学习了如何在server上创建一个TCP的套接字，这里来看一看对于服务端，server是怎么获取客户端的连接请求的。\n获取连接请求 在开启监听(listen)后，如果有客服端尝试连接服务器，那么内核将于客户端进行连接，因为请求连接可能会有多个，所以内核会维护一个队列来存放这些请求。当客户端连接到内核之后，那么内核可以使用accept函数来返回并接受来自这个连接。\n">
 <title>网络编程(二)：服务端获取连接请求</title>
@@ -18,7 +18,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -607,10 +607,10 @@ var _hmt = _hmt || [];
 <pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="kt">pid_t</span> <span class="n">pid</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">((</span><span class="n">pid</span> <span class="o">=</span> <span class="nf">fork</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 子进程
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// do read() or do write()
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl">        <span class="c1">// do read() or do write()
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="c1">// accept 
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -824,7 +824,7 @@ var _hmt = _hmt || [];
         
             2024 - 
         
-        2025 Xiao Peng
+        2026 Xiao Peng
     </section>
     
     <section class="powerby">

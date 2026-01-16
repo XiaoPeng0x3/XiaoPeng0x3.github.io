@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="上次我们了解了怎么用Go语言来创建和连接一个socket，这里来看一看怎么封装用户行为以及怎么实现用户广播上线功能\nServer的封装 server 这是在上一节中提到的server结构\n">
 <title>TCP聊天室(二)：用户上线和广播</title>
@@ -18,7 +18,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -395,7 +395,7 @@ var _hmt = _hmt || [];
 <pre tabindex="0" class="chroma"><code class="language-Go" data-lang="Go"><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Server</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">Ip</span><span class="w">   </span><span class="kt">string</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">Port</span><span class="w"> </span><span class="kt">int</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w"> 
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以看到，我们只有两个简单的成员属性，为了实现用户上线后全部广播的操作，我们需要在<code>server</code>中记录下来每次连接到<code>server</code>的<code>client</code>，这里可以使用<code>map</code>来进行记录，同时，为了实现全局广播的效果，我们可以在<code>server</code>中使用一个<code>chan</code>来进行管理。</p>
@@ -425,7 +425,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">mapLock</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 负责全局广播的chan</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">Message</span><span class="w"> </span><span class="kd">chan</span><span class="w"> </span><span class="kt">string</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>在创建好一个<code>server</code>后，与上一篇文章一样，使用协程去处理连接之后的状态</p>
@@ -498,7 +498,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="c1">// 下面的代码不会阻塞</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里的<code>Handle</code>方法可以去处理连接请求，有哪些请求呢？</p>
@@ -525,7 +525,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">Addr</span><span class="w"> </span><span class="kt">string</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">C</span><span class="w">    </span><span class="kd">chan</span><span class="w"> </span><span class="kt">string</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">conn</span><span class="w"> </span><span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>C</code>是为了接受来自<code>server</code>的消息，<code>conn</code>是为了把消息转发给<code>client</code>，那么在初始化的时候，就得去监听，看是否有消息写回来</p>
@@ -562,15 +562,15 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">go</span><span class="w"> </span><span class="nx">user</span><span class="p">.</span><span class="nf">ListenMessage</span><span class="p">()</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">return</span><span class="w"> </span><span class="nx">user</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ListenMessage 监听User的chan</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">this</span><span class="w"> </span><span class="o">*</span><span class="nx">User</span><span class="p">)</span><span class="w"> </span><span class="nf">ListenMessage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// ListenMessage 监听User的chan</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">this</span><span class="w"> </span><span class="o">*</span><span class="nx">User</span><span class="p">)</span><span class="w"> </span><span class="nf">ListenMessage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">for</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">mes</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&lt;-</span><span class="nx">this</span><span class="p">.</span><span class="nx">C</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">this</span><span class="p">.</span><span class="nx">conn</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">mes</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;\n&#34;</span><span class="p">))</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这样，在实现连接之后，我们就可以添加用户到在线表里面去</p>
@@ -601,7 +601,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 广播该用户已上线</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">this</span><span class="p">.</span><span class="nf">Boardcast</span><span class="p">(</span><span class="nx">newUser</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;I am in!&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="user用户上线的广播">user用户上线的广播
@@ -619,7 +619,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 把上线的消息发送给message chan</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">sendMes</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s">&#34;[&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">user</span><span class="p">.</span><span class="nx">Name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">user</span><span class="p">.</span><span class="nx">Addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">mes</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;]&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">this</span><span class="p">.</span><span class="nx">Message</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nx">sendMes</span><span class="w"> </span><span class="c1">// 发送给管道</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>在发送给管道后，<code>server</code>中的管道就就得到了数据，因此，就可以直接通过<code>server</code>中的<code>chan</code>进行消息的传输，遍历<code>Onlinemap</code>即可</p>
@@ -652,7 +652,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>最后在服务启动的时候去监听转发信息功能即可</p>
@@ -806,7 +806,7 @@ var _hmt = _hmt || [];
         
             2024 - 
         
-        2025 Xiao Peng
+        2026 Xiao Peng
     </section>
     
     <section class="powerby">

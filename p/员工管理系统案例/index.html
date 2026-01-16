@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="员工管理系统 这是一个综合了前后端、开发流程比较完整的一个简单管理系统。项目中已经提供好了前端页面，但是还需要我们自己去编写后端返回给前端的请求。\n其中需要编写的请求就是增删改查这四个基础的请求。在这个项目中，总共有两个需要创建的表，即员工表和部门表。所有的增删查改任务都是基于这两张表来开展的。\n">
 <title>员工管理系统案例</title>
@@ -18,7 +18,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -451,7 +451,7 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">@</span><span class="n">Mapper</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">public</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">DeptMapper</span><span class="w"> </span><span class="err">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">public</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">DeptMapper</span><span class="w"> </span><span class="err">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">//</span><span class="err">查询所有部门数据</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">@</span><span class="k">Select</span><span class="p">(</span><span class="s2">&#34;select id, name, create_time, update_time from dept&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Dept</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">();</span><span class="w">
@@ -473,11 +473,11 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Autowired</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">private</span><span class="w"> </span><span class="n">DeptMapper</span><span class="w"> </span><span class="n">deptMapper</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Override</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Dept</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">list</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">private</span><span class="w"> </span><span class="n">DeptMapper</span><span class="w"> </span><span class="n">deptMapper</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Dept</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">list</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">deptMapper</span><span class="p">.</span><span class="na">list</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div></li>
@@ -498,14 +498,14 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Autowired</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">private</span><span class="w"> </span><span class="n">DeptService</span><span class="w"> </span><span class="n">deptService</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">private</span><span class="w"> </span><span class="n">DeptService</span><span class="w"> </span><span class="n">deptService</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//@RequestMapping(value = &#34;/depts&#34; , method = RequestMethod.GET)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@GetMapping</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="nf">list</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">//@RequestMapping(value = &#34;/depts&#34; , method = RequestMethod.GET)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nd">@GetMapping</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="nf">list</span><span class="p">(){</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Dept</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deptList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deptService</span><span class="p">.</span><span class="na">list</span><span class="p">();</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Result</span><span class="p">.</span><span class="na">success</span><span class="p">(</span><span class="n">deptList</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>需要注意的是，在填写<code>url</code>时，我们可以直接指定访问该<code>url</code>的动作，即使用<code>GET</code>方法即可</p>
@@ -519,10 +519,10 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@GetMapping</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="nf">list</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="nf">list</span><span class="p">(){</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Dept</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deptList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deptService</span><span class="p">.</span><span class="na">list</span><span class="p">();</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Result</span><span class="p">.</span><span class="na">success</span><span class="p">(</span><span class="n">deptList</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div></li>
@@ -554,15 +554,15 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">desc</span><span class="w"> </span><span class="n">dept</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+</span><span class="c1">-------------+--------------+------+-----+---------+----------------+
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="n">Field</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="k">Type</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="k">Null</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">Key</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">Default</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Extra</span><span class="w">          </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+</span><span class="c1">-------------+--------------+------+-----+---------+----------------+
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="n">unsigned</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">PRI</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="n">auto_increment</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">UNI</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w">    </span><span class="o">|</span><span class="w">                </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">create_time</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">datetime</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">   </span><span class="o">|</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w">    </span><span class="o">|</span><span class="w">                </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">update_time</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">datetime</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">   </span><span class="o">|</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w">    </span><span class="o">|</span><span class="w">                </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+</span><span class="c1">-------------+--------------+------+-----+---------+----------------+
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mi">4</span><span class="w"> </span><span class="k">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+</span><span class="c1">-------------+--------------+------+-----+---------+----------------+
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">Field</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="k">Type</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="k">Null</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">Key</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">Default</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Extra</span><span class="w">          </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+</span><span class="c1">-------------+--------------+------+-----+---------+----------------+
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="n">unsigned</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">PRI</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="n">auto_increment</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="n">UNI</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w">    </span><span class="o">|</span><span class="w">                </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">create_time</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">datetime</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">   </span><span class="o">|</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w">    </span><span class="o">|</span><span class="w">                </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">update_time</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">datetime</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="k">NO</span><span class="w">   </span><span class="o">|</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w">    </span><span class="o">|</span><span class="w">                </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+</span><span class="c1">-------------+--------------+------+-----+---------+----------------+
+</span></span></span><span class="line"><span class="cl"><span class="mi">4</span><span class="w"> </span><span class="k">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>其中，后面两个字段需要在我们成功创建对象的时候就添加为创建时的时间<code>now()</code>，而如何传递<code>name</code>字段呢，其实在前端向后端传递数据时，其传递的数据就是<code>json</code>的键值对，我们可以利用<code>RequestBody</code>这个属性来填写该字段，并把该字段的<code>create_time</code>和<code>update_time</code>更新为创建时的时间即可。</p>
@@ -575,9 +575,9 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 新增部门</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// 需要注意的是后面的参数是来自我们自己封装的Dept对象，所以后面要用驼峰命名法，即和dept里面的数据名一致</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Insert</span><span class="p">(</span><span class="s">&#34;insert into dept(name, create_time, update_time) values (#{name}, #{createTime}, #{updateTime})&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">void</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">Dept</span><span class="w"> </span><span class="n">dept</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 需要注意的是后面的参数是来自我们自己封装的Dept对象，所以后面要用驼峰命名法，即和dept里面的数据名一致</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nd">@Insert</span><span class="p">(</span><span class="s">&#34;insert into dept(name, create_time, update_time) values (#{name}, #{createTime}, #{updateTime})&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">Dept</span><span class="w"> </span><span class="n">dept</span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>需要注意的是，在pojo.Dept中，后面两个字段都是按照驼峰命名法来命名的，而数据库中的变量是以下划线来进行分割的，这里有一个变量名转换依赖，在使用这个依赖后就可以将我们的字段成功转换。</p>
@@ -608,8 +608,8 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 根据id来删除</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Delete</span><span class="p">(</span><span class="s">&#34;delete from dept where id = #{id}&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">void</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nd">@Delete</span><span class="p">(</span><span class="s">&#34;delete from dept where id = #{id}&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="修改数据">修改数据
@@ -625,11 +625,11 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@PutMapping</span><span class="p">(</span><span class="s">&#34;{id}&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="nd">@RequestBody</span><span class="w"> </span><span class="n">Dept</span><span class="w"> </span><span class="n">dept</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="nd">@RequestBody</span><span class="w"> </span><span class="n">Dept</span><span class="w"> </span><span class="n">dept</span><span class="p">){</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">dept</span><span class="p">.</span><span class="na">setUpdateTime</span><span class="p">(</span><span class="n">LocalDateTime</span><span class="p">.</span><span class="na">now</span><span class="p">());</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">deptService</span><span class="p">.</span><span class="na">update</span><span class="p">(</span><span class="n">dept</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Result</span><span class="p">.</span><span class="na">success</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>在<code>Service</code>层</p>
@@ -642,9 +642,9 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Override</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">Dept</span><span class="w"> </span><span class="n">dept</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">Dept</span><span class="w"> </span><span class="n">dept</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">deptMapper</span><span class="p">.</span><span class="na">update</span><span class="p">(</span><span class="n">dept</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>在<code>Mapper</code>层</p>
@@ -656,8 +656,8 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 修改数据</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Update</span><span class="p">(</span><span class="s">&#34;update dept set name = #{name}, update_time = #{updateTime} where id = #{id}&#34;</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kt">void</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">Dept</span><span class="w"> </span><span class="n">dept</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nd">@Update</span><span class="p">(</span><span class="s">&#34;update dept set name = #{name}, update_time = #{updateTime} where id = #{id}&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">Dept</span><span class="w"> </span><span class="n">dept</span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="总结">总结
@@ -877,7 +877,7 @@ var _hmt = _hmt || [];
         
             2024 - 
         
-        2025 Xiao Peng
+        2026 Xiao Peng
     </section>
     
     <section class="powerby">

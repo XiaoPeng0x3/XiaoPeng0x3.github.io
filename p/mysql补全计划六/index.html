@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 好耶！是MySQL补全计划六！\nMVCC MVCC的意义就在于可以使不同的事务并发读数据不会阻塞，我们接着上篇，来说一下MVCC的核心概念。\nreadview readview是快照读sql执行时mvcc读取数据的依据，包括四个核心字段。\n">
 <title>Mysql补全计划(六)</title>
@@ -18,7 +18,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -486,16 +486,16 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">age</span><span class="w">  </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp1</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">18</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp2</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">19</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp3</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">20</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">4</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp4</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">22</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">5</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp5</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">23</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">5</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+----+------+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">age</span><span class="w">  </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+----+------+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp1</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">18</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp2</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">19</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp3</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">20</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">4</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp4</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">22</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">5</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp5</span><span class="w"> </span><span class="o">|</span><span class="w">   </span><span class="mi">23</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+----+------+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="mi">5</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>假设我们要创建只有两列关键字的视图</p>
@@ -523,15 +523,15 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">view_id_name</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp1</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp2</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp3</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">4</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp4</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">5</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp5</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+----+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+----+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp1</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp2</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp3</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">4</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp4</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">5</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp5</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+----+------+</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以看到，只有两列字段，剩余的<code>age</code>字段在创建视图的时候我们没有选择这个字段，所以视图中不包含这个字段。</p>
@@ -815,7 +815,7 @@ var _hmt = _hmt || [];
         
             2024 - 
         
-        2025 Xiao Peng
+        2026 Xiao Peng
     </section>
     
     <section class="powerby">

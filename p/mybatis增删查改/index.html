@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="增删查改 增删查改算是十分重要且基础的部分，这里来跟着文档来实现一下如何进行增删改查。\nMybatis连接数据库 需要我们在application.properties下配置好对应的内容\n">
 <title>Mybatis增删查改</title>
@@ -18,7 +18,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -442,11 +442,11 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Mapper</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">EmpMapper</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">EmpMapper</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 删除</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Delete</span><span class="p">(</span><span class="s">&#34;DELETE from emp where id = #{id}&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">deleteEmpById</span><span class="p">(</span><span class="n">Integer</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>使用<code>Mapper</code>注释可以将后续实例化的对象通过容器进行管理，后续我们只需要使用<code>AutoWired</code>注释即可。可以在<code>test</code>文件下进行测试。在测试时，每个测试都要写成一个函数，并且要加上<code>@Test</code>注释。</p>
@@ -460,10 +460,10 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Test</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">deleteByPrimaryKey</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">deleteByPrimaryKey</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">empMapper</span><span class="p">.</span><span class="na">deleteEmpById</span><span class="p">(</span><span class="n">17</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;Return Val Of Delete is &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="sql注入问题">sql注入问题
@@ -513,7 +513,7 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">#</span><span class="err">{</span><span class="n">id</span><span class="err">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">${</span><span class="n">id</span><span class="err">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="err">${</span><span class="n">id</span><span class="err">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这两种方式都可以起到参数传递的作用，不过<code>#{id}</code>的方式是预编译<code>sql</code>，可以解决<code>sql</code>注入的问题。</p>
@@ -552,14 +552,14 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Mapper</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">EmpMapper</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">EmpMapper</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Select</span><span class="p">(</span><span class="s">&#34;select * from emp &#34;</span><span class="w"> </span><span class="o">+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;where name like &#39;%${name}%&#39; &#34;</span><span class="w"> </span><span class="o">+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;and gender = #{gender} &#34;</span><span class="w"> </span><span class="o">+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;and entrydate between #{begin} and #{end} &#34;</span><span class="w"> </span><span class="o">+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s">&#34;order by update_time desc&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Emp</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Short</span><span class="w"> </span><span class="n">gender</span><span class="p">,</span><span class="w"> </span><span class="n">LocalDate</span><span class="w"> </span><span class="n">begin</span><span class="p">,</span><span class="w"> </span><span class="n">LocalDate</span><span class="w"> </span><span class="n">end</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>如果要使用占位参数来编写<code>sql</code>，那么这个句子就变成了</p>
@@ -588,7 +588,7 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">@</span><span class="n">Mapper</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">public</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">EmpMapper</span><span class="w"> </span><span class="err">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">public</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">EmpMapper</span><span class="w"> </span><span class="err">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">@</span><span class="k">Select</span><span class="p">(</span><span class="s2">&#34;select * from emp &#34;</span><span class="w"> </span><span class="o">+</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s2">&#34;where name like concat(&#39;%&#39;,#{name},&#39;%&#39;) &#34;</span><span class="w"> </span><span class="o">+</span><span class="w">
@@ -597,7 +597,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="s2">&#34;order by update_time desc&#34;</span><span class="p">)</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Emp</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Short</span><span class="w"> </span><span class="n">gender</span><span class="p">,</span><span class="w"> </span><span class="n">LocalDate</span><span class="w"> </span><span class="k">begin</span><span class="p">,</span><span class="w"> </span><span class="n">LocalDate</span><span class="w"> </span><span class="k">end</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="err">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这样也可以实现预编译，把中间的<code>#{name}</code>替换掉,在预编译后就变成了</p>
@@ -750,7 +750,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">and</span><span class="w"> </span><span class="n">gender</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">#</span><span class="err">{</span><span class="n">gender</span><span class="err">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">and</span><span class="w"> </span><span class="n">entrydate</span><span class="w"> </span><span class="k">between</span><span class="w"> </span><span class="o">#</span><span class="err">{</span><span class="k">begin</span><span class="err">}</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="o">#</span><span class="err">{</span><span class="k">end</span><span class="err">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">update_time</span><span class="w"> </span><span class="k">desc</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="k">select</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="k">select</span><span class="o">&gt;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以发现,，<code>where</code>后面多跟了一个<code>and</code>导致我们的语法发生了错误，当然也有解决办法，就是去使用<code>&lt;where&gt;</code>标签</p>
@@ -897,20 +897,20 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="n">xml</span><span class="w"> </span><span class="k">version</span><span class="o">=</span><span class="s2">&#34;1.0&#34;</span><span class="w"> </span><span class="k">encoding</span><span class="o">=</span><span class="s2">&#34;UTF-8&#34;</span><span class="w"> </span><span class="o">?&gt;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;!</span><span class="n">DOCTYPE</span><span class="w"> </span><span class="n">mapper</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">&lt;!</span><span class="n">DOCTYPE</span><span class="w"> </span><span class="n">mapper</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">PUBLIC</span><span class="w"> </span><span class="s2">&#34;-//mybatis.org//DTD Mapper 3.0//EN&#34;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="s2">&#34;https://mybatis.org/dtd/mybatis-3-mapper.dtd&#34;</span><span class="o">&gt;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;</span><span class="n">mapper</span><span class="w"> </span><span class="n">namespace</span><span class="o">=</span><span class="s2">&#34;com.itheima.mapper.EmpMapper&#34;</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">mapper</span><span class="w"> </span><span class="n">namespace</span><span class="o">=</span><span class="s2">&#34;com.itheima.mapper.EmpMapper&#34;</span><span class="o">&gt;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;!</span><span class="c1">--更新操作--&gt;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="o">&lt;</span><span class="k">update</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="s2">&#34;update&#34;</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="k">update</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="s2">&#34;update&#34;</span><span class="o">&gt;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">update</span><span class="w"> </span><span class="n">emp</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">set</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">username</span><span class="o">=#</span><span class="err">{</span><span class="n">username</span><span class="err">}</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="o">=#</span><span class="err">{</span><span class="n">id</span><span class="err">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;/</span><span class="k">update</span><span class="o">&gt;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">&lt;/</span><span class="n">mapper</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="n">mapper</span><span class="o">&gt;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>也就是后面多加了一个逗号，同样的，我们也可以使用<code>&lt;set&gt;</code>标签来修改</p>
@@ -1225,7 +1225,7 @@ var _hmt = _hmt || [];
         
             2024 - 
         
-        2025 Xiao Peng
+        2026 Xiao Peng
     </section>
     
     <section class="powerby">

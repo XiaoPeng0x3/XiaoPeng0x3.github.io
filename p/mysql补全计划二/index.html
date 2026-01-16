@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 这次继续来写补全计划。\n表设计原则 很多情况下，在开发业务时就需要制定好表的格式，一般来说，各个表之间也存在着各种各样的联系，基本可以分为\n一对一结构 一对多或者多对一 多对多 一对多结构 一对多结构是很常见的一种关系，例如，一个部门会有很多个员工，而一个员工一般只属于一个部门。\n">
 <title>Mysql补全计划(二)</title>
@@ -18,7 +18,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -491,12 +491,12 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="n">autocommit</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="o">@@</span><span class="n">autocommit</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">            </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+--------------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+--------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="o">@@</span><span class="n">autocommit</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+--------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">            </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+--------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们把这个变量设置为0，这样事务就会变为手动提交</p>
@@ -536,7 +536,7 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">start</span><span class="w"> </span><span class="n">transaction</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">begin</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">begin</span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面两行代码都可以开启事务</p>
@@ -594,12 +594,12 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="n">transaction_isolation</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-------------------------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="o">@@</span><span class="n">transaction_isolation</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-------------------------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">REPEATABLE</span><span class="o">-</span><span class="k">READ</span><span class="w">         </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-------------------------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+-------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="o">@@</span><span class="n">transaction_isolation</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+-------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">REPEATABLE</span><span class="o">-</span><span class="k">READ</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+-------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>可重复读，也就是说，可以解决脏读和不可重复读问题。</p>
@@ -611,7 +611,7 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">transaction</span><span class="w"> </span><span class="n">isolation</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="k">read</span><span class="w"> </span><span class="n">uncommitted</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Query</span><span class="w"> </span><span class="n">OK</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="nf">affected</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">Query</span><span class="w"> </span><span class="n">OK</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="nf">affected</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>此时再查看一下当前数据库的隔离级别</p>
@@ -627,12 +627,12 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="n">transaction_isolation</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-------------------------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="o">@@</span><span class="n">transaction_isolation</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-------------------------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="k">READ</span><span class="o">-</span><span class="n">UNCOMMITTED</span><span class="w">        </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+-------------------------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+-------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="o">@@</span><span class="n">transaction_isolation</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+-------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="k">READ</span><span class="o">-</span><span class="n">UNCOMMITTED</span><span class="w">        </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+-------------------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>注意，这只是当前<code>session</code>的所有数据库隔离级别，如果要以后永久修改的话，可以使用<code>global</code></p>
@@ -643,7 +643,7 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="n">global</span><span class="w"> </span><span class="n">transaction</span><span class="w"> </span><span class="n">isolation</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="k">read</span><span class="w"> </span><span class="n">uncommitted</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Query</span><span class="w"> </span><span class="n">OK</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="nf">affected</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">Query</span><span class="w"> </span><span class="n">OK</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="nf">affected</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="总结">总结
@@ -835,7 +835,7 @@ var _hmt = _hmt || [];
         
             2024 - 
         
-        2025 Xiao Peng
+        2026 Xiao Peng
     </section>
     
     <section class="powerby">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 今天来看一看mysql的日志部分，也就是对应的管理篇。并且，我们来配置一下怎么在一台机器上使用docker来实现主从复制。\n日志 错误日志 错误日志记录了mysql启动和停止的时候，以及服务器再运行过程中发生任何严重错误的相关信息，当数据库出现任何故障导致无法启动时，可以先看看错误日志里面的内容。\n">
 <title>Mysql补全计划(七)</title>
@@ -18,7 +18,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -464,12 +464,12 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w">  </span><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;%binlog_format%&#39;</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---------------+-------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">Variable_name</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Value</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---------------+-------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">binlog_format</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ROW</span><span class="w">   </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---------------+-------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nf">warning</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+---------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">Variable_name</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Value</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+---------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">binlog_format</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ROW</span><span class="w">   </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+---------------+-------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nf">warning</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="查看">查看
@@ -571,13 +571,13 @@ var _hmt = _hmt || [];
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># 主库</span>
 </span></span><span class="line"><span class="cl">docker run -p 3307:3306 --name mysql-master <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--network mysql-net <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /mydata/mysql-master/log:/var/log/mysql <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /mydata/mysql-master/data:/var/lib/mysql <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /mydata/mysql-master/conf:/etc/mysql <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /mydata/mysql-master/mysql-files:/var/lib/mysql-files <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-d mysql:8.0.25
+</span></span></span><span class="line"><span class="cl">--network mysql-net <span class="se">\
+</span></span></span><span class="line"><span class="cl">-v /mydata/mysql-master/log:/var/log/mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl">-v /mydata/mysql-master/data:/var/lib/mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl">-v /mydata/mysql-master/conf:/etc/mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl">-v /mydata/mysql-master/mysql-files:/var/lib/mysql-files <span class="se">\
+</span></span></span><span class="line"><span class="cl">-e <span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">-d mysql:8.0.25
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>mysql</code>对应的服务是<code>3306</code>，我们就映射到本机的<code>3307</code>端口，这是我们的主库。</p>
@@ -731,11 +731,11 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+</span><span class="c1">------------------+-----------+
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="k">user</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="k">host</span><span class="w">      </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+</span><span class="c1">------------------+-----------+
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">|</span><span class="w"> </span><span class="n">root</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="w">         </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">slave</span><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+</span><span class="c1">------------------+-----------+
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="k">user</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="k">host</span><span class="w">      </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+</span><span class="c1">------------------+-----------+
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">root</span><span class="w">             </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="w">         </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">slave</span><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="o">%</span><span class="w">         </span><span class="o">|</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以看到<code>slave</code>用户已经成功创建了。</p>
@@ -765,13 +765,13 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker run -p 3308:3306 --name mysql-slave <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>--network mysql-net <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /mydata/mysql-slave/log:/var/log/mysql <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /mydata/mysql-slave/data:/var/lib/mysql <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /mydata/mysql-slave/conf:/etc/mysql <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /mydata/mysql-slave/mysql-files:/var/lib/mysql-files <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>-d mysql:8.0.25
+</span></span></span><span class="line"><span class="cl">--network mysql-net <span class="se">\
+</span></span></span><span class="line"><span class="cl">-v /mydata/mysql-slave/log:/var/log/mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl">-v /mydata/mysql-slave/data:/var/lib/mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl">-v /mydata/mysql-slave/conf:/etc/mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl">-v /mydata/mysql-slave/mysql-files:/var/lib/mysql-files <span class="se">\
+</span></span></span><span class="line"><span class="cl">-e <span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">-d mysql:8.0.25
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>启动后，进入从库</p>
@@ -1014,7 +1014,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">id</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="kp">auto_increment</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="kt">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">age</span><span class="w"> </span><span class="kt">int</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>插入一些数据试试</p>
@@ -1040,13 +1040,13 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">age</span><span class="w">  </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w">  </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="o">|</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+----+------+------+</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+----+------+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">age</span><span class="w">  </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+----+------+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">|</span><span class="w">  </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">zxp2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">NULL</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">+----+------+------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="mi">2</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以看到，主库已经有这些数据了，如果一切顺利，那么从库也会有当前对应的数据！</p>
@@ -1242,7 +1242,7 @@ var _hmt = _hmt || [];
         
             2024 - 
         
-        2025 Xiao Peng
+        2026 Xiao Peng
     </section>
     
     <section class="powerby">

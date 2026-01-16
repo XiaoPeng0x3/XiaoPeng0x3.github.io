@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" dir="ltr">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="登录功能 对于没有登录管理系统的用户，这些用户是不可以直接对其它的资源进行访问的。但是目前我们并没有做到要对用户进行拦截的操作。总共有这几种方法\njwt和token验证+Filter 过滤 jwt和Interceptor拦截器拦截 JWT令牌 JWT令牌就是一个经过长编码后的一个字符串，其内容主要可以分为\n">
 <title>登录与登录验证</title>
@@ -18,7 +18,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_1dcc252d381e7e65.jpg" width="300"
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -479,7 +479,7 @@ var _hmt = _hmt || [];
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@WebFilter</span><span class="p">(</span><span class="n">urlPatterns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;/login&#34;</span><span class="p">)</span><span class="w"> </span><span class="c1">// 拦截器需要拦截的路径</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DemoFilter</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">Filter</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DemoFilter</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">Filter</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 初始化方法，只调用一次</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
@@ -502,7 +502,7 @@ var _hmt = _hmt || [];
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">destroy</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Filter</span><span class="p">.</span><span class="na">super</span><span class="p">.</span><span class="na">destroy</span><span class="p">();</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里总共是需要重写三个方法，其中的<code>doFilter</code>对应我们的拦截逻辑。除此之外，我们还需要加上一个<code>@WebFilter</code>接口，里面可以指定要拦截的<code>url</code>。</p>
@@ -639,9 +639,9 @@ var _hmt = _hmt || [];
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">preHandle方法</span><span class="err">：</span><span class="n">目标资源方法执行前执行</span><span class="err">。</span><span class="w"> </span><span class="n">返回true</span><span class="err">：</span><span class="n">放行</span><span class="w">    </span><span class="n">返回false</span><span class="err">：</span><span class="n">不放行</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">​</span><span class="w">	</span><span class="n">postHandle方法</span><span class="err">：</span><span class="n">目标资源方法执行后执行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="err">​</span><span class="w">	</span><span class="n">postHandle方法</span><span class="err">：</span><span class="n">目标资源方法执行后执行</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">​</span><span class="w">	</span><span class="n">afterCompletion方法</span><span class="err">：</span><span class="n">视图渲染完毕后执行</span><span class="err">，</span><span class="n">最后执行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="err">​</span><span class="w">	</span><span class="n">afterCompletion方法</span><span class="err">：</span><span class="n">视图渲染完毕后执行</span><span class="err">，</span><span class="n">最后执行</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里我们只需要重写<code>preHandle</code>方法即可，注意方法返回<code>true</code>代表是放行操作，返回<code>false</code>就是不放行。</p>
@@ -981,7 +981,7 @@ var _hmt = _hmt || [];
         
             2024 - 
         
-        2025 Xiao Peng
+        2026 Xiao Peng
     </section>
     
     <section class="powerby">
