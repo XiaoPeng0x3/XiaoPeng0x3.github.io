@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 学习不能半途而废，现在重刷一遍eecs498，接着学习深度学习的内容\n训练一个神经网络 无论是何种架构的网络，其训练流程大致可以分为：\n准备数据 定义网络结构 开始训练 对模型进行测试评估 保存模型(可选) 今天我们就根据上面这几步来尝试构建一个CNN网络，数据集就是MNIST 手写体识别\n">
+<title>Pytorch训练神经网络的流程</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/pytorch%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E6%B5%81%E7%A8%8B/'>
+
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="Pytorch训练神经网络的流程">
+<meta property='og:description' content="前言 学习不能半途而废，现在重刷一遍eecs498，接着学习深度学习的内容\n训练一个神经网络 无论是何种架构的网络，其训练流程大致可以分为：\n准备数据 定义网络结构 开始训练 对模型进行测试评估 保存模型(可选) 今天我们就根据上面这几步来尝试构建一个CNN网络，数据集就是MNIST 手写体识别\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/pytorch%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E6%B5%81%E7%A8%8B/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='pytorch' /><meta property='article:published_time' content='2026-01-03T17:43:28&#43;08:00'/><meta property='article:modified_time' content='2026-01-03T17:43:28&#43;08:00'/>
+<meta name="twitter:title" content="Pytorch训练神经网络的流程">
+<meta name="twitter:description" content="前言 学习不能半途而废，现在重刷一遍eecs498，接着学习深度学习的内容\n训练一个神经网络 无论是何种架构的网络，其训练流程大致可以分为：\n准备数据 定义网络结构 开始训练 对模型进行测试评估 保存模型(可选) 今天我们就根据上面这几步来尝试构建一个CNN网络，数据集就是MNIST 手写体识别\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( true ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8121279679071600"
+     crossorigin="anonymous"></script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😸</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#训练一个神经网络">训练一个神经网络</a>
+      <ol>
+        <li><a href="#1-准备数据">1. 准备数据</a></li>
+        <li><a href="#2-构建cnn模型">2. 构建CNN模型</a>
+          <ol>
+            <li><a href="#实例化模型">实例化模型</a></li>
+            <li><a href="#计算模型总的参数">计算模型总的参数</a></li>
+          </ol>
+        </li>
+        <li><a href="#3-训练模型">3. 训练模型</a>
+          <ol>
+            <li><a href="#设置训练模式">设置训练模式</a></li>
+            <li><a href="#开始训练">开始训练</a></li>
+          </ol>
+        </li>
+        <li><a href="#4-测试与预测">4. 测试与预测</a>
+          <ol>
+            <li><a href="#开启评估模式">开启评估模式</a></li>
+            <li><a href="#关闭梯度计算">关闭梯度计算</a></li>
+            <li><a href="#迭代测试集进行计算">迭代测试集进行计算</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" >
+                深度学习
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/pytorch%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E6%B5%81%E7%A8%8B/">Pytorch训练神经网络的流程</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2026-01-03</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p>学习不能半途而废，现在重刷一遍<code>eecs498</code>，接着学习深度学习的内容</p>
+<h1 id="训练一个神经网络">训练一个神经网络
+</h1><p>无论是何种架构的网络，其训练流程大致可以分为：</p>
+<ul>
+<li>准备数据</li>
+<li>定义网络结构</li>
+<li>开始训练</li>
+<li>对模型进行测试评估</li>
+<li>保存模型(可选)</li>
+</ul>
+<p>今天我们就根据上面这几步来尝试构建一个<code>CNN</code>网络，数据集就是<code>MNIST 手写体识别</code></p>
+<h2 id="1-准备数据">1. 准备数据
+</h2><p>在<code>pytorch</code>中，我们一般使用<code>DataLoader</code>来构建数据</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>对于“手写体识别”这个例子来说，我们可以使用官方工具来获取和构建数据集</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">transforms</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 数据预处理：转为Tensor并标准化</span>
+</span></span><span class="line"><span class="cl"><span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">    <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 下载训练集和测试集</span>
+</span></span><span class="line"><span class="cl"><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span> <span class="s1">&#39;./data&#39;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span> <span class="n">transform</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">test_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span> <span class="s1">&#39;./data&#39;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span> <span class="n">transform</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当然，在很多情况下我们需要构建我们自己的数据集，这个时候我们就需要自己实现一个<code>DataLoader</code>，其实现过程也比较固定</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MyDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>          <span class="c1"># 初始化：只存引用，不加载</span>
+</span></span><span class="line"><span class="cl">        <span class="k">pass</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>       <span class="c1"># 索引→样本：核心逻辑</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>                   <span class="c1"># 必须返回 (特征, 标签)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>                <span class="c1"># 返回数据集大小</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">total_size</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意，使用<code>DataLoader</code>和<code>DataSet</code>其实是有好处的，因为本质上<code>DataLoader</code>是一个迭代器，也就是说在加载数据时是“按需”加载的，而不是把数据一股脑的全部读进内存。</p>
+<h2 id="2-构建cnn模型">2. 构建CNN模型
+</h2><p>我们使用网络结构较为简单的<code>CNN</code>来说明一下如何自定义一个网络。在<code>torch.nn</code>这个包中有许多已经定义好的神经网络工具，借助这个工具，我们就可以较为简单的去定义每一层网络的结构和连接。</p>
+<p>这是一个简单的模板</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">SimpleCNN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 第一个卷积块： 1通道输入 -&gt; 32通道输出</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="c1"># 28x28x1 -&gt; 28x28x32</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># 14 x 14 x 32</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 32通道输入 -&gt; 64通道</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span> <span class="mi">1</span><span class="p">),</span> <span class="c1"># 14 x 14 x 32 -&gt; 14 x 14 x 64</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># 14 x 14 x 64 -&gt; 7 x 7 x 64</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 全连接层</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="c1"># 7 x7 x 64 = 3136</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span> <span class="o">*</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="c1"># 前向传播</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">x</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>需要注意的是，我们必须重写父类的方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是<code>__init__()</code>和<code>forward()</code>方法，前者定义了整个网络的结构，而后者定义了数据流动的整个过程。</p>
+<h3 id="实例化模型">实例化模型
+</h3><p>在定义好网络结构后，我们就可以去实例化一个模型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleCNN</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以下是这个网络的结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">SimpleCNN(
+</span></span><span class="line"><span class="cl">  (conv1): Sequential(
+</span></span><span class="line"><span class="cl">    (0): Conv2d(1, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+</span></span><span class="line"><span class="cl">    (1): ReLU()
+</span></span><span class="line"><span class="cl">    (2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+</span></span><span class="line"><span class="cl">  )
+</span></span><span class="line"><span class="cl">  (conv2): Sequential(
+</span></span><span class="line"><span class="cl">    (0): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+</span></span><span class="line"><span class="cl">    (1): ReLU()
+</span></span><span class="line"><span class="cl">    (2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+</span></span><span class="line"><span class="cl">  )
+</span></span><span class="line"><span class="cl">  (fc): Sequential(
+</span></span><span class="line"><span class="cl">    (0): Flatten(start_dim=1, end_dim=-1)
+</span></span><span class="line"><span class="cl">    (1): Linear(in_features=3136, out_features=128, bias=True)
+</span></span><span class="line"><span class="cl">    (2): ReLU()
+</span></span><span class="line"><span class="cl">    (3): Dropout(p=0.5, inplace=False)
+</span></span><span class="line"><span class="cl">    (4): Linear(in_features=128, out_features=10, bias=True)
+</span></span><span class="line"><span class="cl">  )
+</span></span><span class="line"><span class="cl">)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="计算模型总的参数">计算模型总的参数
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 计算模型参数量</span>
+</span></span><span class="line"><span class="cl"><span class="n">total_params</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;模型总参数量：</span><span class="si">{</span><span class="n">total_params</span><span class="si">:</span><span class="s1">,</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>   
+</span></span><span class="line"><span class="cl"><span class="n">模型总参数量</span><span class="err">：</span><span class="mi">421</span><span class="p">,</span><span class="mi">642</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3-训练模型">3. 训练模型
+</h2><p>定义好一个模型后，我们就可以去训练这个模型。一般的训练模型的过程就是<strong>迭代</strong>和<strong>优化</strong>的一个逻辑。下面是一些我们需要记住的必备参数</p>
+<ul>
+<li>迭代次数</li>
+<li>学习率</li>
+<li>损失函数</li>
+<li>优化器</li>
+</ul>
+<p>显然，后面三个参数都是在<strong>梯度下降</strong>算法中使用的。一个适度的学习率可以使模型快速收敛，而根据不同的任务可以选择合理的损失函数，最后就是选择合适的梯度下降算法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置超参数</span>
+</span></span><span class="line"><span class="cl"><span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl"><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.001</span>
+</span></span><span class="line"><span class="cl"><span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span> <span class="c1"># 交叉熵损失函数</span>
+</span></span><span class="line"><span class="cl"><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span> <span class="n">learning_rate</span><span class="p">)</span> <span class="c1"># 传递模型的参数和学习率</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>设置完以上超参数后就可以开始训练模型了，有很多流程都是固定的。</p>
+<h3 id="设置训练模式">设置训练模式
+</h3><blockquote>
+<p>注意，我们说的训练是迭代训练的，因此下面的处理指的都是单次训练。</p>
+</blockquote>
+<p>首先开启<code>model</code>的训练模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>训练模式会启用一些优化策略，比如说<code>DropOut</code>和<code>Batch Normalization</code>等优化，待会我们会在预测中关闭训练模式。</p>
+<p>除此之外，我们还应该收集一些辅助信息以来查看训练过程中是否一切正常</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1"># 训练误差</span>
+</span></span><span class="line"><span class="cl"><span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># 准确率</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="开始训练">开始训练
+</h3><p>需要从训练集中获取一个训练数据和标签。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">):</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是从上文中的<code>DataLoader</code>中获取。然后将数据迁移到<code>CPU</code>上</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 将数据移动到GPU上</span>
+</span></span><span class="line"><span class="cl"><span class="n">images</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行前向传播</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 前向传播</span>
+</span></span><span class="line"><span class="cl"><span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是将训练数据传递给<code>model</code>，<code>model</code>会根据训练数据得到一个输出，也就是标签，我们将得到的标签和真实的标签来进行误差计算</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>得到误差损失后，我们就必须进行梯度更新，梯度更新的过程就是进行反向传播的过程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 反向传播</span>
+</span></span><span class="line"><span class="cl"><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span> <span class="c1"># 清零梯度</span>
+</span></span><span class="line"><span class="cl"><span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span> <span class="c1"># 计算梯度</span>
+</span></span><span class="line"><span class="cl"><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span> <span class="c1"># 更新权重</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>训练模型也有几个关键的固定步骤，所以我把训练过程的代码全部贴出来</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 训练循环</span>
+</span></span><span class="line"><span class="cl"><span class="n">train_losses</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">train_accuracies</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">):</span> 											<span class="c1"># n次迭代</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 设置训练模式				</span>
+</span></span><span class="line"><span class="cl">    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span> 														<span class="c1"># 打开训练模式</span>
+</span></span><span class="line"><span class="cl">    <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">    <span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">):</span> 			<span class="c1"># 通过迭代器获取数据</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 将数据移动到GPU上</span>
+</span></span><span class="line"><span class="cl">        <span class="n">images</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>								<span class="c1"># 移动数据到对应计算设备</span>
+</span></span><span class="line"><span class="cl">        <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 前向传播</span>
+</span></span><span class="line"><span class="cl">        <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>									<span class="c1"># 前向传播</span>
+</span></span><span class="line"><span class="cl">        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>						<span class="c1"># 计算损失</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 反向传播</span>
+</span></span><span class="line"><span class="cl">        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span> <span class="c1"># 清零梯度						# 清零梯度</span>
+</span></span><span class="line"><span class="cl">        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span> <span class="c1"># 计算梯度								# 反向传播</span>
+</span></span><span class="line"><span class="cl">        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span> <span class="c1"># 更新权重								# 更新权重</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 统计准确率</span>
+</span></span><span class="line"><span class="cl">        <span class="n">running_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">_</span><span class="p">,</span> <span class="n">predicted</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">total</span> <span class="o">+=</span> <span class="n">labels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">correct</span> <span class="o">+=</span> <span class="p">(</span><span class="n">predicted</span> <span class="o">==</span> <span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="c1"># 计算epoch统计</span>
+</span></span><span class="line"><span class="cl">    <span class="n">epoch_loss</span> <span class="o">=</span> <span class="n">running_loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">epoch_acc</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">correct</span> <span class="o">/</span> <span class="n">total</span>
+</span></span><span class="line"><span class="cl">    <span class="n">train_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_loss</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">train_accuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_acc</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Epoch [</span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_epochs</span><span class="si">}</span><span class="s2">], &#34;</span>
+</span></span><span class="line"><span class="cl">          <span class="sa">f</span><span class="s2">&#34;Loss: </span><span class="si">{</span><span class="n">epoch_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, &#34;</span>
+</span></span><span class="line"><span class="cl">          <span class="sa">f</span><span class="s2">&#34;Accuracy: </span><span class="si">{</span><span class="n">epoch_acc</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;训练完成!&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 训练结束后，一次性绘制</span>
+</span></span><span class="line"><span class="cl"><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 绘制损失曲线</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Training Loss&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Training Loss&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Epoch&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Loss&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 绘制准确率曲线</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_accuracies</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Training Accuracy&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Training Accuracy&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Epoch&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Accuracy (%)&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4-测试与预测">4. 测试与预测
+</h2><p>训练完一个模型后，如果在训练集上的精度还不错，那么我们就可以在验证集上测试其准确率。</p>
+<p>测试也是分下面几个步骤：</p>
+<h3 id="开启评估模式">开启评估模式
+</h3><p>在训练阶段，一些优化方法如<code>Dropout</code>和<code>Batch Normalization</code>等其实是不需要开启的，而通过</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>就可以很方便的一键关闭。</p>
+<h3 id="关闭梯度计算">关闭梯度计算
+</h3><p>这里使用的是一个<code>torch</code>自带的上下文管理器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="迭代测试集进行计算">迭代测试集进行计算
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">in</span> <span class="n">test_loader</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_</span><span class="p">,</span> <span class="n">predicted</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">test_total</span> <span class="o">+=</span> <span class="n">labels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">test_correct</span> <span class="o">+=</span> <span class="p">(</span><span class="n">predicted</span> <span class="o">==</span> <span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="总结">总结
+</h1><p>总的来说，训练并测试神经网络就可以分为上面几步。希望上面的代码可以作为参考，以后不时之需来看看！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pytorch/">Pytorch</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
