@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Camera on 卖紫薯的紫薯精</title>
+        <link>https://XiaoPeng0x3.github.io/tags/camera/</link>
+        <description>Recent content in Camera on 卖紫薯的紫薯精</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>Xiao Peng</copyright>
+        <lastBuildDate>Mon, 03 Mar 2025 17:43:28 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/tags/camera/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>手机拍照技巧</title>
+        <link>https://XiaoPeng0x3.github.io/p/%E6%89%8B%E6%9C%BA%E6%8B%8D%E7%85%A7%E6%8A%80%E5%B7%A7/</link>
+        <pubDate>Mon, 03 Mar 2025 17:43:28 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/p/%E6%89%8B%E6%9C%BA%E6%8B%8D%E7%85%A7%E6%8A%80%E5%B7%A7/</guid>
+        <description>&lt;h1 id=&#34;前言&#34;&gt;前言
+&lt;/h1&gt;&lt;p&gt;又是一年春，最近刷抖音看到很多花已经开了，这些作品拍的都很美，大多数教程都是指导你打开相机的专业模式，然后去调整一些你不太熟悉的参数，比如说&lt;code&gt;ISO&lt;/code&gt;和快门速度之类的参数。今天刷&lt;code&gt;b站&lt;/code&gt;发现一门讲&lt;a class=&#34;link&#34; href=&#34;https://www.bilibili.com/video/BV1JHPgzXEkF&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;摄影拍照的课&lt;/a&gt;，借这个课程来学习一下“专业”人士对拍照的理解。&lt;/p&gt;
+&lt;h1 id=&#34;专业模式下相机的参数&#34;&gt;专业模式下相机的参数
+&lt;/h1&gt;&lt;p&gt;现在大多数手机都可以打开专业模式，当打开之后，你会看到有许多参数，例如，&lt;code&gt;ISO&lt;/code&gt;大小、曝光时间、快门速度等等，我们来看看这些设置的用法吧。&lt;/p&gt;
+&lt;h2 id=&#34;iso&#34;&gt;ISO
+&lt;/h2&gt;&lt;p&gt;简单来说，&lt;code&gt;ISO&lt;/code&gt;可以提升画面的明暗程度。&lt;code&gt;ISO&lt;/code&gt;倍数越大，整个画面就看起来越明亮。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;注意，&lt;code&gt;ISO&lt;/code&gt;并非真正意义上的明亮，而是可以控制相机传感器对光的敏感程度。也就是说，&lt;code&gt;ISO&lt;/code&gt;可以将光信号给放大，从而使得所处的环境亮了起来。但是，放大光信号的同时，噪声也会被放大，所以&lt;strong&gt;ISO越大，拍出来的照片也就越亮，同时照片中的噪声也就越多(图片变模糊了)&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260313140911032.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260313140911032&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;也就是图片中总结的这样&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;光线暗的情况下很好用&lt;/li&gt;
+&lt;li&gt;但是也会使得图片中的噪声变多&lt;/li&gt;
+&lt;li&gt;当你的拍摄环境缺光线时可以考虑使用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;快门速度&#34;&gt;快门速度
+&lt;/h2&gt;&lt;p&gt;快门速度决定相机记录光线的时间长短，它既影响照片亮度，也决定运动物体是否会被冻结或产生拖影&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260313142830036.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260313142830036&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;快门时间越快，比如(&lt;code&gt;1/500&lt;/code&gt;)表示记录光线的时间也就越短。想象一下，如果记录的一束光时间越长，越容易记录光的运动轨迹，从图像上来说其效果也就越模糊。所以，需要记住以下几点&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;快门越快，越容易捕捉运动物体的照片&lt;/li&gt;
+&lt;li&gt;快门越慢，图像的运动轨迹就越模糊&lt;/li&gt;
+&lt;li&gt;由于快门涉及画面的明暗，所以调整好快门后，可以按照要求调整&lt;code&gt;ISO&lt;/code&gt;使得画面亮度适中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;视频创作者还给了一个提示，当你的视频帧率是30帧时，那么你的快门速度最好是&lt;code&gt;1/60&lt;/code&gt;~&lt;code&gt;1-70&lt;/code&gt;，这样可以获得更好的质感。&lt;/p&gt;
+&lt;h2 id=&#34;光圈大小&#34;&gt;光圈大小
+&lt;/h2&gt;&lt;p&gt;现在手机大多数不可以调整光圈的大小，通俗来说光圈就是镜头里的一个可调节的孔径，控制光线进入相机。&lt;/p&gt;
+&lt;p&gt;光圈大小用 &lt;strong&gt;f 值（f-number）&lt;/strong&gt; 表示，例如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-txt&#34; data-lang=&#34;txt&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;f/1.8
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;f/2.8
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;f/4
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;f/8
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;f/16
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;对于光圈对图片的影响来说&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;光圈越大（f值越小）&lt;/li&gt;
+&lt;li&gt;景深越浅&lt;/li&gt;
+&lt;li&gt;背景越虚&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;镜头焦段&#34;&gt;镜头焦段
+&lt;/h2&gt;&lt;p&gt;一般来说，镜头焦段越小，其广角效果就越明显。所以，我们选择如下&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果需要拍摄特写画面，尤其是背景虚化，那么最好选择长焦120mm等长焦镜头&lt;/li&gt;
+&lt;li&gt;如果需要拍摄广角画面，尤其是清晰的背景，最小选择焦段较小的，例如10mm&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
