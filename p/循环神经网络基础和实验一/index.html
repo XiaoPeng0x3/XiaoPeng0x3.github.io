@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 这次来学习一下一个之前从未接触到的网络架构RNN，来看看RNN解决了哪些CNN不好解决的问题。\nRNN 过去的问题 我们之前解决的问题，一般是网络接收一个输入，比如说某张图片，需要正确给出这张图片的类别，也就是分类问题\n">
+<title>循环神经网络:基础和实验(一)</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%80/'>
+
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="循环神经网络:基础和实验(一)">
+<meta property='og:description' content="前言 这次来学习一下一个之前从未接触到的网络架构RNN，来看看RNN解决了哪些CNN不好解决的问题。\nRNN 过去的问题 我们之前解决的问题，一般是网络接收一个输入，比如说某张图片，需要正确给出这张图片的类别，也就是分类问题\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%80/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-12-15T17:12:53&#43;08:00'/><meta property='article:modified_time' content='2024-12-15T17:12:53&#43;08:00'/>
+<meta name="twitter:title" content="循环神经网络:基础和实验(一)">
+<meta name="twitter:description" content="前言 这次来学习一下一个之前从未接触到的网络架构RNN，来看看RNN解决了哪些CNN不好解决的问题。\nRNN 过去的问题 我们之前解决的问题，一般是网络接收一个输入，比如说某张图片，需要正确给出这张图片的类别，也就是分类问题\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( true ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8121279679071600"
+     crossorigin="anonymous"></script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😸</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#rnn">RNN</a>
+      <ol>
+        <li><a href="#过去的问题">过去的问题</a></li>
+        <li><a href="#rnn的结构">RNN的结构</a></li>
+        <li><a href="#rnn的计算图">RNN的计算图</a></li>
+        <li><a href="#image-captioning">Image Captioning</a></li>
+      </ol>
+    </li>
+    <li><a href="#实验">实验</a>
+      <ol>
+        <li><a href="#coco数据集">COCO数据集</a></li>
+        <li><a href="#实验-1">实验</a>
+          <ol>
+            <li><a href="#数据详情">数据详情</a></li>
+          </ol>
+        </li>
+        <li><a href="#单步rnn">单步RNN</a>
+          <ol>
+            <li><a href="#rnn-forward">RNN forward</a></li>
+            <li><a href="#rnn-backward">RNN backward</a></li>
+          </ol>
+        </li>
+        <li><a href="#连续时间片">连续时间片</a>
+          <ol>
+            <li><a href="#前向传播">前向传播</a></li>
+            <li><a href="#反向传播">反向传播</a></li>
+          </ol>
+        </li>
+        <li><a href="#词嵌入">词嵌入</a>
+          <ol>
+            <li><a href="#计算loss">计算loss</a></li>
+            <li><a href="#输入">输入：</a></li>
+          </ol>
+        </li>
+        <li><a href="#开始实验">开始实验</a>
+          <ol>
+            <li><a href="#数据处理">数据处理</a></li>
+            <li><a href="#前向传播-1">前向传播</a></li>
+            <li><a href="#测试阶段">测试阶段</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/eecs-498/007/" >
+                EECS-498/007
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%80/">循环神经网络:基础和实验(一)</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-12-15</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p>这次来学习一下一个之前从未接触到的网络架构<code>RNN</code>，来看看<code>RNN</code>解决了哪些<code>CNN</code>不好解决的问题。</p>
+<h1 id="rnn">RNN
+</h1><h2 id="过去的问题">过去的问题
+</h2><p>我们之前解决的问题，一般是网络接收一个输入，比如说某张图片，需要正确给出这张图片的类别，也就是<strong>分类</strong>问题</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260318175437065.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260318175437065"
+	
+	
+></p>
+<p>但是，还有许多问题不是离散的输入，比如说“一句话”或者“一段声音”，以<code>ppt</code>中为例</p>
+<ul>
+<li>
+<p>一对多问题</p>
+<p>一个典型的例子是：输入一张图片，用一句话输出图片的内容，也就是<strong>Image Captioning</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260318175743298.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260318175743298"
+	
+	
+></p>
+</li>
+<li>
+<p>多对一问题</p>
+<p>输入是一段序列，输出是一个类别，例如视频分类</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319091724070.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319091724070"
+	
+	
+></p>
+</li>
+<li>
+<p>多对多问题</p>
+<p>输入和输出都是一段序列，例如常见的机器翻译</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319092043695.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319092043695"
+	
+	
+></p>
+</li>
+</ul>
+<h2 id="rnn的结构">RNN的结构
+</h2><p><code>RNN</code>解决的是一个序列问题，为了让网络理解这个序列问题，一个关键的思路是使用一种“中间”状态，当序列不断输入时，这个中间状态也一直在更新。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319092401406.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319092401406"
+	
+	
+></p>
+<p>也就是说，当前时刻的中间状态（隐藏层）$$h_t$$由$$h_{t-1}$$和$$x_t$$共同决定，$$x_t$$是我们的输入，例如一个词向量。</p>
+<p>下面是一张更为清晰的<code>RNN</code>计算输入输出的过程：</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319092657553.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319092657553"
+	
+	
+></p>
+<p>这样的<code>RNN</code>也被叫做<code>Vanilla RNN</code>。</p>
+<h2 id="rnn的计算图">RNN的计算图
+</h2><p>在本门课程的<code>lab</code>中，大多需要手动推导计算<code>forward</code>和<code>backword</code>，因此，了解<code>RNN</code>的计算过程可以很好的帮助我们理解前向传播和计算反向传播的过程。</p>
+<p>首先，<code>RNN</code>接收一个初始的隐藏层，我们叫做<code>h0</code>，除此之外还接收一个输入<code>x1</code>，大概如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">h_1</span> <span class="o">=</span> <span class="n">RNN</span><span class="p">(</span><span class="n">h0</span><span class="p">,</span> <span class="n">x1</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是说，<strong>每一个时间步，都会有一个根据<code>x1</code>和<code>h_prev</code>得到的<code>h_next</code></strong>。最后的计算结果图如下</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319093414584.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319093414584"
+	
+	
+></p>
+<p>需要注意的是，在整个的计算过程中，每一步时间<code>T</code>所使用的权重矩阵<code>W</code>都是一致的，使用同一个矩阵<code>W</code>一下子生成可能会更好的联系和把握上下文。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319094300838.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319094300838"
+	
+	
+></p>
+<p>课堂上老师还记录了许多不同类型的输入输出的计算过程，这里不一一展开说明了。</p>
+<h2 id="image-captioning">Image Captioning
+</h2><p>有了上述基础，我们就可以来看看课堂上举的这个例子了。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319095008770.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319095008770"
+	
+	
+></p>
+<p>这个例子的想要做到的效果是，输入一张图片，网络可以根据这张图片来描述一下当前输入图片的内容。</p>
+<p>这个问题就是我们上面说的<code>Many To One </code>的例子，也就是说，其处理流程如下</p>
+<ul>
+<li>首先，我们使用<code>CNN</code>来获取图片的特征</li>
+<li>使用某种方法，可以把图片转换为<code>RNN</code>可以理解的样子，也就是初始的<code>h0</code></li>
+<li>这个时候需要有一个输入<code>x</code>，也就是<code>&lt;START&gt;</code>标签。</li>
+<li>最后得到所有的输出</li>
+</ul>
+<h1 id="实验">实验
+</h1><p>本次的实验要求是使用<code>RNN</code>和<code>LSTM</code>去完成课上提到的&quot;描述图片内容&quot;的任务，下面来记录一下使用<code>RNN</code>完成该例子的过程。</p>
+<h2 id="coco数据集">COCO数据集
+</h2><p>对于本次实验使用的是2014年发布的<code>COCO</code>数据集，该数据集已经成为<code>Image caption</code>的标准测试。这个数据集包含了80,000张训练数据和40,000张验证数据，每张图片都有5个字幕。实验之前，<code>COCO</code>数据集已经被经过下采样处理过了，每张图片的大小是<code>112x112</code>的。这次实现中将会使用<code>RegNet-X 400MF</code>的网络去抽取图片特征。</p>
+<blockquote>
+<p>还有一些额外的提示：直接处理字符串是低效的，所以我们将用一个编码后的字幕去进行实验。每个词都分配了一个整数ID,这样我们就可以使用整数ID去代表一个词。</p>
+</blockquote>
+<h2 id="实验-1">实验
+</h2><p>也就是说，我们现在有：</p>
+<ul>
+<li>处理好的图片</li>
+<li>ID和词映射</li>
+</ul>
+<p>现在来说明输出单词的格式。</p>
+<p>这里有几个特殊的生成<code>Token</code></p>
+<ul>
+<li><code>&lt;START&gt;</code>:开始<code>Token</code>，出现在句子开头</li>
+<li><code>&lt;END&gt;</code>:结束<code>Token</code>，出现在句子结尾</li>
+<li><code>&lt;UNK&gt;</code>:出现频率很低的词</li>
+<li><code>&lt;NULL&gt;</code>:作为占位符去补充字幕，方便计算</li>
+</ul>
+<h3 id="数据详情">数据详情
+</h3><p>经过上面这些处理后，可以将图片进行可视化</p>
+<img src="C:\Users\zxp\AppData\Roaming\Typora\typora-user-images\image-20260319114602421.png" alt="image-20260319114602421" style="zoom:50%;" />
+<img src="C:\Users\zxp\AppData\Roaming\Typora\typora-user-images\image-20260319114628479.png" alt="image-20260319114628479" style="zoom:50%;" />
+<h2 id="单步rnn">单步RNN
+</h2><h3 id="rnn-forward">RNN forward
+</h3><p>首先是实现单步的<code>RNN</code>，也就是<code>rnn_step_forward</code>。先跟着思路慢慢来，下面是<code>code</code>中的提示,我们只看有用的部分</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    The input data has dimension D, the hidden state has dimension H, and we use
+</span></span></span><span class="line"><span class="cl"><span class="s2">    a minibatch size of N.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Args:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        x: Input data for this timestep, of shape (N, D).
+</span></span></span><span class="line"><span class="cl"><span class="s2">        prev_h: Hidden state from previous timestep, of shape (N, H)
+</span></span></span><span class="line"><span class="cl"><span class="s2">        Wx: Weight matrix for input-to-hidden connections, of shape (D, H)
+</span></span></span><span class="line"><span class="cl"><span class="s2">        Wh: Weight matrix for hidden-to-hidden connections, of shape (H, H)
+</span></span></span><span class="line"><span class="cl"><span class="s2">        b: Biases, of shape (H,)
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Returns a tuple of:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        next_h: Next hidden state, of shape (N, H)
+</span></span></span><span class="line"><span class="cl"><span class="s2">        cache: Tuple of values needed for the backward pass.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个其实很好计算，<code>ppt</code>上的公式如下</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319092657553.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319092657553"
+	
+	
+></p>
+<p>结果求出<code>next_h</code>即可，就是简单的套公式就行。</p>
+<h3 id="rnn-backward">RNN backward
+</h3><p>反向传播只需要记住链式求导法则即可，首先，函数参数中给了我们上游梯度<code>dnext_h</code>，也就是损失函数对与<code>next_h</code>的参数，我们可以来推导一下这个计算过程。</p>
+<blockquote>
+<p>在之前的问题中，可以理解为y = Wx * x + b，通常来说，我们只需要求得<code>Wx</code>的梯度和<code>b</code>的梯度即可。而这里求<code>x</code>的梯度，我觉得可以这样思考，因为对之前的输入<code>x</code>，其值都是确定的，也就是说，这里的<code>x</code>很有可能来自前一个网络的输出，</p>
+</blockquote>
+<p>对于$x$来说，</p>
+<p>$$ \frac{\partial L}{\partial x} =  \frac{\partial L}{\partial next_h} \times  \frac{\partial next_h}{\partial x}$$</p>
+<p>而$  \frac{\partial L}{\partial next_h} $$就是上游梯度$$ \mathrm {dnext_h} $，所以我们可以推导出</p>
+<p>$$\mathrm{dx} = \mathrm{dnext_h} \times \frac{\partial next_h}{\partial x}$$</p>
+<p><code>ht</code>计算公式</p>
+<p>$$ h_t = tanh(W_{hh}h_{t-1} + W_{xh}x_t) $$</p>
+<p>所以$ \frac{\partial{next_h}}{\partial{x}} $ 需要使用符合函数求导，即为$$\mathrm{da} = 1 - h_{t}^2  $$所以，$$ \frac{\partial{next_h}}{\partial{x}} = \mathrm{da} \times W_{xh}$$</p>
+<p>同理，$$ \frac{\partial{next_h}}{\partial{W_{xh}}} = \mathrm{da} \times x_t $$</p>
+<p>$$ \frac{\partial{next_h}}{\partial{W_{hh}}} = \mathrm{da} \times h_{t-1} $$</p>
+<p>计算方式如上，不要忘记与$\mathrm{dnext_h} $相乘！</p>
+<h2 id="连续时间片">连续时间片
+</h2><p>现在，我们有了单步的前向传播和反向传播，这个时候就可以去在连续的时间片上进行传播。</p>
+<h3 id="前向传播">前向传播
+</h3><p>这是代码的注释</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Run a vanilla RNN forward on an entire sequence of data. We assume an input
+</span></span></span><span class="line"><span class="cl"><span class="s2">    sequence composed of T vectors, each of dimension D. The RNN uses a hidden
+</span></span></span><span class="line"><span class="cl"><span class="s2">    size of H, and we work over a minibatch containing N sequences. After running
+</span></span></span><span class="line"><span class="cl"><span class="s2">    the RNN forward, we return the hidden states for all timesteps.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Args:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        x: Input data for the entire timeseries, of shape (N, T, D).
+</span></span></span><span class="line"><span class="cl"><span class="s2">        h0: Initial hidden state, of shape (N, H)
+</span></span></span><span class="line"><span class="cl"><span class="s2">        Wx: Weight matrix for input-to-hidden connections, of shape (D, H)
+</span></span></span><span class="line"><span class="cl"><span class="s2">        Wh: Weight matrix for hidden-to-hidden connections, of shape (H, H)
+</span></span></span><span class="line"><span class="cl"><span class="s2">        b: Biases, of shape (H,)
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Returns a tuple of:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        h: Hidden states for the entire timeseries, of shape (N, T, H).
+</span></span></span><span class="line"><span class="cl"><span class="s2">        cache: Values needed in the backward pass
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们重点来看看参数的含义。</p>
+<p>首先输入是<code>NxTxD</code>的类型，也就是说，我们只需要在<code>T</code>时间步上，每一次都进行<code>step_forward</code>即可。同时，把每一时间片的隐藏状态保存下来。要注意计算过程中的矩阵维度问题</p>
+<h3 id="反向传播">反向传播
+</h3><p>现在来看看反向传播的过程，先贴一张图</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319150205974.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319150205974"
+	
+	
+></p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319151107634.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260319151107634"
+	
+	
+></p>
+<p>对于<code>t</code>时刻的梯度来说，比如图中的<code>h2</code>，因为整个时间片<code>t</code>是使用一个权重参数，所以梯度在每一个时间片也是跟前后时间有关的。</p>
+<p>其实我们只需要关注<strong>梯度的流向即可</strong>，对于<code>h2</code>来说，一部分直接流向了输出，比如说是<code>y2</code>，另一部分直接流向了<code>h3</code>，而<code>h3</code>又流向了<code>h4</code>，所以，就<code>h2</code>而言，其梯度的值为当前梯度值和上游梯度值，所以这其实是一个累加的过程。</p>
+<p>在求梯度时，我们需要注意每一层梯度之间的累加，对于最后一个隐藏层来说，其没有上游梯度，所以求解的时候要倒着去遍历时间片。</p>
+<h2 id="词嵌入">词嵌入
+</h2><p>到目前为止，我们有</p>
+<ul>
+<li>采集数据集图片特征的网络</li>
+<li>图片处理后的字幕</li>
+<li>完整的<code>RNN</code>结构</li>
+</ul>
+<p>对于深度学习中，词语一般是由一个<code>D</code>维向量来表示的，这里先记住这个结论，不要在意细节。也就是说，我们可以找到一个词汇表，其维度是<code>(V, D)</code>的，有<code>V</code>个词，每个都是一个<code>D</code>维向量。</p>
+<p>值得注意的是，词向量是学习过来的。首先，我们有<code>word_to_idx</code>，类似于</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;cat&#34;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;dog&#34;</span><span class="p">:</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这类的东西。</p>
+<p>当我们想要输入<code>cat</code>这个词，就会去调用<code>word_to_idx['cat']</code>，得到索引是<code>0</code>，然后再去调用<code>embedding</code>，得到词向量<code>embedding[0]</code>，也就拿到了我们的输入。</p>
+<h3 id="计算loss">计算loss
+</h3><p>我们选择的损失函数是交叉熵损失函数，实验中对损失函数的描述如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    A temporal version of softmax loss for use in RNNs. We assume that we are
+</span></span></span><span class="line"><span class="cl"><span class="s2">    making predictions over a vocabulary of size V for each timestep of a
+</span></span></span><span class="line"><span class="cl"><span class="s2">    timeseries of length T, over a minibatch of size N. The input x gives scores
+</span></span></span><span class="line"><span class="cl"><span class="s2">    for all vocabulary elements at all timesteps, and y gives the indices of the
+</span></span></span><span class="line"><span class="cl"><span class="s2">    ground-truth element at each timestep. We use a cross-entropy loss at each
+</span></span></span><span class="line"><span class="cl"><span class="s2">    timestep, *summing* the loss over all timesteps and *averaging* across the
+</span></span></span><span class="line"><span class="cl"><span class="s2">    minibatch.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    As an additional complication, we may want to ignore the model output at some
+</span></span></span><span class="line"><span class="cl"><span class="s2">    timesteps, since sequences of different length may have been combined into a
+</span></span></span><span class="line"><span class="cl"><span class="s2">    minibatch and padded with NULL tokens. The optional ignore_index argument
+</span></span></span><span class="line"><span class="cl"><span class="s2">    tells us which elements in the caption should not contribute to the loss.
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Args:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        x: Input scores, of shape (N, T, V)
+</span></span></span><span class="line"><span class="cl"><span class="s2">        y: Ground-truth indices, of shape (N, T) where each element is in the
+</span></span></span><span class="line"><span class="cl"><span class="s2">            range 0 &lt;= y[i, t] &lt; V
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Returns a tuple of:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        loss: Scalar giving loss
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>看一看参数的描述</p>
+<ul>
+<li>
+<p>x: We assume that we are making predictions over a vocabulary of size V for each timestep of a timeseries of length T, over a minibatch of size N.</p>
+<p><code>N</code>个数据，对于每个时间步<code>T</code>，都有模型预测出的<code>V</code>个词分数。</p>
+<p>比如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span> <span class="c1"># 第一个时间步，T1，分数最大索引是2</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="c1"># 第二个时间步, T2，分数最大时1</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span> 			 <span class="c1"># 以此类推</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样，我们就可以获得分数最大的那个词的索引，从而获得对应的词。</p>
+</li>
+<li>
+<p>y:Ground-truth indices, of shape (N, T) where each element is in the range 0 &lt;= y[i, t] &lt; V</p>
+<p>这个好理解，对于每个时间步，都有一个正确的答案，比如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="mi">2</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">    <span class="mi">3</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p><code>F.cross_entropy(input, target)</code> 要求：</p>
+<h3 id="输入">输入：
+</h3><ul>
+<li><code>input</code>: shape = <strong>(batch_size, num_classes)</strong></li>
+<li><code>target</code>: shape = <strong>(batch_size,)</strong>
+每个位置是一个类别 index</li>
+</ul>
+<p>这样就把连续的N个问题分为了<code>N*T</code>个离散的分类问题</p>
+<h2 id="开始实验">开始实验
+</h2><p>到目前，我们的所有准备工作已经做完了，可以开始做实验了。</p>
+<h3 id="数据处理">数据处理
+</h3><p>在<code>CaptioningRNN</code>中，我们还需要对图片进行一些线性层变换。</p>
+<p>首先我们需要对图片进行编码，把它变成<code>RNN</code>认识的样子，也就是调用提供的<code>ImageEncoder</code>类</p>
+<p>在<code>COCO</code>数据集中，输入的<code>image</code>的形状是<code>(2, 3, 112, 112)</code>的，经过采样后变成了(2, 400, 4, 4)的，其中，400就是输入维度，此时，输入的图片特征为<code>(N, D, 4, 4)</code>，我们需要把这个图片转为<code>(N, H)</code>的，也就是<code>RNN</code>可以理解的格式，我们可以采取以下的变换</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="bp">self</span><span class="o">.</span><span class="n">feature_projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span><span class="c1"># 展平，即变为(N, D * 4 * 4)，区别torch.flatten()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">)</span> <span class="c1"># 转变维度</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们还需要将隐藏层和词嵌入层联系起来，所以我们还得需要一个转换</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="bp">self</span><span class="o">.</span><span class="n">output_projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后就可以考虑前向传播的逻辑了。</p>
+<h3 id="前向传播-1">前向传播
+</h3><ol>
+<li>
+<p>抽取图片特征为<code>RNN</code>可以看懂的形式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_encoder</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_projection</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">features</span><span class="p">)</span> <span class="c1"># h0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>得到了<code>h0</code></p>
+</li>
+<li>
+<p>转换字幕为词嵌入的形式</p>
+<p>这里我们只是做了简单的转换，并未开始训练。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">word_embed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_embedding</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">captions_in</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>使用<code>RNN</code>，生成每个时间<code>T</code>的隐藏层</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">hn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RNN</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">word_embed</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span> <span class="c1"># 每个隐藏层的输出</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>计算得分</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_projection</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">hn</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>计算<code>loss</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">loss</span> <span class="o">=</span> <span class="n">temporal_softmax_loss</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">captions_out</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_index</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<p>训练阶段和测试阶段是两个完全不同的结果，我们来看看测试阶段是怎么进行处理的。</p>
+<h3 id="测试阶段">测试阶段
+</h3><p>在测试阶段，应该是：</p>
+<ul>
+<li>给<code>RNN</code>一张可以理解的图片作为初始<code>h0</code></li>
+<li>给<code>RNN</code>一个初始输入词，比如<code>&lt;START&gt;</code>标签</li>
+</ul>
+<p>在每一个隐藏层上，需要找出隐藏层对应的最大得分索引，然后再去找到对应的词。</p>
+<p>这是几张测试效果图：</p>
+<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319173914170.png" alt="image-20260319173914170" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319173938980.png" alt="image-20260319173938980" style="zoom:50%;" />
+<h1 id="总结">总结
+</h1><p>其实整个过程还是很复杂的，尤其是对于初次学习的同学来说，下次我们将看看<code>LSTM</code>部分的实验！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pytorch/">Pytorch</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">训练神经网络part2</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart1/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">训练神经网络part1</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">卷积神经网络</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">神经网络——多层感知机</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E4%BC%98%E5%8C%96%E4%B8%8E%E8%AE%AD%E7%BB%83/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">优化与训练</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
