@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="学习率 学习率是一个很重要的参数，而且学习率决定了网络能否快速的收敛并趋于稳定。目前为止，我们接触到的网络实际上都是一个优化问题，即如何找到损失函数的极小值。对于多元函数使用的就是梯度下降法去找到极小值，其中又有很多梯度下降的优化版本，例如sgd + momentum、adam等方法，这些方法里面都要用到学习率这个参数\n">
-<title>训练神经网络part2</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 在上一篇文章中，我们描述记录了RNN的基本结构，让我们快速回顾一下。\n首先，RNN是为了能够处理序列问题而发明出来的。对于之前学习的CNN来说，一个重要的特征是CNN可以提取相似的特征，对于同一个特征，它门的向量很相似。但是，对于语言来说，比如说“it”这个单词会因在上下文中的位置而有着不同的涵义，如果只是简单的提取特征则不会有这种理解上下文的智慧。因此，RNN应运而生，其思路就是当前网络的输出不仅与当前的输入有关，还与前一时刻网络的输出有关。更详细来说，我们把网络的输出叫做隐藏层h,可以写出这样一个式子：$h_t = f(h_{t-1}, x_t)$这样就可以很好的解决“记忆”这个问题。\n">
+<title>循环神经网络:LSTM</title>
 
-<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/'>
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Clstm/'>
 
-<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="训练神经网络part2">
-<meta property='og:description' content="学习率 学习率是一个很重要的参数，而且学习率决定了网络能否快速的收敛并趋于稳定。目前为止，我们接触到的网络实际上都是一个优化问题，即如何找到损失函数的极小值。对于多元函数使用的就是梯度下降法去找到极小值，其中又有很多梯度下降的优化版本，例如sgd + momentum、adam等方法，这些方法里面都要用到学习率这个参数\n">
-<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/'>
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="循环神经网络:LSTM">
+<meta property='og:description' content="前言 在上一篇文章中，我们描述记录了RNN的基本结构，让我们快速回顾一下。\n首先，RNN是为了能够处理序列问题而发明出来的。对于之前学习的CNN来说，一个重要的特征是CNN可以提取相似的特征，对于同一个特征，它门的向量很相似。但是，对于语言来说，比如说“it”这个单词会因在上下文中的位置而有着不同的涵义，如果只是简单的提取特征则不会有这种理解上下文的智慧。因此，RNN应运而生，其思路就是当前网络的输出不仅与当前的输入有关，还与前一时刻网络的输出有关。更详细来说，我们把网络的输出叫做隐藏层h,可以写出这样一个式子：$h_t = f(h_{t-1}, x_t)$这样就可以很好的解决“记忆”这个问题。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Clstm/'>
 <meta property='og:site_name' content='卖紫薯的紫薯精'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-12-07T12:30:58&#43;08:00'/><meta property='article:modified_time' content='2024-12-07T12:30:58&#43;08:00'/>
-<meta name="twitter:title" content="训练神经网络part2">
-<meta name="twitter:description" content="学习率 学习率是一个很重要的参数，而且学习率决定了网络能否快速的收敛并趋于稳定。目前为止，我们接触到的网络实际上都是一个优化问题，即如何找到损失函数的极小值。对于多元函数使用的就是梯度下降法去找到极小值，其中又有很多梯度下降的优化版本，例如sgd + momentum、adam等方法，这些方法里面都要用到学习率这个参数\n">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2024-12-16T17:12:53&#43;08:00'/><meta property='article:modified_time' content='2024-12-16T17:12:53&#43;08:00'/>
+<meta name="twitter:title" content="循环神经网络:LSTM">
+<meta name="twitter:description" content="前言 在上一篇文章中，我们描述记录了RNN的基本结构，让我们快速回顾一下。\n首先，RNN是为了能够处理序列问题而发明出来的。对于之前学习的CNN来说，一个重要的特征是CNN可以提取相似的特征，对于同一个特征，它门的向量很相似。但是，对于语言来说，比如说“it”这个单词会因在上下文中的位置而有着不同的涵义，如果只是简单的提取特征则不会有这种理解上下文的智慧。因此，RNN应运而生，其思路就是当前网络的输出不仅与当前的输入有关，还与前一时刻网络的输出有关。更详细来说，我们把网络的输出叫做隐藏层h,可以写出这样一个式子：$h_t = f(h_{t-1}, x_t)$这样就可以很好的解决“记忆”这个问题。\n">
     <link rel="shortcut icon" href="/favicon.ico" />
 
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
@@ -288,15 +288,30 @@ var _hmt = _hmt || [];
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#学习率">学习率</a>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#lstm">LSTM</a>
       <ol>
-        <li><a href="#step-学习率">step 学习率</a></li>
-        <li><a href="#cos-学习率">cos 学习率</a></li>
-        <li><a href="#线性下降学习率">线性下降学习率</a></li>
-        <li><a href="#平方根学习率">平方根学习率</a></li>
+        <li><a href="#lstm的结构">LSTM的结构</a></li>
+        <li><a href="#lstm组件的计算方式">LSTM组件的计算方式</a>
+          <ol>
+            <li><a href="#得到变量门">得到变量门</a></li>
+            <li><a href="#计算cell值">计算cell值</a></li>
+          </ol>
+        </li>
+        <li><a href="#attention-lstm">Attention LSTM</a>
+          <ol>
+            <li><a href="#seq2seq">seq2seq</a></li>
+            <li><a href="#attention机制">Attention机制</a></li>
+            <li><a href="#attention推广">Attention推广</a></li>
+            <li><a href="#相似度计算">相似度计算</a></li>
+            <li><a href="#self-attention机制">self-attention机制</a></li>
+            <li><a href="#masked-self-attention">Masked self attention</a></li>
+            <li><a href="#多头注意力">多头注意力</a></li>
+          </ol>
+        </li>
+        <li><a href="#各种结构的比较">各种结构的比较</a></li>
       </ol>
     </li>
-    <li><a href="#超参数选择">超参数选择</a></li>
     <li><a href="#总结">总结</a></li>
   </ol>
 </nav>
@@ -325,7 +340,7 @@ var _hmt = _hmt || [];
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/">训练神经网络part2</a>
+            <a href="/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Clstm/">循环神经网络:LSTM</a>
         </h2>
     
         
@@ -347,7 +362,7 @@ var _hmt = _hmt || [];
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">2024-12-07</time>
+                <time class="article-time--published">2024-12-16</time>
             </div>
         
 
@@ -362,7 +377,7 @@ var _hmt = _hmt || [];
 
 
                 <time class="article-time--reading">
-                    阅读时长: 3 分钟
+                    阅读时长: 7 分钟
                 </time>
             </div>
         
@@ -377,232 +392,349 @@ var _hmt = _hmt || [];
     <section class="article-content">
     
     
-    <h1 id="学习率">学习率
-</h1><p>学习率是一个很重要的参数，而且学习率决定了网络能否快速的收敛并趋于稳定。目前为止，我们接触到的网络实际上都是一个优化问题，即如何找到损失函数的极小值。对于多元函数使用的就是梯度下降法去找到极小值，其中又有很多梯度下降的优化版本，例如<code>sgd + momentum</code>、<code>adam</code>等方法，这些方法里面都要用到学习率这个参数</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200057319.png"
+    <h1 id="前言">前言
+</h1><p>在上一篇文章中，我们描述记录了<code>RNN</code>的基本结构，让我们快速回顾一下。</p>
+<p>首先，<code>RNN</code>是为了能够处理序列问题而发明出来的。对于之前学习的<code>CNN</code>来说，一个重要的特征是<code>CNN</code>可以提取相似的特征，对于同一个特征，它门的向量很相似。但是，对于语言来说，比如说<code>“it”</code>这个单词会因在上下文中的位置而有着不同的涵义，如果只是简单的提取特征则不会有这种理解上下文的智慧。因此，<code>RNN</code>应运而生，其思路就是当前网络的输出不仅与当前的输入有关，还与前一时刻网络的输出有关。更详细来说，我们把网络的输出叫做隐藏层<code>h</code>,可以写出这样一个式子：$h_t = f(h_{t-1}, x_t)$这样就可以很好的解决“记忆”这个问题。</p>
+<p>但是，因为在反向传播的时候需要用到链式法则，所以当网络变得很深时，就容易出现梯度消失或者梯度爆炸这个问题，而一般来说，网络越深，那么其结果也就越好。所以为了解决这个问题，也就引入了<code>LSTM</code>，即<strong>长短期记忆网络</strong>，我们来看看<code>LSTM</code>是怎么解决这个问题的。</p>
+<h1 id="lstm">LSTM
+</h1><h2 id="lstm的结构">LSTM的结构
+</h2><p><code>LSTM</code>依然保留了<code>RNN</code>的基本结构，即接受一个输入<code>x_t</code>和一个隐藏层输出<code>h_t-1</code>，不同的是，它把原来<code>RNN</code>的简单更新状态使用<strong>门</strong>技巧给取代了。</p>
+<p>处理接受<code>x_t</code>和<code>h_t-1</code>之外，<code>LSTM</code>还需要接收一个<code>cell</code>状态，暂且叫他<code>cell</code>吧，不翻译作细胞了。除此之外，还有<strong>门</strong>结构，分别是</p>
+<ul>
+<li><code>input gate</code></li>
+<li><code>forget gate</code></li>
+<li><code>output gate</code></li>
+<li><code>block gate</code></li>
+</ul>
+<p>下面来说一下其计算方式。</p>
+<h2 id="lstm组件的计算方式">LSTM组件的计算方式
+</h2><h3 id="得到变量门">得到变量门
+</h3><p>第一步计算一个$a$,即$$ a = W_xx_t + W_hh_{t-1} + b $$,这一步和计算<code>RNN</code>的隐藏层一致，不过$a$是我们得到上面四个门的必要条件。有了$a$，我们就可以计算四个门的值</p>
+<p>即</p>
+<ul>
+<li>$ i = \sigma(a_i) $</li>
+<li>$f = \sigma(a_f)$</li>
+<li>$o = \sigma(a_o)$</li>
+<li>$g = tanh(a_g)$</li>
+</ul>
+<p>我们需要把$a$拆分为4个门，比如，<code>a</code>是一个<code>(N, 4H)</code>的矩阵，那么<code>i,f,o,g</code>就是<code>(N, H)</code>的矩阵。而$\sigma$就是<code>sigmoid</code>函数。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323130230726.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241209200057319"
+		alt="image-20260323130230726"
 	
 	
 ></p>
-<p>老师给出了许多学习率的选择方法</p>
-<h2 id="step-学习率">step 学习率
-</h2><p>step学习率的思路就是每经过给定的几个<code>epochs</code>，就重新设置学习率。可以这样做是因为在学习初期，即使学习率很大也没有关系，大的学习率反而可以减少训练时间，当经过几轮<code>epoch</code>后，把学习率降低可以减少模型的震荡，从而提高精度。</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200554629.png"
+<h3 id="计算cell值">计算cell值
+</h3><p>我们使用<code>cell</code>值去更新隐藏层<code>h</code>的状态，<code>cell</code>层的计算过程是</p>
+<p>$c_t = f \odot c_{t-1} + i \odot  g$, 得到<code>c_t</code>之后，就可以正常的去更新隐藏层的状态了</p>
+<p>$ h_t = o \odot tanh(c_t) $，注意，$\odot $是点积的意思。</p>
+<p>之后的计算部分和<code>RNN</code>没有什么区别，下面我们重点来看一看<code>attention</code>的内容。</p>
+<h2 id="attention-lstm">Attention LSTM
+</h2><p>在讲<code>attention</code>之前，我们先来看一看<code>attention</code>解决了哪些问题。</p>
+<h3 id="seq2seq">seq2seq
+</h3><p>在上文中我们提到，<code>rnn</code>可以去解决那些：</p>
+<ul>
+<li>多对一问题，例如文本情感分析</li>
+<li>一对多问题，例如图片描述</li>
+<li>多对多问题，机器翻译</li>
+</ul>
+<p>我们就以多对多问题出发。首先，在多对多问题中有两个常见的助手，分别是<code>encoder</code>和<code>decoder</code>，我们可以理解为一个压缩原始信息和从压缩后的信息去解码的两个网络。而机器翻译的流程一般是这样的：</p>
+<ul>
+<li><code>encoder</code>网络对输入进行编码</li>
+<li>输入编码后得到一个长向量，一般把这个向量叫做<code>context</code>，即上下文</li>
+<li><code>decoder</code>网络对上下文向量进行解码，得到输出。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323131816543.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241209200554629"
+		alt="image-20260323131816543"
 	
 	
 ></p>
-<h2 id="cos-学习率">cos 学习率
-</h2><p>在训练过程中，学习率的参数变化是<code>cos</code>型的</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200715331.png"
+<p>这样做的确可以解决一些问题，缺点就是：</p>
+<ul>
+<li>当序列很长时，固定维度(例如512维的向量)的向量不能很好的理解上下文</li>
+<li>不能动态的关注某一个词在上下文中位置</li>
+</ul>
+<p>其实这两个问题都是<code>context</code>上下文过短导致的，也就导致我们不能很好的去处理对应的词汇。</p>
+<blockquote>
+<p>就好比让你读一边书记住后再去考试，记忆力是有限的</p>
+</blockquote>
+<p>而<code>Attention</code>可以解决这个问题。</p>
+<h3 id="attention机制">Attention机制
+</h3><p><code>Attention</code>可以理解为评分决策，即在每次使用<code>decoder</code>解码时，不再去使用“静态的”上下文，而是去根据当前词汇去动态的更新<code>context</code></p>
+<p>我们来说一下具体的计算方式</p>
+<ul>
+<li>
+<p>将<code>decoder</code>的初始状态<code>S0</code>与之前每个时间步<code>t</code>的隐藏层作运算</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323132429001.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241209200715331"
+		alt="image-20260323132429001"
 	
 	
 ></p>
-<h2 id="线性下降学习率">线性下降学习率
-</h2><p>学习率的选择是线性的</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200913799.png"
+<p><code>S0</code>其实就是最后一个隐藏层，与每个隐藏层作运算后得到<code>e11,e12,e13,e14</code>，然后再对结果进行<code>softmax</code>变换得到对应的概率分布(<code>a11,a12,a13,a14</code>)</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323132655828.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241209200913799"
+		alt="image-20260323132655828"
 	
 	
 ></p>
-<h2 id="平方根学习率">平方根学习率
-</h2><p>这个图片是反平方根的函数曲线&hellip;.</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209200947963.png"
+<p>其中，<code>a11</code>就是<code>h1</code>层在第一个上下文中的权重参数，以此类推，我们将每个隐藏层与其对应权重相乘相加，就可以得到一个上下文<code>c</code></p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323132919607.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241209200947963"
+		alt="image-20260323132919607"
 	
 	
 ></p>
-<h1 id="超参数选择">超参数选择
-</h1><p>选择超参数（hyperparameter）是深度学习和机器学习中关键的步骤，影响模型的性能和训练效率。</p>
-<p><strong>1. 检查初始损失 (Check initial loss)</strong></p>
-<ul>
-<li><strong>目的</strong>：确认模型和数据管道是否正确配置。</li>
-<li>细节
-<ul>
-<li>使用默认或初始超参数（如随机初始化权重，标准学习率）。</li>
-<li>检查初始损失是否异常高或为NaN。</li>
-<li>如果损失值异常，可能是数据预处理或模型设置的问题。</li>
-</ul>
-</li>
-</ul>
-<p><strong>2. 在小样本上过拟合 (Overfit a small sample)</strong></p>
-<ul>
-<li><strong>目的</strong>：验证模型是否有能力拟合数据（模型复杂度是否足够）。</li>
-<li>细节
-<ul>
-<li>使用数据集中的一小部分样本（例如5-10个）。</li>
-<li>调整模型直到它能够完全拟合这组数据，损失降到接近零。</li>
-<li>如果无法过拟合，检查模型架构或超参数（如学习率、网络深度等）。</li>
-</ul>
-</li>
-</ul>
-<p><strong>3. 找到能使损失下降的学习率 (Find LR that makes loss go down)</strong></p>
-<ul>
-<li><strong>目的</strong>：找到一个合适的学习率，使损失能稳步下降。</li>
-<li>细节
-<ul>
-<li>采用 <em>learning rate finder</em> 技术。</li>
-<li>逐步增加学习率，绘制损失随学习率变化的曲线。</li>
-<li>选择损失开始明显下降但未发生震荡的学习率（通常在曲线的下降初期）。</li>
-</ul>
-</li>
-</ul>
-<p><strong>4. 粗略网格搜索，训练1-5个epoch (Coarse grid, train for ~1-5 epochs)</strong></p>
-<ul>
-<li><strong>目的</strong>：快速筛选出表现较好的超参数范围。</li>
-<li>细节
-<ul>
-<li>在关键超参数（如学习率、权重衰减、batch size）上进行粗粒度的网格搜索。</li>
-<li>每次试验只训练1到5个epoch，足够观察趋势但不过多浪费计算资源。</li>
-<li>排除性能较差的参数组合。</li>
-</ul>
-</li>
-</ul>
-<p><strong>5. 精细网格搜索，延长训练时间 (Refine grid, train longer)</strong></p>
-<ul>
-<li>
-<p><strong>目的</strong>：进一步优化超参数，找到最佳的参数组合。</p>
 </li>
 <li>
-<p>细节</p>
-<ul>
-<li>缩小关键超参数的搜索范围，进行更精细的网格搜索。</li>
-<li>增加训练epoch（例如10到50个）以评估长期性能。</li>
-<li>检查模型在验证集上的表现以避免过拟合。</li>
-</ul>
-</li>
-</ul>
-<p><strong>6. 检查学习曲线 (Look at learning curves)</strong></p>
-<ul>
-<li>
-<p><strong>目的</strong>：通过学习曲线分析模型的训练动态。</p>
-</li>
-<li>
-<p>细节</p>
-<ul>
-<li>
-<p>学习曲线显示训练和验证损失或精度随时间变化的趋势。</p>
-</li>
-<li>
-<p>常见问题及解决办法</p>
-<ul>
-<li>如果验证损失明显高于训练损失：模型可能过拟合，需要正则化或增加数据。</li>
-<li>如果两者都较高：可能是学习率太低或模型复杂度不足。</li>
-<li>如果训练损失震荡：可能是学习率过高或模型过于复杂。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>这也是老师在课上提到的这几点，为了方便查看训练的进展，一个很好的习惯是把模型在测试集上的精确度和验证集上的精确度给可视化，老师这里提到了一些有用的建议。</p>
-<ul>
-<li>
-<p><code>loss</code>一开始不降低</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209201948555.png"
+<p>得到上下文<code>c1</code>后，<code>decoder</code>的解码策略还是根据所获得的上下文去进行解码，与之前相同</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323133105516.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241209201948555"
-	
-	
-></p>
-<p>你的初始化很bad!</p>
-</li>
-<li>
-<p><code>loss</code>很高而且随着训练的进行不发生变化</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202140502.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20241209202140502"
-	
-	
-></p>
-<p>学习率太大了，试试学习率衰减的办法吧！</p>
-</li>
-<li>
-<p>衰减的太早了，导致不能快速下降</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202317588.png"
-	
-	
-	
-	loading="lazy"
-	
-		alt="image-20241209202317588"
+		alt="image-20260323133105516"
 	
 	
 ></p>
 </li>
 <li>
-<p>准确率依旧在上升，应该训练更长的时间</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202413717.png"
+<p>根据<code>y0, s0, c1</code>，可以计算出<code>s1</code>（注意，<code>decoder</code>网络的隐藏层使用<code>s</code>来进行表示）</p>
+<p>计算出<code>s1</code>之后，继续重复之前的“打分操作”，可以得到新的注意力权重(<code>a21,a22,a23,a24</code>)：</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323133355981.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241209202413717"
+		alt="image-20260323133355981"
 	
 	
 ></p>
 </li>
 <li>
-<p>这种情况也是很常见的，即数据在训练集上精度很高，但是在测试集上精度却不增高，这是因为发生了过拟合，导致模型只能很好的识别出“见到”过的数据</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202548575.png"
+<p>最后，我们可以得到最后的完整输出</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323133527973.png"
 	
 	
 	
 	loading="lazy"
 	
-		alt="image-20241209202548575"
+		alt="image-20260323133527973"
+	
+	
+></p>
+</li>
+</ul>
+<h3 id="attention推广">Attention推广
+</h3><p>更一般的，我们可以把上面这个流程进行推广</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323133941484.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260323133941484"
+	
+	
+></p>
+<p>我们来看看其计算流程：</p>
+<ul>
+<li>
+<p>将<code>Query Vector</code>与<code>Input Vector</code>作相似度计算</p>
+<p>这个过程很像<code>decoder </code>的<code>s</code>和<code>encoder</code>隐藏层作计算的形式，总之，我们的目的就是去得到<code>attention</code>的权重参数。</p>
+</li>
+<li>
+<p>将得分进行<code>softmax</code></p>
+</li>
+<li>
+<p>得到输出<code>vector</code></p>
+</li>
+</ul>
+<h3 id="相似度计算">相似度计算
+</h3><p>相似度计算即<code>f_attn</code>函数，这里提供了点积相似度和缩放点积相似度</p>
+<ul>
+<li>
+<p>点积相似度</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323150704796.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260323150704796"
 	
 	
 ></p>
 </li>
 <li>
-<p>训练集与验证集之间精度在训练过程中相差很小，假设数据来源可靠的话，那么说明模型还不够复杂，或者模型还是处于欠拟合的状态</p>
-<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/test/image-20241209202929429.png"
+<p>缩放点积相似度</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323150734259.png"
 	
 	
 	
 	loading="lazy"
 	
+		alt="image-20260323150734259"
+	
 	
 ></p>
 </li>
+</ul>
+<p>我们现在来看看有多个<code>query vector</code>时的情况：</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323151729479.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260323151729479"
+	
+	
+></p>
+<p>现在情况有些复杂，我们来一步步的拆开说明其计算步骤</p>
+<ol>
+<li>
+<p>当前的<code>query vector</code>已经转变为<code>Query vectors</code>向量</p>
+</li>
+<li>
+<p>我们专门设置两个额外的变量，即<code>K</code>和<code>V</code>,<code>K</code>和<code>V</code>都是输入<code>X</code>在不同空间的投影，所以可以这样理解：</p>
+<ul>
+<li>哪些维度适合“匹配”<code>（K）</code></li>
+<li>哪些维度适合“被提取”<code>（V）</code></li>
+</ul>
+<p>即</p>
+<ul>
+<li>用 <code>Q</code> 去匹配<code> K</code>（找相关内容）</li>
+<li>得到权重</li>
+<li>用权重去取<code> V</code>（真正的信息）</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>课堂上举了一个例子：<em>就像是你去Google上搜索“帝国大厦有多高”，Google会返回给你一个网页标题和里面的内容，内容里面说明了帝国大厦的高度，但是你已经知道标题了(就是我们搜索的内容)，所以你只需要拿到内容的值即可</em></p>
+</blockquote>
+<p>所以其计算结果可以这样表示：</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323152149864.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260323152149864"
+	
+	
+></p>
+<ol>
+<li>抽取<code>X</code>的特征，得到<code>K</code>($X K ^T$)</li>
+<li>将<code>K</code>和<code>Query</code>作相似度计算，<code>softmax</code>后得到<code>A</code>，即特征的分数</li>
+<li>抽取<code>X</code>输出值的特征，得到<code>V</code>($XV$)</li>
+<li>将<code>A</code>和<code>V</code>作点积运算求和后得到最后的输出</li>
+</ol>
+<h3 id="self-attention机制">self-attention机制
+</h3><p><code>self-attention</code>的计算与上面我们提到的计算不同在于<code>Q</code>的计算来源</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323155734234.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260323155734234"
+	
+	
+></p>
+<p>在<code>self-attention</code>的计算中，只有输入<code>X</code>是给定的，其它部分都需要我们自己去计算，包括</p>
+<ul>
+<li><code>Q</code>: $ XW_Q$</li>
+<li><code>K</code>:$XW_K$</li>
+<li><code>V</code>:$XW_V$</li>
+</ul>
+<p>其余部分也跟计算上面<code>attention</code>的一致。</p>
+<blockquote>
+<p>Tips: 在计算过程中，如果改变输入的顺序，比如改成<code>X3,X1,X2</code>，那么网络的输出结果也会随之发生变化，变成<code>Y3,Y1,Y2</code>，也就是说对输入顺序并不敏感，为了加强<strong>顺序</strong>的影响，我们可以加一个位置编码</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323165634580.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260323165634580"
+	
+	
+></p>
+</blockquote>
+<h3 id="masked-self-attention">Masked self attention
+</h3><p><code>Masked self attention</code>的思路就是说，对于现在的<code>self attention</code>，每个单词之间都是互相可见的，而之前的<code>RNN</code>则是需要根据前一时刻的输出来确定当前时刻，所以，为了控制信息的可见范围，我们引入了<code>Masked</code>矩阵<img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323171243987.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260323171243987"
+	
+	
+></p>
+<p>在得到<code>Q</code>和<code>K</code>后，使用一个<strong>下三角矩阵</strong>，经<code>softmax</code>之后，$-\infty$就变为了$0$，这样就限制了单词能够查看的范围，更加便于训练。</p>
+<h3 id="多头注意力">多头注意力
+</h3><p>多头注意力机制也是经常能够听到的词语了，多头注意力机制<strong>Multi-head</strong>的样子大概长这样</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323173554969.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260323173554969"
+	
+	
+></p>
+<p>对于输入来说，我们这次使用多个注意力块来提取其中的信息，其优点在于**Multi-head attention 是对同一输入，通过多组不同的线性变换映射到不同子空间，在每个子空间中分别进行 attention，从而捕捉不同的关系，最后将结果拼接起来。**也就是说，每个<code>attention</code>块的关注点不同，其捕获到的信息也就越多。</p>
+<h2 id="各种结构的比较">各种结构的比较
+</h2><p>目前我们学习了三种网络，按照时间顺序来排列的话，包括</p>
+<ul>
+<li><code>CNN</code>，卷积神经网络</li>
+<li><code>RNN</code>，循环神经网络</li>
+<li><code>attention</code>，注意力机制</li>
+</ul>
+<p>其优缺点如下图：</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323174402838.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260323174402838"
+	
+	
+></p>
+<ul>
+<li>循环神经网络可以很好的处理序列问题，并且可以得到一个关于整个序列的“映像”，但它不能很好的并行运行，也就无法使用专有硬件进行加速</li>
+<li>卷积神经网络不擅长处理长序列问题，但却可以并行计算</li>
+<li>而自注意力机制可以很好的处理序列问题，也可以很好的并行化，缺点是需要占用大量内存</li>
 </ul>
 <h1 id="总结">总结
-</h1><p>在这一部分，我们只介绍了学习率以及超参数选择的一些技巧，后面的内容与迁移学习以后再做总结！</p>
+</h1><p>这次实验需要的知识还是很多的，有的甚至都没见过，为了不让篇幅过长，<code>Transformer</code>留着下次再说！</p>
 
 </section>
 
@@ -669,12 +801,12 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Clstm/">
+    <a href="/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%80/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">循环神经网络:LSTM</h2>
+            <h2 class="article-title">循环神经网络:基础和实验(一)</h2>
         </div>
     </a>
 </article>
@@ -682,12 +814,12 @@ var _hmt = _hmt || [];
             
                 
 <article class="">
-    <a href="/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%80/">
+    <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">循环神经网络:基础和实验(一)</h2>
+            <h2 class="article-title">训练神经网络part2</h2>
         </div>
     </a>
 </article>

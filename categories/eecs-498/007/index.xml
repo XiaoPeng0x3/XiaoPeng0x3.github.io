@@ -7,7 +7,358 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <copyright>Xiao Peng</copyright>
-        <lastBuildDate>Sun, 15 Dec 2024 17:12:53 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/eecs-498/007/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 16 Dec 2024 17:12:53 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/categories/eecs-498/007/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>循环神经网络:LSTM</title>
+        <link>https://XiaoPeng0x3.github.io/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Clstm/</link>
+        <pubDate>Mon, 16 Dec 2024 17:12:53 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Clstm/</guid>
+        <description>&lt;h1 id=&#34;前言&#34;&gt;前言
+&lt;/h1&gt;&lt;p&gt;在上一篇文章中，我们描述记录了&lt;code&gt;RNN&lt;/code&gt;的基本结构，让我们快速回顾一下。&lt;/p&gt;
+&lt;p&gt;首先，&lt;code&gt;RNN&lt;/code&gt;是为了能够处理序列问题而发明出来的。对于之前学习的&lt;code&gt;CNN&lt;/code&gt;来说，一个重要的特征是&lt;code&gt;CNN&lt;/code&gt;可以提取相似的特征，对于同一个特征，它门的向量很相似。但是，对于语言来说，比如说&lt;code&gt;“it”&lt;/code&gt;这个单词会因在上下文中的位置而有着不同的涵义，如果只是简单的提取特征则不会有这种理解上下文的智慧。因此，&lt;code&gt;RNN&lt;/code&gt;应运而生，其思路就是当前网络的输出不仅与当前的输入有关，还与前一时刻网络的输出有关。更详细来说，我们把网络的输出叫做隐藏层&lt;code&gt;h&lt;/code&gt;,可以写出这样一个式子：$h_t = f(h_{t-1}, x_t)$这样就可以很好的解决“记忆”这个问题。&lt;/p&gt;
+&lt;p&gt;但是，因为在反向传播的时候需要用到链式法则，所以当网络变得很深时，就容易出现梯度消失或者梯度爆炸这个问题，而一般来说，网络越深，那么其结果也就越好。所以为了解决这个问题，也就引入了&lt;code&gt;LSTM&lt;/code&gt;，即&lt;strong&gt;长短期记忆网络&lt;/strong&gt;，我们来看看&lt;code&gt;LSTM&lt;/code&gt;是怎么解决这个问题的。&lt;/p&gt;
+&lt;h1 id=&#34;lstm&#34;&gt;LSTM
+&lt;/h1&gt;&lt;h2 id=&#34;lstm的结构&#34;&gt;LSTM的结构
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;LSTM&lt;/code&gt;依然保留了&lt;code&gt;RNN&lt;/code&gt;的基本结构，即接受一个输入&lt;code&gt;x_t&lt;/code&gt;和一个隐藏层输出&lt;code&gt;h_t-1&lt;/code&gt;，不同的是，它把原来&lt;code&gt;RNN&lt;/code&gt;的简单更新状态使用&lt;strong&gt;门&lt;/strong&gt;技巧给取代了。&lt;/p&gt;
+&lt;p&gt;处理接受&lt;code&gt;x_t&lt;/code&gt;和&lt;code&gt;h_t-1&lt;/code&gt;之外，&lt;code&gt;LSTM&lt;/code&gt;还需要接收一个&lt;code&gt;cell&lt;/code&gt;状态，暂且叫他&lt;code&gt;cell&lt;/code&gt;吧，不翻译作细胞了。除此之外，还有&lt;strong&gt;门&lt;/strong&gt;结构，分别是&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;input gate&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;forget gate&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;output gate&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;block gate&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;下面来说一下其计算方式。&lt;/p&gt;
+&lt;h2 id=&#34;lstm组件的计算方式&#34;&gt;LSTM组件的计算方式
+&lt;/h2&gt;&lt;h3 id=&#34;得到变量门&#34;&gt;得到变量门
+&lt;/h3&gt;&lt;p&gt;第一步计算一个$a$,即$$ a = W_xx_t + W_hh_{t-1} + b $$,这一步和计算&lt;code&gt;RNN&lt;/code&gt;的隐藏层一致，不过$a$是我们得到上面四个门的必要条件。有了$a$，我们就可以计算四个门的值&lt;/p&gt;
+&lt;p&gt;即&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$ i = \sigma(a_i) $&lt;/li&gt;
+&lt;li&gt;$f = \sigma(a_f)$&lt;/li&gt;
+&lt;li&gt;$o = \sigma(a_o)$&lt;/li&gt;
+&lt;li&gt;$g = tanh(a_g)$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;我们需要把$a$拆分为4个门，比如，&lt;code&gt;a&lt;/code&gt;是一个&lt;code&gt;(N, 4H)&lt;/code&gt;的矩阵，那么&lt;code&gt;i,f,o,g&lt;/code&gt;就是&lt;code&gt;(N, H)&lt;/code&gt;的矩阵。而$\sigma$就是&lt;code&gt;sigmoid&lt;/code&gt;函数。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323130230726.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323130230726&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;计算cell值&#34;&gt;计算cell值
+&lt;/h3&gt;&lt;p&gt;我们使用&lt;code&gt;cell&lt;/code&gt;值去更新隐藏层&lt;code&gt;h&lt;/code&gt;的状态，&lt;code&gt;cell&lt;/code&gt;层的计算过程是&lt;/p&gt;
+&lt;p&gt;$c_t = f \odot c_{t-1} + i \odot  g$, 得到&lt;code&gt;c_t&lt;/code&gt;之后，就可以正常的去更新隐藏层的状态了&lt;/p&gt;
+&lt;p&gt;$ h_t = o \odot tanh(c_t) $，注意，$\odot $是点积的意思。&lt;/p&gt;
+&lt;p&gt;之后的计算部分和&lt;code&gt;RNN&lt;/code&gt;没有什么区别，下面我们重点来看一看&lt;code&gt;attention&lt;/code&gt;的内容。&lt;/p&gt;
+&lt;h2 id=&#34;attention-lstm&#34;&gt;Attention LSTM
+&lt;/h2&gt;&lt;p&gt;在讲&lt;code&gt;attention&lt;/code&gt;之前，我们先来看一看&lt;code&gt;attention&lt;/code&gt;解决了哪些问题。&lt;/p&gt;
+&lt;h3 id=&#34;seq2seq&#34;&gt;seq2seq
+&lt;/h3&gt;&lt;p&gt;在上文中我们提到，&lt;code&gt;rnn&lt;/code&gt;可以去解决那些：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;多对一问题，例如文本情感分析&lt;/li&gt;
+&lt;li&gt;一对多问题，例如图片描述&lt;/li&gt;
+&lt;li&gt;多对多问题，机器翻译&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;我们就以多对多问题出发。首先，在多对多问题中有两个常见的助手，分别是&lt;code&gt;encoder&lt;/code&gt;和&lt;code&gt;decoder&lt;/code&gt;，我们可以理解为一个压缩原始信息和从压缩后的信息去解码的两个网络。而机器翻译的流程一般是这样的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;encoder&lt;/code&gt;网络对输入进行编码&lt;/li&gt;
+&lt;li&gt;输入编码后得到一个长向量，一般把这个向量叫做&lt;code&gt;context&lt;/code&gt;，即上下文&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;decoder&lt;/code&gt;网络对上下文向量进行解码，得到输出。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323131816543.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323131816543&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;这样做的确可以解决一些问题，缺点就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当序列很长时，固定维度(例如512维的向量)的向量不能很好的理解上下文&lt;/li&gt;
+&lt;li&gt;不能动态的关注某一个词在上下文中位置&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其实这两个问题都是&lt;code&gt;context&lt;/code&gt;上下文过短导致的，也就导致我们不能很好的去处理对应的词汇。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;就好比让你读一边书记住后再去考试，记忆力是有限的&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;而&lt;code&gt;Attention&lt;/code&gt;可以解决这个问题。&lt;/p&gt;
+&lt;h3 id=&#34;attention机制&#34;&gt;Attention机制
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;Attention&lt;/code&gt;可以理解为评分决策，即在每次使用&lt;code&gt;decoder&lt;/code&gt;解码时，不再去使用“静态的”上下文，而是去根据当前词汇去动态的更新&lt;code&gt;context&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;我们来说一下具体的计算方式&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;将&lt;code&gt;decoder&lt;/code&gt;的初始状态&lt;code&gt;S0&lt;/code&gt;与之前每个时间步&lt;code&gt;t&lt;/code&gt;的隐藏层作运算&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323132429001.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323132429001&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;S0&lt;/code&gt;其实就是最后一个隐藏层，与每个隐藏层作运算后得到&lt;code&gt;e11,e12,e13,e14&lt;/code&gt;，然后再对结果进行&lt;code&gt;softmax&lt;/code&gt;变换得到对应的概率分布(&lt;code&gt;a11,a12,a13,a14&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323132655828.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323132655828&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中，&lt;code&gt;a11&lt;/code&gt;就是&lt;code&gt;h1&lt;/code&gt;层在第一个上下文中的权重参数，以此类推，我们将每个隐藏层与其对应权重相乘相加，就可以得到一个上下文&lt;code&gt;c&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323132919607.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323132919607&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;得到上下文&lt;code&gt;c1&lt;/code&gt;后，&lt;code&gt;decoder&lt;/code&gt;的解码策略还是根据所获得的上下文去进行解码，与之前相同&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323133105516.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323133105516&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;根据&lt;code&gt;y0, s0, c1&lt;/code&gt;，可以计算出&lt;code&gt;s1&lt;/code&gt;（注意，&lt;code&gt;decoder&lt;/code&gt;网络的隐藏层使用&lt;code&gt;s&lt;/code&gt;来进行表示）&lt;/p&gt;
+&lt;p&gt;计算出&lt;code&gt;s1&lt;/code&gt;之后，继续重复之前的“打分操作”，可以得到新的注意力权重(&lt;code&gt;a21,a22,a23,a24&lt;/code&gt;)：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323133355981.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323133355981&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;最后，我们可以得到最后的完整输出&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323133527973.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323133527973&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;attention推广&#34;&gt;Attention推广
+&lt;/h3&gt;&lt;p&gt;更一般的，我们可以把上面这个流程进行推广&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323133941484.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323133941484&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;我们来看看其计算流程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;将&lt;code&gt;Query Vector&lt;/code&gt;与&lt;code&gt;Input Vector&lt;/code&gt;作相似度计算&lt;/p&gt;
+&lt;p&gt;这个过程很像&lt;code&gt;decoder &lt;/code&gt;的&lt;code&gt;s&lt;/code&gt;和&lt;code&gt;encoder&lt;/code&gt;隐藏层作计算的形式，总之，我们的目的就是去得到&lt;code&gt;attention&lt;/code&gt;的权重参数。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;将得分进行&lt;code&gt;softmax&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;得到输出&lt;code&gt;vector&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;相似度计算&#34;&gt;相似度计算
+&lt;/h3&gt;&lt;p&gt;相似度计算即&lt;code&gt;f_attn&lt;/code&gt;函数，这里提供了点积相似度和缩放点积相似度&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;点积相似度&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323150704796.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323150704796&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;缩放点积相似度&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323150734259.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323150734259&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;我们现在来看看有多个&lt;code&gt;query vector&lt;/code&gt;时的情况：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323151729479.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323151729479&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;现在情况有些复杂，我们来一步步的拆开说明其计算步骤&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;当前的&lt;code&gt;query vector&lt;/code&gt;已经转变为&lt;code&gt;Query vectors&lt;/code&gt;向量&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;我们专门设置两个额外的变量，即&lt;code&gt;K&lt;/code&gt;和&lt;code&gt;V&lt;/code&gt;,&lt;code&gt;K&lt;/code&gt;和&lt;code&gt;V&lt;/code&gt;都是输入&lt;code&gt;X&lt;/code&gt;在不同空间的投影，所以可以这样理解：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;哪些维度适合“匹配”&lt;code&gt;（K）&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;哪些维度适合“被提取”&lt;code&gt;（V）&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;即&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用 &lt;code&gt;Q&lt;/code&gt; 去匹配&lt;code&gt; K&lt;/code&gt;（找相关内容）&lt;/li&gt;
+&lt;li&gt;得到权重&lt;/li&gt;
+&lt;li&gt;用权重去取&lt;code&gt; V&lt;/code&gt;（真正的信息）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;课堂上举了一个例子：&lt;em&gt;就像是你去Google上搜索“帝国大厦有多高”，Google会返回给你一个网页标题和里面的内容，内容里面说明了帝国大厦的高度，但是你已经知道标题了(就是我们搜索的内容)，所以你只需要拿到内容的值即可&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所以其计算结果可以这样表示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323152149864.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323152149864&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;抽取&lt;code&gt;X&lt;/code&gt;的特征，得到&lt;code&gt;K&lt;/code&gt;($X K ^T$)&lt;/li&gt;
+&lt;li&gt;将&lt;code&gt;K&lt;/code&gt;和&lt;code&gt;Query&lt;/code&gt;作相似度计算，&lt;code&gt;softmax&lt;/code&gt;后得到&lt;code&gt;A&lt;/code&gt;，即特征的分数&lt;/li&gt;
+&lt;li&gt;抽取&lt;code&gt;X&lt;/code&gt;输出值的特征，得到&lt;code&gt;V&lt;/code&gt;($XV$)&lt;/li&gt;
+&lt;li&gt;将&lt;code&gt;A&lt;/code&gt;和&lt;code&gt;V&lt;/code&gt;作点积运算求和后得到最后的输出&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;self-attention机制&#34;&gt;self-attention机制
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;self-attention&lt;/code&gt;的计算与上面我们提到的计算不同在于&lt;code&gt;Q&lt;/code&gt;的计算来源&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323155734234.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323155734234&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;在&lt;code&gt;self-attention&lt;/code&gt;的计算中，只有输入&lt;code&gt;X&lt;/code&gt;是给定的，其它部分都需要我们自己去计算，包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Q&lt;/code&gt;: $ XW_Q$&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;K&lt;/code&gt;:$XW_K$&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;V&lt;/code&gt;:$XW_V$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其余部分也跟计算上面&lt;code&gt;attention&lt;/code&gt;的一致。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Tips: 在计算过程中，如果改变输入的顺序，比如改成&lt;code&gt;X3,X1,X2&lt;/code&gt;，那么网络的输出结果也会随之发生变化，变成&lt;code&gt;Y3,Y1,Y2&lt;/code&gt;，也就是说对输入顺序并不敏感，为了加强&lt;strong&gt;顺序&lt;/strong&gt;的影响，我们可以加一个位置编码&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323165634580.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323165634580&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;masked-self-attention&#34;&gt;Masked self attention
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;Masked self attention&lt;/code&gt;的思路就是说，对于现在的&lt;code&gt;self attention&lt;/code&gt;，每个单词之间都是互相可见的，而之前的&lt;code&gt;RNN&lt;/code&gt;则是需要根据前一时刻的输出来确定当前时刻，所以，为了控制信息的可见范围，我们引入了&lt;code&gt;Masked&lt;/code&gt;矩阵&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323171243987.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323171243987&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;在得到&lt;code&gt;Q&lt;/code&gt;和&lt;code&gt;K&lt;/code&gt;后，使用一个&lt;strong&gt;下三角矩阵&lt;/strong&gt;，经&lt;code&gt;softmax&lt;/code&gt;之后，$-\infty$就变为了$0$，这样就限制了单词能够查看的范围，更加便于训练。&lt;/p&gt;
+&lt;h3 id=&#34;多头注意力&#34;&gt;多头注意力
+&lt;/h3&gt;&lt;p&gt;多头注意力机制也是经常能够听到的词语了，多头注意力机制&lt;strong&gt;Multi-head&lt;/strong&gt;的样子大概长这样&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323173554969.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323173554969&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;对于输入来说，我们这次使用多个注意力块来提取其中的信息，其优点在于**Multi-head attention 是对同一输入，通过多组不同的线性变换映射到不同子空间，在每个子空间中分别进行 attention，从而捕捉不同的关系，最后将结果拼接起来。**也就是说，每个&lt;code&gt;attention&lt;/code&gt;块的关注点不同，其捕获到的信息也就越多。&lt;/p&gt;
+&lt;h2 id=&#34;各种结构的比较&#34;&gt;各种结构的比较
+&lt;/h2&gt;&lt;p&gt;目前我们学习了三种网络，按照时间顺序来排列的话，包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;CNN&lt;/code&gt;，卷积神经网络&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;RNN&lt;/code&gt;，循环神经网络&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;attention&lt;/code&gt;，注意力机制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其优缺点如下图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260323174402838.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260323174402838&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;循环神经网络可以很好的处理序列问题，并且可以得到一个关于整个序列的“映像”，但它不能很好的并行运行，也就无法使用专有硬件进行加速&lt;/li&gt;
+&lt;li&gt;卷积神经网络不擅长处理长序列问题，但却可以并行计算&lt;/li&gt;
+&lt;li&gt;而自注意力机制可以很好的处理序列问题，也可以很好的并行化，缺点是需要占用大量内存&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;总结&#34;&gt;总结
+&lt;/h1&gt;&lt;p&gt;这次实验需要的知识还是很多的，有的甚至都没见过，为了不让篇幅过长，&lt;code&gt;Transformer&lt;/code&gt;留着下次再说！&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>循环神经网络:基础和实验(一)</title>
         <link>https://XiaoPeng0x3.github.io/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%80/</link>
         <pubDate>Sun, 15 Dec 2024 17:12:53 +0800</pubDate>
@@ -175,8 +526,8 @@
 &lt;/ul&gt;
 &lt;h3 id=&#34;数据详情&#34;&gt;数据详情
 &lt;/h3&gt;&lt;p&gt;经过上面这些处理后，可以将图片进行可视化&lt;/p&gt;
-&lt;img src=&#34;C:\Users\zxp\AppData\Roaming\Typora\typora-user-images\image-20260319114602421.png&#34; alt=&#34;image-20260319114602421&#34; style=&#34;zoom:50%;&#34; /&gt;
-&lt;img src=&#34;C:\Users\zxp\AppData\Roaming\Typora\typora-user-images\image-20260319114628479.png&#34; alt=&#34;image-20260319114628479&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319114602421.png&#34; alt=&#34;image-20260319114602421&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260319114628479.png&#34; alt=&#34;image-20260319114628479&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h2 id=&#34;单步rnn&#34;&gt;单步RNN
 &lt;/h2&gt;&lt;h3 id=&#34;rnn-forward&#34;&gt;RNN forward
 &lt;/h3&gt;&lt;p&gt;首先是实现单步的&lt;code&gt;RNN&lt;/code&gt;，也就是&lt;code&gt;rnn_step_forward&lt;/code&gt;。先跟着思路慢慢来，下面是&lt;code&gt;code&lt;/code&gt;中的提示,我们只看有用的部分&lt;/p&gt;
