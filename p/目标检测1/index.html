@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 计算机视觉的任务大概有下面这些：\n图片分类 语义分割 物体检测 实例分割 在之前的任务中，我们已经认识了图片分类任务，即使用经典的卷积神经网络去对图片进行分类，今天我们来看看目标检测。\n">
+<title>目标检测1</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B1/'>
+
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="目标检测1">
+<meta property='og:description' content="前言 计算机视觉的任务大概有下面这些：\n图片分类 语义分割 物体检测 实例分割 在之前的任务中，我们已经认识了图片分类任务，即使用经典的卷积神经网络去对图片进行分类，今天我们来看看目标检测。\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B1/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Pytorch' /><meta property='article:published_time' content='2025-01-17T17:17:33&#43;08:00'/><meta property='article:modified_time' content='2025-01-17T17:17:33&#43;08:00'/>
+<meta name="twitter:title" content="目标检测1">
+<meta name="twitter:description" content="前言 计算机视觉的任务大概有下面这些：\n图片分类 语义分割 物体检测 实例分割 在之前的任务中，我们已经认识了图片分类任务，即使用经典的卷积神经网络去对图片进行分类，今天我们来看看目标检测。\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( true ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8121279679071600"
+     crossorigin="anonymous"></script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😸</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#目标检测">目标检测</a>
+      <ol>
+        <li><a href="#所面临的挑战">所面临的挑战</a></li>
+        <li><a href="#检测单一物体">检测单一物体</a></li>
+        <li><a href="#滑动窗口改进">滑动窗口改进</a></li>
+        <li><a href="#区域提议">区域提议</a></li>
+        <li><a href="#r-cnn">R-CNN</a>
+          <ol>
+            <li><a href="#iou">IoU</a></li>
+            <li><a href="#非极大值抑制">非极大值抑制</a></li>
+            <li><a href="#map评估">mAP评估</a></li>
+          </ol>
+        </li>
+        <li><a href="#fast-r-cnn">Fast-R-CNN</a>
+          <ol>
+            <li><a href="#backbone">Backbone</a></li>
+            <li><a href="#区域映射">区域映射</a></li>
+            <li><a href="#缺点">缺点</a></li>
+            <li><a href="#性能对比">性能对比</a></li>
+            <li><a href="#rpn网络">RPN网络</a></li>
+          </ol>
+        </li>
+        <li><a href="#一阶段和二阶段检测器">一阶段和二阶段检测器</a></li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/eecs-498/007/" >
+                EECS-498/007
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B1/">目标检测1</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-01-17</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p>计算机视觉的任务大概有下面这些：</p>
+<ul>
+<li>图片分类</li>
+<li>语义分割</li>
+<li>物体检测</li>
+<li>实例分割</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327193850123.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327193850123"
+	
+	
+></p>
+<p>在之前的任务中，我们已经认识了图片分类任务，即使用经典的卷积神经网络去对图片进行分类，今天我们来看看目标检测。</p>
+<h1 id="目标检测">目标检测
+</h1><p>首先来给目标检测定义一下，其输入是一张<code>RGB</code>图片，输出是图片中物体的类别标签和一个边框，就像图片中的那样</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327194153640.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327194153640"
+	
+	
+></p>
+<h2 id="所面临的挑战">所面临的挑战
+</h2><p>首先，这次输出不再是单一的标签，而是多个输出，包括图片上每个物体的类别和一个边框。其次，我们不再只有一种输出，而是有一个&quot;类别标签&quot;和“边框”。最后，输入通常是非常大的像素图片。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327194433552.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327194433552"
+	
+	
+></p>
+<p>不过我们来看看几种常见的解决办法</p>
+<h2 id="检测单一物体">检测单一物体
+</h2><p>对于输入图片只有一类物体的情况，其实多做的一部分只有“边框”，这个时候我们可以用一个联合<code>Loss</code></p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327194916662.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327194916662"
+	
+	
+></p>
+<p>即输出一个框和标签，最后对最小化他们的<code>Loss</code>和，这个方法也被叫做多任务损失。问题是，当图片中的图片数量种类变多后就变得不可量化了。因为网络实际上只会输出一个标签和一个边框，所以我们需要改进网络。</p>
+<h2 id="滑动窗口改进">滑动窗口改进
+</h2><p>一个很简单的思路是去使用滑动窗口去动态采样一张图片，即每次动态取样一张图片，确保一张图片内只有一个物体和一个边框，这样我们就可以使用之前的<code>CNN</code>和联合损失来进行训练。可惜的是，滑动窗口的大小、窗口的步长都是未知的参数，而且，在滑动窗口采样的过程中，会存在有数量巨大的图片，这会使得网络的输入变得巨大，从而更难采样。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327195735358.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327195735358"
+	
+	
+></p>
+<h2 id="区域提议">区域提议
+</h2><p>虽然滑动窗口的想法很好，但是缺点就是计算量太大，一个很好的思路是：每次使用算法去计算一些“高质量”的小方框，这个算法后来又有一系列的工作，总的来说就是去使用算法去快速生成一些候选框。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327201212702.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327201212702"
+	
+	
+></p>
+<h2 id="r-cnn">R-CNN
+</h2><p><code>R-CNN</code>的核心思路就是<code>Region + CNN</code>。</p>
+<ol>
+<li><code>Regions</code>:使用<code>Selective Search</code>快速生成2000个候选框，也就是我们上文提到的<code>Region Proposal</code></li>
+<li><code>CNN</code>:使用<code>CNN</code>对每个候选框提取特征</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327201553567.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327201553567"
+	
+	
+></p>
+<blockquote>
+<p>把候选框缩放为<code>224x224</code>的大小，方便卷积分类</p>
+</blockquote>
+<p>这个时候就完成对候选框内的图片分类了，还需要调整矩形框的位置。简单来说，我们会使用回归预测让模型输出一个微调参数，缩放调整框的大小</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327202552581.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327202552581"
+	
+	
+></p>
+<p>最后将网络的框与真实的框进行比较。其中，怎么衡量预测框和真实框之间有多像呢？</p>
+<h3 id="iou">IoU
+</h3><p><code>IoU</code>即，<code>Intersection over Union（交并比）</code>，即$$ IoU = \frac{预测框 \cap 真实框}{预测框 \cup 真实框}$$</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327203339560.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327203339560"
+	
+	
+></p>
+<p>图片左下角说明了这个分数的范围，即越大越好。</p>
+<h3 id="非极大值抑制">非极大值抑制
+</h3><p>在做目标检测的时候，经常会遇到&quot;一个物体会被检测出多个框&quot;的问题，我们只需要其中的一个，这个时候我们可以使用<code>NMS</code>，即非极大值抑制，其算法流程如下：</p>
+<ul>
+<li>找到最高得分的边框</li>
+<li>把与得分最高边框，即<code>IoU &gt; threshold</code>的其他边框消除掉</li>
+<li>如果还有其它边框，继续第一步，直到剩下最高分的边框为止</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327212256208.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327212256208"
+	
+	
+></p>
+<p>例如，上图中蓝色和橙色边框的<code>IoU</code>分数较大，那么就消除橙色的边框。这个思路很好，缺点在于，当图片中有两个重叠程度较高的物体时，<code>NMS</code>可能会消除掉效果好的边框</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327212540005.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327212540005"
+	
+	
+></p>
+<h3 id="map评估">mAP评估
+</h3><blockquote>
+<p>以下总结来自AI</p>
+<p>Mean Average Precision (mAP，平均精度均值) 是计算机视觉中用于评估<strong>目标检测</strong>（如YOLO, SSD）和<strong>实例分割</strong>模型性能的核心指标。它综合了不同类别模型的精确定位（IoU）和分类能力，通过计算所有类别的平均精度（AP）来衡量模型在真实场景中的稳健性，分数越接近1表示模型越完美。</p>
+<p>关键概念与核心组件</p>
+<ol>
+<li>
+<p><strong><a class="link" href="https://www.google.com/search?q=IoU&#43;%28%e4%ba%a4%e5%b9%b6%e6%af%94&#43;-&#43;Intersection&#43;over&#43;Union%29&amp;sca_esv=ef91e3cdcba5483e&amp;sxsrf=ANbL-n6l--bWiBmzrZHh36XD4pWWHyyoZw%3A1774618680722&amp;ei=OIjGad7kK8qevr0PioKVsQQ&amp;biw=697&amp;bih=662&amp;ved=2ahUKEwjwu9DmmcCTAxVOyzQHHfW6BN8QgK4QegQIAxAB&amp;uact=5&amp;oq=Mean&#43;Average&#43;Precision&#43;mAP%e6%98%af%e4%bb%80%e4%b9%88&amp;gs_lp=Egxnd3Mtd2l6LXNlcnAiI01lYW4gQXZlcmFnZSBQcmVjaXNpb24gbUFQ5piv5LuA5LmIMgUQIRigATIFECEYoAFIzhtQrA5YwBpwAXgBkAEAmAGLAqAByA-qAQMyLTi4AQPIAQD4AQGYAgigAusNwgIKEAAYsAMY1gQYR8ICDRAAGIAEGLADGEMYigXCAgYQABgWGB7CAggQABgWGAoYHsICBxAjGLACGCfCAgYQABgNGB7CAggQABgKGA0YHsICCBAAGIAEGKIEwgIHECEYoAEYCpgDAIgGAZAGC5IHBTEuMC43oAfaIbIHAzItN7gH5w3CBwUxLjQuM8gHD4AIAA&amp;sclient=gws-wiz-serp&amp;mstk=AUtExfA4KGVsjZQ-aw9chHteuZZDv8TlAftkBCIgKygdzaxhV5bG6K1c7BVkKNR35vgbx7UpPpPn4LkUFL570ZwunSfbHo1DMhehTL3MbX7DaGAZkPG1pYt_TUbThsOYooOi9SidtolDN85Qg06wWQO6HurTCRTS8YaVGmG6vSW4KlX905VmfITmO46Xw_T4f-lOMXcCFscw4fKfjFuM7Z7JDYYJZLS3c-GPy13ThYC8r7PTPCqDlyRCkPtzgar5mov4KEqRkxhhNXPGYNUwc2DxrpBJ&amp;csui=3"  target="_blank" rel="noopener"
+    >IoU (交并比 - Intersection over Union)</a></strong>: 衡量预测框与真实框（Ground Truth）的重叠程度。通常设定一个阈值（如0.5），高于该阈值则认为检测正确（TP），否则为假正例（FP）。</p>
+</li>
+<li>
+<p><strong><a class="link" href="https://www.google.com/search?q=Precision&#43;%28%e7%b2%be%e7%a1%ae%e7%8e%87&#43;-&#43;P%29&amp;sca_esv=ef91e3cdcba5483e&amp;sxsrf=ANbL-n6l--bWiBmzrZHh36XD4pWWHyyoZw%3A1774618680722&amp;ei=OIjGad7kK8qevr0PioKVsQQ&amp;biw=697&amp;bih=662&amp;ved=2ahUKEwjwu9DmmcCTAxVOyzQHHfW6BN8QgK4QegQIAxAD&amp;uact=5&amp;oq=Mean&#43;Average&#43;Precision&#43;mAP%e6%98%af%e4%bb%80%e4%b9%88&amp;gs_lp=Egxnd3Mtd2l6LXNlcnAiI01lYW4gQXZlcmFnZSBQcmVjaXNpb24gbUFQ5piv5LuA5LmIMgUQIRigATIFECEYoAFIzhtQrA5YwBpwAXgBkAEAmAGLAqAByA-qAQMyLTi4AQPIAQD4AQGYAgigAusNwgIKEAAYsAMY1gQYR8ICDRAAGIAEGLADGEMYigXCAgYQABgWGB7CAggQABgWGAoYHsICBxAjGLACGCfCAgYQABgNGB7CAggQABgKGA0YHsICCBAAGIAEGKIEwgIHECEYoAEYCpgDAIgGAZAGC5IHBTEuMC43oAfaIbIHAzItN7gH5w3CBwUxLjQuM8gHD4AIAA&amp;sclient=gws-wiz-serp&amp;mstk=AUtExfA4KGVsjZQ-aw9chHteuZZDv8TlAftkBCIgKygdzaxhV5bG6K1c7BVkKNR35vgbx7UpPpPn4LkUFL570ZwunSfbHo1DMhehTL3MbX7DaGAZkPG1pYt_TUbThsOYooOi9SidtolDN85Qg06wWQO6HurTCRTS8YaVGmG6vSW4KlX905VmfITmO46Xw_T4f-lOMXcCFscw4fKfjFuM7Z7JDYYJZLS3c-GPy13ThYC8r7PTPCqDlyRCkPtzgar5mov4KEqRkxhhNXPGYNUwc2DxrpBJ&amp;csui=3"  target="_blank" rel="noopener"
+    >Precision (精确率 - P)</a></strong>: 模型检测为正的样本中，真正正确的比例。</p>
+</li>
+<li>
+<p><strong><a class="link" href="https://www.google.com/search?q=Recall&#43;%28%e5%8f%ac%e5%9b%9e%e7%8e%87&#43;-&#43;R%29&amp;sca_esv=ef91e3cdcba5483e&amp;sxsrf=ANbL-n6l--bWiBmzrZHh36XD4pWWHyyoZw%3A1774618680722&amp;ei=OIjGad7kK8qevr0PioKVsQQ&amp;biw=697&amp;bih=662&amp;ved=2ahUKEwjwu9DmmcCTAxVOyzQHHfW6BN8QgK4QegQIAxAF&amp;uact=5&amp;oq=Mean&#43;Average&#43;Precision&#43;mAP%e6%98%af%e4%bb%80%e4%b9%88&amp;gs_lp=Egxnd3Mtd2l6LXNlcnAiI01lYW4gQXZlcmFnZSBQcmVjaXNpb24gbUFQ5piv5LuA5LmIMgUQIRigATIFECEYoAFIzhtQrA5YwBpwAXgBkAEAmAGLAqAByA-qAQMyLTi4AQPIAQD4AQGYAgigAusNwgIKEAAYsAMY1gQYR8ICDRAAGIAEGLADGEMYigXCAgYQABgWGB7CAggQABgWGAoYHsICBxAjGLACGCfCAgYQABgNGB7CAggQABgKGA0YHsICCBAAGIAEGKIEwgIHECEYoAEYCpgDAIgGAZAGC5IHBTEuMC43oAfaIbIHAzItN7gH5w3CBwUxLjQuM8gHD4AIAA&amp;sclient=gws-wiz-serp&amp;mstk=AUtExfA4KGVsjZQ-aw9chHteuZZDv8TlAftkBCIgKygdzaxhV5bG6K1c7BVkKNR35vgbx7UpPpPn4LkUFL570ZwunSfbHo1DMhehTL3MbX7DaGAZkPG1pYt_TUbThsOYooOi9SidtolDN85Qg06wWQO6HurTCRTS8YaVGmG6vSW4KlX905VmfITmO46Xw_T4f-lOMXcCFscw4fKfjFuM7Z7JDYYJZLS3c-GPy13ThYC8r7PTPCqDlyRCkPtzgar5mov4KEqRkxhhNXPGYNUwc2DxrpBJ&amp;csui=3"  target="_blank" rel="noopener"
+    >Recall (召回率 - R)</a></strong>: 实际为正的样本中，被模型正确检测出来的比例。</p>
+</li>
+<li>
+<p><strong><a class="link" href="https://www.google.com/search?q=AP&#43;%28Average&#43;Precision&#43;-&#43;%e5%b9%b3%e5%9d%87%e7%b2%be%e5%ba%a6%29&amp;sca_esv=ef91e3cdcba5483e&amp;sxsrf=ANbL-n6l--bWiBmzrZHh36XD4pWWHyyoZw%3A1774618680722&amp;ei=OIjGad7kK8qevr0PioKVsQQ&amp;biw=697&amp;bih=662&amp;ved=2ahUKEwjwu9DmmcCTAxVOyzQHHfW6BN8QgK4QegQIAxAH&amp;uact=5&amp;oq=Mean&#43;Average&#43;Precision&#43;mAP%e6%98%af%e4%bb%80%e4%b9%88&amp;gs_lp=Egxnd3Mtd2l6LXNlcnAiI01lYW4gQXZlcmFnZSBQcmVjaXNpb24gbUFQ5piv5LuA5LmIMgUQIRigATIFECEYoAFIzhtQrA5YwBpwAXgBkAEAmAGLAqAByA-qAQMyLTi4AQPIAQD4AQGYAgigAusNwgIKEAAYsAMY1gQYR8ICDRAAGIAEGLADGEMYigXCAgYQABgWGB7CAggQABgWGAoYHsICBxAjGLACGCfCAgYQABgNGB7CAggQABgKGA0YHsICCBAAGIAEGKIEwgIHECEYoAEYCpgDAIgGAZAGC5IHBTEuMC43oAfaIbIHAzItN7gH5w3CBwUxLjQuM8gHD4AIAA&amp;sclient=gws-wiz-serp&amp;mstk=AUtExfA4KGVsjZQ-aw9chHteuZZDv8TlAftkBCIgKygdzaxhV5bG6K1c7BVkKNR35vgbx7UpPpPn4LkUFL570ZwunSfbHo1DMhehTL3MbX7DaGAZkPG1pYt_TUbThsOYooOi9SidtolDN85Qg06wWQO6HurTCRTS8YaVGmG6vSW4KlX905VmfITmO46Xw_T4f-lOMXcCFscw4fKfjFuM7Z7JDYYJZLS3c-GPy13ThYC8r7PTPCqDlyRCkPtzgar5mov4KEqRkxhhNXPGYNUwc2DxrpBJ&amp;csui=3"  target="_blank" rel="noopener"
+    >AP (Average Precision - 平均精度)</a></strong>: 单个类别的PR曲线（Precision-Recall curve）下的面积。它代表了在不同置信度阈值下模型对该类别的综合性能。</p>
+</li>
+<li>
+<p><strong><a class="link" href="https://www.google.com/search?q=mAP&#43;%28Mean&#43;Average&#43;Precision&#43;-&#43;%e5%b9%b3%e5%9d%87%e7%b2%be%e5%ba%a6%e5%9d%87%e5%80%bc%29&amp;sca_esv=ef91e3cdcba5483e&amp;sxsrf=ANbL-n6l--bWiBmzrZHh36XD4pWWHyyoZw%3A1774618680722&amp;ei=OIjGad7kK8qevr0PioKVsQQ&amp;biw=697&amp;bih=662&amp;ved=2ahUKEwjwu9DmmcCTAxVOyzQHHfW6BN8QgK4QegQIAxAJ&amp;uact=5&amp;oq=Mean&#43;Average&#43;Precision&#43;mAP%e6%98%af%e4%bb%80%e4%b9%88&amp;gs_lp=Egxnd3Mtd2l6LXNlcnAiI01lYW4gQXZlcmFnZSBQcmVjaXNpb24gbUFQ5piv5LuA5LmIMgUQIRigATIFECEYoAFIzhtQrA5YwBpwAXgBkAEAmAGLAqAByA-qAQMyLTi4AQPIAQD4AQGYAgigAusNwgIKEAAYsAMY1gQYR8ICDRAAGIAEGLADGEMYigXCAgYQABgWGB7CAggQABgWGAoYHsICBxAjGLACGCfCAgYQABgNGB7CAggQABgKGA0YHsICCBAAGIAEGKIEwgIHECEYoAEYCpgDAIgGAZAGC5IHBTEuMC43oAfaIbIHAzItN7gH5w3CBwUxLjQuM8gHD4AIAA&amp;sclient=gws-wiz-serp&amp;mstk=AUtExfA4KGVsjZQ-aw9chHteuZZDv8TlAftkBCIgKygdzaxhV5bG6K1c7BVkKNR35vgbx7UpPpPn4LkUFL570ZwunSfbHo1DMhehTL3MbX7DaGAZkPG1pYt_TUbThsOYooOi9SidtolDN85Qg06wWQO6HurTCRTS8YaVGmG6vSW4KlX905VmfITmO46Xw_T4f-lOMXcCFscw4fKfjFuM7Z7JDYYJZLS3c-GPy13ThYC8r7PTPCqDlyRCkPtzgar5mov4KEqRkxhhNXPGYNUwc2DxrpBJ&amp;csui=3"  target="_blank" rel="noopener"
+    >mAP (Mean Average Precision - 平均精度均值)</a></strong>: 对所有类别的AP值取平均值。</p>
+</li>
+</ol>
+<p>mAP 的计算步骤</p>
+<ol>
+<li>
+<p><strong>排序</strong>: 将模型对所有图片的某个类别的检测结果按照置信度得分（Confidence Score）从高到低排序。</p>
+</li>
+<li>
+<p><strong>计算PR曲线</strong>: 计算不同排序位置的P和R值，绘制PR曲线。</p>
+</li>
+<li>
+<p><strong>计算AP</strong>: 计算该类别的PR曲线下的面积。</p>
+</li>
+<li>
+<p><strong>计算mAP</strong>: 将所有类别的AP值取平均值。</p>
+</li>
+</ol>
+<p>常见指标变体</p>
+<ul>
+<li>
+<p><strong><a class="link" href="mailto:mAP@0.5" >mAP@0.5</a></strong>: IoU 阈值设定为 0.5 时计算的 mAP（Pascal VOC竞赛标准）。</p>
+</li>
+<li>
+<p><strong><a class="link" href="mailto:mAP@0.5" >mAP@0.5</a>:0.95</strong>: 在不同 IoU 阈值（0.5, 0.55, &hellip;, 0.95）下计算 mAP 后取平均，这是 COCO 数据集使用的更严格的评估标准。</p>
+</li>
+</ul>
+<p><strong>总结</strong>：mAP 是一个单一的、量化的分数，能够全面反映模型在多个类别、不同目标位置和大小下的综合检测能力。</p>
+</blockquote>
+<p>具体计算细节以后再看，先知道有这个东西。</p>
+<h2 id="fast-r-cnn">Fast-R-CNN
+</h2><p>让我们再来分析一下<code>R-CNN</code>的计算过程，来分析一下为什么它比较慢。首先，我们需要抽取将近2000张候选框，对于这2000张候选框来说，都得计算他们的一个卷积结果。但是，<strong>候选框中有很多区域都重叠的，也就是有些像素是被重复计算很多次的</strong>。一个很明显的直觉是，我们可以让整张图片<strong>先去做卷积，然后再根据候选框来选择对应的特征图</strong>，这样就不用重复计算卷积了。</p>
+<p>大概计算结果如下：</p>
+<ul>
+<li>
+<p><code>R-CNN</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">图像 → Selective Search → 2000个框 → 各自Crop/Warp → 各自CNN → 特征 → SVM分类 → BBox回归
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><code>Fast R-CNN</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">图像 → CNN → 特征图 → 对2000个框做RoI Pooling → 各自RoI特征 → 全连接层 → 同时分类+回归
+</span></span><span class="line"><span class="cl">                ↑
+</span></span><span class="line"><span class="cl">        Selective Search (仍需要，但只在CPU上跑几毫秒)
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>下面我们来说一说其详细的计算过程</p>
+<h3 id="backbone">Backbone
+</h3><p><code>Backbone</code>是模型的“特征抽取器”或者说“主干网络”，比如说，可以使用<code>AlexNet、ResNet</code>等。用于目标检测时，需要对网络进行改造，比如：</p>
+<ul>
+<li>移除末尾的分类输出，不要最后的全连接层等</li>
+<li>保留卷积层，使用<strong>卷积特征图</strong>作为输出</li>
+<li>特征抽取</li>
+</ul>
+<h3 id="区域映射">区域映射
+</h3><p>为了继续确定候选框里面的像素，我们需要以某种缩放运算将缩放前候选框的坐标调整到特征图对应的部分，然后使用池化去抽取每个<code>RoI</code>的特征，最后输出到全连接层上进行分类。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260327230451244.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260327230451244"
+	
+	
+></p>
+<p>全连接层的输入是固定的(比如7x7)，而我们现在有2000个大小不同的候选框，映射到特征图上也是2000个大小不一的特征图，而<code>RoI Pooling</code>就是一个把映射后的特征图也可以继续输入到全连接层的压缩机。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260328104816157.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260328104816157"
+	
+	
+></p>
+<p>也就是说，候选框在经过投影之后，我们需要将网格给动态池化，强行把这个区域划分为<code>7x7=49</code>的格子，然后找到每个格子的最大值，得到一个像素，最后输出<code>7x7</code>的特征块。</p>
+<h3 id="缺点">缺点
+</h3><p>上述过程中有两次取整：</p>
+<ul>
+<li>坐标映射取证：候选框在特征图上的坐标需要取整</li>
+<li>网格划分取整：每个小格子也不是对齐的，可能导致检测误差</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260328105409842.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260328105409842"
+	
+	
+></p>
+<p>解决办法是使用<code>RoI Align</code>，废除取整，改用<strong>双线性插值</strong>：在小数坐标位置用周围4个像素加权计算，精度更高。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260328113955007.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260328113955007"
+	
+	
+></p>
+<h3 id="性能对比">性能对比
+</h3><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260328114054902.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260328114054902"
+	
+	
+></p>
+<p>可以看到，<code>Fast R-CNN</code>的训练测试时间更短，但是其时间瓶颈还是在“区域推荐”这里，所以，一个很好的办法是<strong>使用CNN去学习</strong>推荐的区域，这样就可以把时间缩短至更少。</p>
+<h3 id="rpn网络">RPN网络
+</h3><p>用一个小型卷积网络在特征图上扫描，自动生成候选框，具体思路如下：</p>
+<ul>
+<li>
+<p>在每个位置预设“标准检测框”(<code>Anchor</code>)</p>
+<p>在特征图的<strong>每个像素位置</strong>，生成<code>k</code>个不同大小的参考框</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 在一个特征图位置上</span>
+</span></span><span class="line"><span class="cl"><span class="n">anchors</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="mi">128</span><span class="err">×</span><span class="mi">128</span><span class="p">),</span>  <span class="c1"># 小正方形</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="mi">256</span><span class="err">×</span><span class="mi">256</span><span class="p">),</span>  <span class="c1"># 中正方形</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="mi">512</span><span class="err">×</span><span class="mi">512</span><span class="p">),</span>  <span class="c1"># 大正方形</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="mi">128</span><span class="err">×</span><span class="mi">256</span><span class="p">),</span>  <span class="c1"># 瘦高</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="mi">256</span><span class="err">×</span><span class="mi">128</span><span class="p">),</span>  <span class="c1"># 矮胖</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>  <span class="c1"># 共9个</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>确保能够匹配各种尺寸的目标</p>
+</li>
+<li>
+<p>滑动窗口扫描并打分</p>
+<p>使用一个<code>3x3x512</code>的卷积核在特征图上滑动，对每个位置的<code>k</code>个框做两件事：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 输入：特征图上3×3×512的小区域</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 输出1：分类分数（2k个值）→ 每个锚框是前景/背景的分数</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 输出2：回归修正（4k个值）→ 每个锚框的Δx, Δy, Δw, Δh</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">cls_score</span> <span class="o">=</span> <span class="n">conv_cls</span><span class="p">(</span><span class="n">sliding_window</span><span class="p">)</span>    <span class="c1"># 形状: [H×W×k, 2]</span>
+</span></span><span class="line"><span class="cl"><span class="n">bbox_pred</span> <span class="o">=</span> <span class="n">conv_reg</span><span class="p">(</span><span class="n">sliding_window</span><span class="p">)</span>    <span class="c1"># 形状: [H×W×k, 4]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>分类分数：判断这个框里面<strong>有没有物体</strong></p>
+<p>回归分支：如果有物体，调整框的大小和位置，让他更加贴合目标</p>
+</li>
+<li>
+<p>生成候选框</p>
+<ol>
+<li><strong>平移+缩放</strong>：用回归修正量调整锚框位置
+<code>最终框 = 锚框 + 网络预测的Δx, Δy, Δw, Δh</code></li>
+<li><strong>排序过滤</strong>：按前景分数排序，用NMS去重，保留Top-N（如2000个）作为候选框</li>
+</ol>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260328140000777.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260328140000777"
+	
+	
+></p>
+<p>至此，我们已经说明了目标检测的一个基本思路，现在我们来看看<strong>一阶段检测器</strong>和<strong>二阶段检测器</strong></p>
+<h2 id="一阶段和二阶段检测器">一阶段和二阶段检测器
+</h2><p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260328140412790.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260328140412790"
+	
+	
+></p>
+<p>上图说明了一阶段和二阶段检测器的区别。对于一阶段来说，其流程：输入图像 → Backbone → 直接输出密集预测 → NMS → 最终框+类别，其思路是：</p>
+<ul>
+<li>在特征图的每个位置预设锚点</li>
+<li>直接预测每个锚框的类别概率和位置修正量</li>
+<li>无需单独的候选框生成</li>
+</ul>
+<p><strong>One-stage：在</strong>特征图<strong>每个位置对</strong>预设的k个anchor<strong>直接做分类回归；Two-stage：先用RPN</strong> **生成候选框 **，再对候选区域精细分类回归。</p>
+<h1 id="总结">总结
+</h1><p>目标检测是计算机视觉的一个重要的研究，例如像大名鼎鼎的<code>YOLO</code>系列，下次来看看更多的研究吧！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pytorch/">Pytorch</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Clstm/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">循环神经网络:LSTM</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E5%92%8C%E5%AE%9E%E9%AA%8C%E4%B8%80/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">循环神经网络:基础和实验(一)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart2/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">训练神经网络part2</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cpart1/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">训练神经网络part1</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">卷积神经网络</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
