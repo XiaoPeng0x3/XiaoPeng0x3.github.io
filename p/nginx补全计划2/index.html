@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
+                        <img src="/img/avatar_hu_7f757ce7b802b902.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -404,22 +404,22 @@ var _hmt = _hmt || [];
 </div><p>同样的，也有<strong>加权最少连接算法</strong>。这种算法也是最少连接，不过考虑了权重。这种加权算法还是考虑了不同服务器之间的性能差异，性能好的，虽然连接数多，但是处理能力也强，所以权限就大。</p>
 <p>例如，请考虑下面这种情形</p>
 <div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th>服务器</th>
-          <th>连接数</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>A，高性能</td>
-          <td>20</td>
-      </tr>
-      <tr>
-          <td>B，性能较差</td>
-          <td>10</td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th>服务器</th>
+					<th>连接数</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>A，高性能</td>
+					<td>20</td>
+			</tr>
+			<tr>
+					<td>B，性能较差</td>
+					<td>10</td>
+			</tr>
+	</tbody>
 </table></div>
 <p>按照我们的思路，此时，虽然B服务器的连接数小于A服务器，但是出于权重的考虑，我们应该把下一次请求分配给A服务器，在<code>nginx</code>中，我们只需要在<code>server</code>后面加入<code>weight</code>参数即可。</p>
 <div class="highlight"><div class="chroma">

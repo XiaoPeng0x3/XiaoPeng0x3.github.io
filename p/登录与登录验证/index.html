@@ -85,7 +85,7 @@ var _hmt = _hmt || [];
                     
                     
                         
-                        <img src="/img/avatar_hu_685ecf9070abf303.jpg" width="300"
+                        <img src="/img/avatar_hu_7f757ce7b802b902.jpg" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -751,35 +751,35 @@ var _hmt = _hmt || [];
 </div><h3 id="添加路径">添加路径
 </h3><p>在拦截器中除了可以设置<code>/**</code>拦截所有资源外，还有一些常见拦截路径设置：</p>
 <div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th>拦截路径</th>
-          <th>含义</th>
-          <th>举例</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>/*</td>
-          <td>一级路径</td>
-          <td>能匹配/depts，/emps，/login，不能匹配 /depts/1</td>
-      </tr>
-      <tr>
-          <td>/**</td>
-          <td>任意级路径</td>
-          <td>能匹配/depts，/depts/1，/depts/1/2</td>
-      </tr>
-      <tr>
-          <td>/depts/*</td>
-          <td>/depts下的一级路径</td>
-          <td>能匹配/depts/1，不能匹配/depts/1/2，/depts</td>
-      </tr>
-      <tr>
-          <td>/depts/**</td>
-          <td>/depts下的任意级路径</td>
-          <td>能匹配/depts，/depts/1，/depts/1/2，不能匹配/emps/1</td>
-      </tr>
-  </tbody>
+	<thead>
+			<tr>
+					<th>拦截路径</th>
+					<th>含义</th>
+					<th>举例</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>/*</td>
+					<td>一级路径</td>
+					<td>能匹配/depts，/emps，/login，不能匹配 /depts/1</td>
+			</tr>
+			<tr>
+					<td>/**</td>
+					<td>任意级路径</td>
+					<td>能匹配/depts，/depts/1，/depts/1/2</td>
+			</tr>
+			<tr>
+					<td>/depts/*</td>
+					<td>/depts下的一级路径</td>
+					<td>能匹配/depts/1，不能匹配/depts/1/2，/depts</td>
+			</tr>
+			<tr>
+					<td>/depts/**</td>
+					<td>/depts下的任意级路径</td>
+					<td>能匹配/depts，/depts/1，/depts/1/2，不能匹配/emps/1</td>
+			</tr>
+	</tbody>
 </table></div>
 <p>以上就是拦截器的执行流程。通过执行流程分析，大家应该已经清楚了过滤器和拦截器之间的区别，其实它们之间的区别主要是两点：</p>
 <ul>
