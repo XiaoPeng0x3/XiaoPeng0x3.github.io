@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前言 最近开始学习这门新课，本人之前已经学习过了一些深度学习的知识，想来尝试学习一下这门课，这个系列是去做一些知识笔记。\n计算机浮点数表示 上次学习浮点数知识还是在CSAPP中进行学习的，现在再来重新学习一下有关浮点数的知识。计算机中的所有数都是通过二进制来表示的，不同的是，由于浮点数引入的小数点，所以为了统一表示，科学家发明了一个统一的标准，即IEEE 754。一般的分为双精度浮点数和单精度浮点数，也就是32位和64位，我们来看看浮点数的表示，先从熟悉的十进制和科学计数法来看：\n">
+<title>cs336笔记1</title>
+
+<link rel='canonical' href='https://XiaoPeng0x3.github.io/p/cs336%E7%AC%94%E8%AE%B01/'>
+
+<link rel="stylesheet" href="/scss/style.min.f842e76eb8d9751beb0f5ca76dc748e59c1012d39267ed3220d10b10a913683d.css"><meta property='og:title' content="cs336笔记1">
+<meta property='og:description' content="前言 最近开始学习这门新课，本人之前已经学习过了一些深度学习的知识，想来尝试学习一下这门课，这个系列是去做一些知识笔记。\n计算机浮点数表示 上次学习浮点数知识还是在CSAPP中进行学习的，现在再来重新学习一下有关浮点数的知识。计算机中的所有数都是通过二进制来表示的，不同的是，由于浮点数引入的小数点，所以为了统一表示，科学家发明了一个统一的标准，即IEEE 754。一般的分为双精度浮点数和单精度浮点数，也就是32位和64位，我们来看看浮点数的表示，先从熟悉的十进制和科学计数法来看：\n">
+<meta property='og:url' content='https://XiaoPeng0x3.github.io/p/cs336%E7%AC%94%E8%AE%B01/'>
+<meta property='og:site_name' content='卖紫薯的紫薯精'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='llm' /><meta property='article:published_time' content='2026-01-15T18:30:53&#43;08:00'/><meta property='article:modified_time' content='2026-01-15T18:30:53&#43;08:00'/>
+<meta name="twitter:title" content="cs336笔记1">
+<meta name="twitter:description" content="前言 最近开始学习这门新课，本人之前已经学习过了一些深度学习的知识，想来尝试学习一下这门课，这个系列是去做一些知识笔记。\n计算机浮点数表示 上次学习浮点数知识还是在CSAPP中进行学习的，现在再来重新学习一下有关浮点数的知识。计算机中的所有数都是通过二进制来表示的，不同的是，由于浮点数引入的小数点，所以为了统一表示，科学家发明了一个统一的标准，即IEEE 754。一般的分为双精度浮点数和单精度浮点数，也就是32位和64位，我们来看看浮点数的表示，先从熟悉的十进制和科学计数法来看：\n">
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-NQDGFC8QR3"></script>
+      <script>
+        var doNotTrack = false;
+        if ( true ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-NQDGFC8QR3');
+        }
+      </script><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7fe48bfdee738232efb3dbfb477a8d31";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8121279679071600"
+     crossorigin="anonymous"></script>
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_7f757ce7b802b902.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😸</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">卖紫薯的紫薯精</a></h1>
+            <h2 class="site-description">Keep It Simple Stupid</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/XiaoPeng0x3'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.zhihu.com/people/14-35-61-48'
+                        target="_blank"
+                        title="ZhiHu"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-zhihu"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 6h6v12h-2l-2 2l-1 -2h-1z" /><path d="M4 12h6.5" /><path d="M10.5 6h-5" /><path d="M6 4c-.5 2.5 -1.5 3.5 -2.5 4.5" /><path d="M8 6v7c0 4.5 -2 5.5 -4 7" /><path d="M11 18l-3 -5" /></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>友情链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#计算机浮点数表示">计算机浮点数表示</a>
+      <ol>
+        <li><a href="#符号位">符号位</a></li>
+        <li><a href="#指数位">指数位</a></li>
+        <li><a href="#fp16">fp16</a></li>
+        <li><a href="#bf16">bf16</a></li>
+        <li><a href="#混合精度">混合精度</a></li>
+        <li><a href="#计算能力">计算能力</a></li>
+        <li><a href="#mfu模型flops利用率">MFU模型FLOPs利用率</a></li>
+        <li><a href="#算数强度accelerator-intensity">算数强度(Accelerator Intensity)</a></li>
+        <li><a href="#算法强度arithmetic-intensity">算法强度(Arithmetic Intensity)</a></li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/cs336/" >
+                Cs336
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/cs336%E7%AC%94%E8%AE%B01/">cs336笔记1</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2026-01-15</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="前言">前言
+</h1><p>最近开始学习这门新课，本人之前已经学习过了一些深度学习的知识，想来尝试学习一下这门课，这个系列是去做一些知识笔记。</p>
+<h1 id="计算机浮点数表示">计算机浮点数表示
+</h1><p>上次学习浮点数知识还是在CSAPP中进行学习的，现在再来重新学习一下有关浮点数的知识。计算机中的所有数都是通过二进制来表示的，不同的是，由于浮点数引入的小数点，所以为了统一表示，科学家发明了一个统一的标准，即<code>IEEE 754</code>。一般的分为双精度浮点数和单精度浮点数，也就是<code>32</code>位和<code>64</code>位，我们来看看浮点数的表示，先从熟悉的十进制和科学计数法来看：</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260719184653352.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260719184653352"
+	
+	
+></p>
+<p>对于一个32位浮点数来说存储如上图所示，分为：</p>
+<ul>
+<li><code>S</code>：符号位</li>
+<li><code>K</code>：指数位</li>
+<li><code>M</code>：小数位</li>
+</ul>
+<h2 id="符号位">符号位
+</h2><p>符号位比较好理解，这里，如果这个数是正数，那么符号位就是<code>0</code>，如果是负数，那么符号位就是<code>1</code>。</p>
+<h2 id="指数位">指数位
+</h2><p>指数位需要结合科学计数法去进行理解，对于一个数，比如说<code>15.75</code>，我们把它拆成二进制小数的样子：
+$$
+15.75 = 1111.11_{(2)}
+$$
+类比十进制，小数点后每一位是$10^{-1}, 10^{-2}$，所以对于二进制来说就是$2^{-1}, 2^{-2}$,所以我们可以使用计数法来表示这个数，也就是
+$$
+1111.11 = 1.11111  \times 2 ^{3}
+$$
+我们得到了指数位，也就是<code>3</code>，同时，因为二进制科学计数法开头的数字一定是<code>1</code>，所以我们可以省略这个<code>1</code>，也就是
+$$
+.11111  \times 2 ^{3}
+$$
+这样我们就得到了小数部分。</p>
+<p>此时又有一个问题，怎么表述指数为负数的情况呢？这里我们知道，因为<code>32</code>位浮点数中指数部分是<code>8</code>位，所以可以表示的范围是<code>0~255</code>，于是就做了一个映射，把<code>0~255</code>映射为<code>-127~128</code>，也就是说，<strong>浮点数的指数位需要减去127</strong>得到的才是实际的指数为，所以，我们的指数位就是<code>127+3=130</code>，也就是<code>1000 0010</code>，小数位就是<code>11111</code>，填充一下得到<code>15.75</code>的表示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">0    	1000 0010	11111000000000000
+</span></span><span class="line"><span class="cl">符号位（1位）     指数位（8位）		 	小数部分(23位)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样，我们就搞懂了一个浮点数是怎么表示的，下面来看一看不同的浮点数吧。</p>
+<h2 id="fp16">fp16
+</h2><p>很多情况下需要降低显存的压力，于是乎就发明了许多新的存储格式。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260719212708155.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260719212708155"
+	
+	
+></p>
+<p>而<code>fp16</code>没有解决的问题是当数值过小时容易溢出，即无法表示，为了解决这个问题而发明了<code>bf16</code>。</p>
+<h2 id="bf16">bf16
+</h2><p>BF16（BFloat16）是<strong>Google Brain团队专为深度学习场景设计的16位浮点数据格式</strong></p>
+<p><strong>BF16（16位脑浮点）</strong>：1位符号+8位指数+7位尾数，仅占用2字节。核心优势是<strong>完全继承FP32的超大数值范围</strong>，仅牺牲少量小数精度，同时硬件可零成本与FP32互相转换，无需复杂运算逻辑。</p>
+<p><img src="https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260719214058900.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20260719214058900"
+	
+	
+></p>
+<h2 id="混合精度">混合精度
+</h2><p>在训练中，如果需要<code>fp32</code>去进行训练，那么就会需要占用许多显存，如果全程采用半精度去进行训练(<code>fp16</code>或者<code>bp16</code>)，那么训练结果不稳定。所以采用的一个办法就是使用混合精度去进行训练。</p>
+<p>混合精度训练：</p>
+<ul>
+<li>使用<code>bf16</code>存储参数、激活值和梯度</li>
+<li>使用<code>fp32</code>存储优化器状态</li>
+</ul>
+<p><code>Pytorch</code>有一个自动混合精度的<code>API</code>库，叫做 <code>automatic mixed precision (AMP)</code>，除此之外，还有<code>fp8</code>和<code>fp4</code>等精度。</p>
+<h2 id="计算能力">计算能力
+</h2><p>常见的浮点数操作有加减乘除这些，而A floating-point operation (FLOP) 。这里有两个长得比较像，容易搞混的内容：</p>
+<ul>
+<li><code>FLOPs</code>：指的是浮点数运算数，可以理解为计算量。</li>
+<li><code>FLOPS</code>或者<code>FLOP/s</code>指的是每秒浮点数运算能力，可以理解为计算速度。</li>
+</ul>
+<h2 id="mfu模型flops利用率">MFU模型FLOPs利用率
+</h2><p>我们把<code>MFU</code>定义为：实际的计算速度/理论的计算速度。</p>
+<p>实际上的计算速度我们可以这样去进行计算，让总的计算次数除以总的计算时间。实际中，<code>MFU&gt;0.5</code>已经算好的了！</p>
+<p>为什么这个数值不是接近于1的？我们需要看看是怎么计算的？计算一个数值的过程是这样的：</p>
+<ol>
+<li>把来自内存的输入发送到计算器中</li>
+<li>执行计算</li>
+<li>把结果写回内存</li>
+</ol>
+<p>这个过程的总时间取决于两个内容：</p>
+<ol>
+<li>计算器的计算能力，FLOPS</li>
+<li>内存的带宽，也就是发送能力(bytes/s)</li>
+</ol>
+<p>所以，在计算的总时间可以分为两个部分：</p>
+<ul>
+<li>内存通信时间，即将数据发送到运算单元的时间</li>
+<li>计算时间，执行计算的时间</li>
+</ul>
+<p>这两部分理想情况下是可以独立进行的，实际中会发生重合，这样，执行整个计算的时间就可以确定，就是两者之间的最大值。所以，对性能瓶颈进行分析：</p>
+<ul>
+<li>内存瓶颈：当通信时间大于计算时间</li>
+<li>计算瓶颈：计算时间大于通信时间</li>
+</ul>
+<h2 id="算数强度accelerator-intensity">算数强度(Accelerator Intensity)
+</h2><ul>
+<li>
+<p><strong>计算公式</strong>：算术强度 =$(\frac{\text{加速器计算吞吐量}(FLOPs/sec)}{\text{内存带宽}(Bytes/sec)})$</p>
+</li>
+<li>
+<p><strong>物理意义</strong>：代表数据在硬件中传输与处理的比例。数值越高，说明硬件利用率越高，计算能力越强大。</p>
+</li>
+<li>
+<p><strong>单位</strong>：FLOP/Byte（每字节的浮点操作次数）</p>
+</li>
+</ul>
+<p>每搬运1 Byte数据，GPU最多能做多少FLOPs</p>
+<h2 id="算法强度arithmetic-intensity">算法强度(Arithmetic Intensity)
+</h2><p>$(\text{Arithmetic Intensity} = \frac{\text{总计算量 (FLOPs)}}{\text{总访存量 (Bytes)}})$</p>
+<p>每搬运1 Byte数据，实际做了多少FLOPs，这里指的是算法。</p>
+<p>例如，对于<code>ReLU</code>这个算法，如下面：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其流程是这样的：</p>
+<ul>
+<li>读一次<code>x</code>(2 Byte)</li>
+<li>做一次比较(1 FLOP)</li>
+<li>写一次<code>y</code>(2 Byte)</li>
+</ul>
+<p>所以，搬运了4次数据，只做了1次计算，可以通过比较这两个值来确定是内存受限还是计算受限：</p>
+<ul>
+<li>当Accelerator Intensity &gt; Arithmetic Intensity时，也就是说该算法的搬运速度小于计算速度，所以是内存受限的</li>
+<li>反之，搬运速度大于计算速度，则是计算受限</li>
+</ul>
+<h1 id="总结">总结
+</h1><p>这次笔记搞清楚了一些基本的概念知识，下次见！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/llm/">Llm</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="XiaoPeng0x3/blogtalks"
+        issue-term="title"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    let utterancesLoaded = false;
+
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+
+        
+        utterancesLoaded = true;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (!utterancesLoaded) return;
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    
+
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Xiao Peng
+    </section>
+    
+    <section class="powerby">
+        
+            花有重开日，人无再少年 <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+	</section>
+</footer>
+<script>
+    (function(u, c) {
+      var d = document, t = 'script', o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function(e) { c(e); }); }
+      s.parentNode.insertBefore(o, s);
+    })('//cdn.bootcss.com/pangu/4.0.7/pangu.min.js', function() {
+      pangu.spacingPage();
+    });
+</script>
+
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

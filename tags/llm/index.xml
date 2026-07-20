@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Llm on 卖紫薯的紫薯精</title>
+        <link>https://XiaoPeng0x3.github.io/tags/llm/</link>
+        <description>Recent content in Llm on 卖紫薯的紫薯精</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>Xiao Peng</copyright>
+        <lastBuildDate>Thu, 15 Jan 2026 18:30:53 +0800</lastBuildDate><atom:link href="https://XiaoPeng0x3.github.io/tags/llm/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>cs336笔记1</title>
+        <link>https://XiaoPeng0x3.github.io/p/cs336%E7%AC%94%E8%AE%B01/</link>
+        <pubDate>Thu, 15 Jan 2026 18:30:53 +0800</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/p/cs336%E7%AC%94%E8%AE%B01/</guid>
+        <description>&lt;h1 id=&#34;前言&#34;&gt;前言
+&lt;/h1&gt;&lt;p&gt;最近开始学习这门新课，本人之前已经学习过了一些深度学习的知识，想来尝试学习一下这门课，这个系列是去做一些知识笔记。&lt;/p&gt;
+&lt;h1 id=&#34;计算机浮点数表示&#34;&gt;计算机浮点数表示
+&lt;/h1&gt;&lt;p&gt;上次学习浮点数知识还是在CSAPP中进行学习的，现在再来重新学习一下有关浮点数的知识。计算机中的所有数都是通过二进制来表示的，不同的是，由于浮点数引入的小数点，所以为了统一表示，科学家发明了一个统一的标准，即&lt;code&gt;IEEE 754&lt;/code&gt;。一般的分为双精度浮点数和单精度浮点数，也就是&lt;code&gt;32&lt;/code&gt;位和&lt;code&gt;64&lt;/code&gt;位，我们来看看浮点数的表示，先从熟悉的十进制和科学计数法来看：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260719184653352.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260719184653352&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;对于一个32位浮点数来说存储如上图所示，分为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;S&lt;/code&gt;：符号位&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;K&lt;/code&gt;：指数位&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;M&lt;/code&gt;：小数位&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;符号位&#34;&gt;符号位
+&lt;/h2&gt;&lt;p&gt;符号位比较好理解，这里，如果这个数是正数，那么符号位就是&lt;code&gt;0&lt;/code&gt;，如果是负数，那么符号位就是&lt;code&gt;1&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;指数位&#34;&gt;指数位
+&lt;/h2&gt;&lt;p&gt;指数位需要结合科学计数法去进行理解，对于一个数，比如说&lt;code&gt;15.75&lt;/code&gt;，我们把它拆成二进制小数的样子：
+$$
+15.75 = 1111.11_{(2)}
+$$
+类比十进制，小数点后每一位是$10^{-1}, 10^{-2}$，所以对于二进制来说就是$2^{-1}, 2^{-2}$,所以我们可以使用计数法来表示这个数，也就是
+$$
+1111.11 = 1.11111  \times 2 ^{3}
+$$
+我们得到了指数位，也就是&lt;code&gt;3&lt;/code&gt;，同时，因为二进制科学计数法开头的数字一定是&lt;code&gt;1&lt;/code&gt;，所以我们可以省略这个&lt;code&gt;1&lt;/code&gt;，也就是
+$$
+.11111  \times 2 ^{3}
+$$
+这样我们就得到了小数部分。&lt;/p&gt;
+&lt;p&gt;此时又有一个问题，怎么表述指数为负数的情况呢？这里我们知道，因为&lt;code&gt;32&lt;/code&gt;位浮点数中指数部分是&lt;code&gt;8&lt;/code&gt;位，所以可以表示的范围是&lt;code&gt;0~255&lt;/code&gt;，于是就做了一个映射，把&lt;code&gt;0~255&lt;/code&gt;映射为&lt;code&gt;-127~128&lt;/code&gt;，也就是说，&lt;strong&gt;浮点数的指数位需要减去127&lt;/strong&gt;得到的才是实际的指数为，所以，我们的指数位就是&lt;code&gt;127+3=130&lt;/code&gt;，也就是&lt;code&gt;1000 0010&lt;/code&gt;，小数位就是&lt;code&gt;11111&lt;/code&gt;，填充一下得到&lt;code&gt;15.75&lt;/code&gt;的表示&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-txt&#34; data-lang=&#34;txt&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;0    	1000 0010	11111000000000000
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;符号位（1位）     指数位（8位）		 	小数部分(23位)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样，我们就搞懂了一个浮点数是怎么表示的，下面来看一看不同的浮点数吧。&lt;/p&gt;
+&lt;h2 id=&#34;fp16&#34;&gt;fp16
+&lt;/h2&gt;&lt;p&gt;很多情况下需要降低显存的压力，于是乎就发明了许多新的存储格式。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260719212708155.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260719212708155&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;而&lt;code&gt;fp16&lt;/code&gt;没有解决的问题是当数值过小时容易溢出，即无法表示，为了解决这个问题而发明了&lt;code&gt;bf16&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;bf16&#34;&gt;bf16
+&lt;/h2&gt;&lt;p&gt;BF16（BFloat16）是&lt;strong&gt;Google Brain团队专为深度学习场景设计的16位浮点数据格式&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;BF16（16位脑浮点）&lt;/strong&gt;：1位符号+8位指数+7位尾数，仅占用2字节。核心优势是&lt;strong&gt;完全继承FP32的超大数值范围&lt;/strong&gt;，仅牺牲少量小数精度，同时硬件可零成本与FP32互相转换，无需复杂运算逻辑。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260719214058900.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20260719214058900&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;混合精度&#34;&gt;混合精度
+&lt;/h2&gt;&lt;p&gt;在训练中，如果需要&lt;code&gt;fp32&lt;/code&gt;去进行训练，那么就会需要占用许多显存，如果全程采用半精度去进行训练(&lt;code&gt;fp16&lt;/code&gt;或者&lt;code&gt;bp16&lt;/code&gt;)，那么训练结果不稳定。所以采用的一个办法就是使用混合精度去进行训练。&lt;/p&gt;
+&lt;p&gt;混合精度训练：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用&lt;code&gt;bf16&lt;/code&gt;存储参数、激活值和梯度&lt;/li&gt;
+&lt;li&gt;使用&lt;code&gt;fp32&lt;/code&gt;存储优化器状态&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;Pytorch&lt;/code&gt;有一个自动混合精度的&lt;code&gt;API&lt;/code&gt;库，叫做 &lt;code&gt;automatic mixed precision (AMP)&lt;/code&gt;，除此之外，还有&lt;code&gt;fp8&lt;/code&gt;和&lt;code&gt;fp4&lt;/code&gt;等精度。&lt;/p&gt;
+&lt;h2 id=&#34;计算能力&#34;&gt;计算能力
+&lt;/h2&gt;&lt;p&gt;常见的浮点数操作有加减乘除这些，而A floating-point operation (FLOP) 。这里有两个长得比较像，容易搞混的内容：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;FLOPs&lt;/code&gt;：指的是浮点数运算数，可以理解为计算量。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;FLOPS&lt;/code&gt;或者&lt;code&gt;FLOP/s&lt;/code&gt;指的是每秒浮点数运算能力，可以理解为计算速度。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;mfu模型flops利用率&#34;&gt;MFU模型FLOPs利用率
+&lt;/h2&gt;&lt;p&gt;我们把&lt;code&gt;MFU&lt;/code&gt;定义为：实际的计算速度/理论的计算速度。&lt;/p&gt;
+&lt;p&gt;实际上的计算速度我们可以这样去进行计算，让总的计算次数除以总的计算时间。实际中，&lt;code&gt;MFU&amp;gt;0.5&lt;/code&gt;已经算好的了！&lt;/p&gt;
+&lt;p&gt;为什么这个数值不是接近于1的？我们需要看看是怎么计算的？计算一个数值的过程是这样的：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;把来自内存的输入发送到计算器中&lt;/li&gt;
+&lt;li&gt;执行计算&lt;/li&gt;
+&lt;li&gt;把结果写回内存&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这个过程的总时间取决于两个内容：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;计算器的计算能力，FLOPS&lt;/li&gt;
+&lt;li&gt;内存的带宽，也就是发送能力(bytes/s)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;所以，在计算的总时间可以分为两个部分：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;内存通信时间，即将数据发送到运算单元的时间&lt;/li&gt;
+&lt;li&gt;计算时间，执行计算的时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这两部分理想情况下是可以独立进行的，实际中会发生重合，这样，执行整个计算的时间就可以确定，就是两者之间的最大值。所以，对性能瓶颈进行分析：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;内存瓶颈：当通信时间大于计算时间&lt;/li&gt;
+&lt;li&gt;计算瓶颈：计算时间大于通信时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;算数强度accelerator-intensity&#34;&gt;算数强度(Accelerator Intensity)
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;计算公式&lt;/strong&gt;：算术强度 =$(\frac{\text{加速器计算吞吐量}(FLOPs/sec)}{\text{内存带宽}(Bytes/sec)})$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;物理意义&lt;/strong&gt;：代表数据在硬件中传输与处理的比例。数值越高，说明硬件利用率越高，计算能力越强大。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;单位&lt;/strong&gt;：FLOP/Byte（每字节的浮点操作次数）&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;每搬运1 Byte数据，GPU最多能做多少FLOPs&lt;/p&gt;
+&lt;h2 id=&#34;算法强度arithmetic-intensity&#34;&gt;算法强度(Arithmetic Intensity)
+&lt;/h2&gt;&lt;p&gt;$(\text{Arithmetic Intensity} = \frac{\text{总计算量 (FLOPs)}}{\text{总访存量 (Bytes)}})$&lt;/p&gt;
+&lt;p&gt;每搬运1 Byte数据，实际做了多少FLOPs，这里指的是算法。&lt;/p&gt;
+&lt;p&gt;例如，对于&lt;code&gt;ReLU&lt;/code&gt;这个算法，如下面：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;relu&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;其流程是这样的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;读一次&lt;code&gt;x&lt;/code&gt;(2 Byte)&lt;/li&gt;
+&lt;li&gt;做一次比较(1 FLOP)&lt;/li&gt;
+&lt;li&gt;写一次&lt;code&gt;y&lt;/code&gt;(2 Byte)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以，搬运了4次数据，只做了1次计算，可以通过比较这两个值来确定是内存受限还是计算受限：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当Accelerator Intensity &amp;gt; Arithmetic Intensity时，也就是说该算法的搬运速度小于计算速度，所以是内存受限的&lt;/li&gt;
+&lt;li&gt;反之，搬运速度大于计算速度，则是计算受限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;总结&#34;&gt;总结
+&lt;/h1&gt;&lt;p&gt;这次笔记搞清楚了一些基本的概念知识，下次见！&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
