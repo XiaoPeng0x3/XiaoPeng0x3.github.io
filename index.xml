@@ -21033,6 +21033,67 @@ $$ r_{XY} = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y} $$&lt;/p&gt;
         <description></description>
         </item>
         <item>
+        <title></title>
+        <link>https://XiaoPeng0x3.github.io/p/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://XiaoPeng0x3.github.io/p/</guid>
+        <description>&lt;p&gt;title = &amp;lsquo;attention内容回顾记录&amp;rsquo;
+date = 2026-09-18T18:30:53+08:00
+draft = true&lt;/p&gt;
+&lt;p&gt;categories = [&amp;ldquo;eecs498&amp;rdquo;]&lt;/p&gt;
+&lt;p&gt;tags = [&amp;ldquo;llm&amp;rdquo;]&lt;/p&gt;
+&lt;p&gt;+++&lt;/p&gt;
+&lt;h1 id=&#34;前言&#34;&gt;前言
+&lt;/h1&gt;&lt;p&gt;在之前的课程中我们学习了&lt;code&gt;RNN&lt;/code&gt;和&lt;code&gt;LSTM&lt;/code&gt;两种网络，当处理的目标是连续的内容时，比如说翻译，这种网络可以很好的解决连续序列的问题，但之后的故事大家都知道了，&lt;code&gt;transformer&lt;/code&gt;横空出世，我们来看看&lt;code&gt;RNN&lt;/code&gt;有哪些未解决的问题吧。&lt;/p&gt;
+&lt;h1 id=&#34;rnn的前生今世&#34;&gt;RNN的前生今世
+&lt;/h1&gt;&lt;h2 id=&#34;encoder-decoder架构&#34;&gt;encoder-decoder架构
+&lt;/h2&gt;&lt;p&gt;在执行翻译任务时，有着&lt;code&gt;encoder&lt;/code&gt;和&lt;code&gt;decoder&lt;/code&gt;的编码器结构应该是这样的：&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260919202820444.png&#34; alt=&#34;image-20260919202820444&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;p&gt;即，当前&lt;code&gt;t&lt;/code&gt;时刻的隐藏层与&lt;code&gt;t-1&lt;/code&gt;时刻的隐藏层和当前输入&lt;code&gt;x&lt;/code&gt;有关，在&lt;code&gt;encoder&lt;/code&gt;经过编码后会得到一个最终向量，我们一般叫做&lt;code&gt;context&lt;/code&gt;上下文向量，其翻译过程就是这样
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260919203128751.png&#34; alt=&#34;image-20260919203128751&#34; style=&#34;zoom:50%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;可以看到，在&lt;code&gt;decoder&lt;/code&gt;的每一步中都用到了这个上下文向量，我们可以理解为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;encoder&lt;/code&gt;所有的信息都压缩在这个向量中&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;deocder&lt;/code&gt;根据这个上下文向量和&lt;code&gt;rnn&lt;/code&gt;网络进行预测生成&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;缺点&#34;&gt;缺点
+&lt;/h2&gt;&lt;p&gt;当序列变得很长时，例如有1000步，这也就意味着我们需要把1000步的内容给进行压缩，这会丢失掉许多信息。&lt;/p&gt;
+&lt;h2 id=&#34;attention改进&#34;&gt;attention改进
+&lt;/h2&gt;&lt;p&gt;一个很棒的思路是，我们在&lt;code&gt;decoder&lt;/code&gt;的过程中，为什么总是使用一个压缩的上下文向量呢，而不是每次都去计算一个新的上下文向量呢？如下图所示：&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260919213019712.png&#34; alt=&#34;image-20260919213019712&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;blockquote&gt;
+&lt;p&gt;我们在这里看到的注意力机制叫做&lt;strong&gt;Bahdanau attention&lt;/strong&gt;，也叫加法注意力机制。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;decoder&lt;/code&gt;的过程和之前的不变，需要注意的是，每一次都需要去计算一个新的上下文向量，我们来说明一下这个计算过程：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在&lt;code&gt;decoder&lt;/code&gt;阶段，我们使用&lt;code&gt;encoder&lt;/code&gt;阶段最后的隐藏层$h_t$作为&lt;code&gt;decoder&lt;/code&gt;的初始值$s_0$，当我们计算第一个上下文向量$c_1$的时候需要使用这个$s_0$向量，其计算流程如下
+$$
+e_{t,i} = f_{att}(s_{t-1}, h_i)
+$$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在得到注意力分数的这个过程其实就是对&lt;strong&gt;前&lt;code&gt;T&lt;/code&gt;时刻所有的隐藏层进行权重分配的过程&lt;/strong&gt;。可以这样理解，一个隐藏层包含单词及周围词性信息，在&lt;code&gt;decoder&lt;/code&gt;的过程中，每个词的关注度不可能都是一样的，我们需要聚焦与某个单词。所以，$s_0$实际上也是包含了单词的所有信息，这样，在每一个时间步&lt;code&gt;T&lt;/code&gt;上，我们就可以做到物尽其用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260919220349195.png&#34; alt=&#34;image-20260919220349195&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;p&gt;计算过程如上图所示&lt;/p&gt;
+&lt;h1 id=&#34;attention&#34;&gt;Attention
+&lt;/h1&gt;&lt;p&gt;更一般的，我们把这种查询抽象为一个注意力层&lt;/p&gt;
+&lt;h2 id=&#34;交叉注意力&#34;&gt;交叉注意力
+&lt;/h2&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260919232512609.png&#34; alt=&#34;image-20260919232512609&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;p&gt;如之前&lt;code&gt;RNN&lt;/code&gt;中介绍的，我们需要把当前输入去之前的&lt;code&gt;encoder&lt;/code&gt;中进行匹配计算，好比人类做翻译的时候需要去看译文。&lt;/p&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260919232708069.png&#34; alt=&#34;image-20260919232708069&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;h2 id=&#34;自注意力机制&#34;&gt;自注意力机制
+&lt;/h2&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260919232906726.png&#34; alt=&#34;image-20260919232906726&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;p&gt;与之不同的是，自注意力机制的&lt;code&gt;Q,K,V&lt;/code&gt;全部来自输入&lt;code&gt;X&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;多头注意力机制&#34;&gt;多头注意力机制
+&lt;/h2&gt;&lt;img src=&#34;https://raw.githubusercontent.com/XiaoPeng0x3/blogImage/main/image-20260919233137967.png&#34; alt=&#34;image-20260919233137967&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;p&gt;前后输入输出向量维度不变，将输入向量&lt;code&gt;X&lt;/code&gt;进行维度分配，随后把得到的向量拼接起来&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>关于</title>
         <link>https://XiaoPeng0x3.github.io/%E5%85%B3%E4%BA%8E/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
